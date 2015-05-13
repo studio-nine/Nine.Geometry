@@ -41,6 +41,7 @@
     <Compile Include="QuadTree.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QuadTreeCollection.cs" />
+    <Compile Include="QuadTreeExtensions.cs" />
     <Compile Include="SpacePartitionTree.cs" />
     <Compile Include="SpatialQuery.cs" />
     <Compile Include="SpatialQueryExtensions.cs" />
