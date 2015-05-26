@@ -1,32 +1,26 @@
-﻿namespace Nine.SpatialQuery
+﻿namespace Nine.Geometry
 {
     using System;
     using System.Collections.Generic;
-    using Microsoft.Xna.Framework;
+    using System.Numerics;
+
+    // TODO: Should we switch to System.Numerics.Vector4?
 
     /// <summary>
     /// Defines an axis-aligned rectangle-shaped 2D volume.
     /// </summary>
     public struct BoundingRectangle : IEquatable<BoundingRectangle>
     {
-        /// <summary>
-        /// Gets or sets the x value.
-        /// </summary>
+        /// <summary> Gets or sets the x value. </summary>
         public float X;
 
-        /// <summary>
-        /// Gets or sets the y value.
-        /// </summary>
+        /// <summary> Gets or sets the y value. </summary>
         public float Y;
 
-        /// <summary>
-        /// Gets or sets the width.
-        /// </summary>
+        /// <summary> Gets or sets the width. </summary>
         public float Width;
 
-        /// <summary>
-        /// Gets or sets the height.
-        /// </summary>
+        /// <summary> Gets or sets the height. </summary>
         public float Height;
 
         /// <summary>
@@ -79,7 +73,7 @@
         public static BoundingRectangle Empty { get; private set; }
 
         /// <summary>
-        /// Create a new instance of BoundingRectangle object.
+        /// Initializes a new instance of the <see cref="BoundingRectangle"/> class.
         /// </summary>
         public BoundingRectangle(float width, float height)
         {
@@ -90,7 +84,7 @@
         }
 
         /// <summary>
-        /// Create a new instance of BoundingRectangle object.
+        /// Initializes a new instance of the <see cref="BoundingRectangle"/> class.
         /// </summary>
         public BoundingRectangle(float x, float y, float width, float height)
         {

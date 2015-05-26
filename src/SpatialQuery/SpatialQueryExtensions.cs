@@ -1,9 +1,8 @@
-namespace Nine.SpatialQuery
+namespace Nine.Geometry.SpatialQuery
 {
     using System;
     using System.Collections.Generic;
     using System.ComponentModel;
-    using Microsoft.Xna.Framework;
 
     /// <summary>
     /// Contains extension methods for spatial queries.

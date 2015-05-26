@@ -1,9 +1,8 @@
-namespace Nine.SpatialQuery
+namespace Nine.Geometry.SpatialQuery
 {
     using System;
     using System.Collections;
     using System.Collections.Generic;
-    using Microsoft.Xna.Framework;
 
     /// <summary>
     /// Represents an adapter class that filters and converts the result of

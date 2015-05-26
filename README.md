@@ -1,7 +1,7 @@
-# Nine.SpatialQuery [![Build status](https://ci.appveyor.com/api/projects/status/1jib1hat6n3b8x9i)](https://ci.appveyor.com/project/ChillyFlashER/nine-spatialquery)
-Nine.SpatialQuery is a portable lightweight spatial query library with octree and quadtree. 
+# Nine.Geometry [![Build status](https://ci.appveyor.com/api/projects/status/1jib1hat6n3b8x9i)](https://ci.appveyor.com/project/ChillyFlashER/nine-spatialquery)
+Nine.Geometry is lightweight library with geometry and spatial query classes. 
 
-_<sup>Code is based on Engine Nine.<sup>_
+## Want to Learn More?
+See the [test game class](https://github.com/studio-nine/Nine.SpatialQuery/blob/master/test/Nine.SpatialQuery.Windows.Test/Game1.cs) to learn more about Nine.SpatialQuery.
 
-## Highlights
-- **Portable:** Runs on Windows, Windows Phone 8, Windows Store, iOS, Android, etc.
+_<sup>Code is based on [Engine Nine](https://github.com/studio-nine/Nine).<sup>_

@@ -1,9 +1,9 @@
-﻿namespace Nine.SpatialQuery
+﻿namespace Nine.Geometry.SpatialQuery
 {
-    using Microsoft.Xna.Framework;
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
+    using System.Numerics;
 
     /// <summary>
     /// Manages a collection of objects using quad tree.

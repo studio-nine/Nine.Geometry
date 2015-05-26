@@ -1,4 +1,4 @@
-﻿namespace Nine.SpatialQuery
+﻿namespace Nine.Geometry.SpatialQuery
 {
     using System;
     using System.Collections;

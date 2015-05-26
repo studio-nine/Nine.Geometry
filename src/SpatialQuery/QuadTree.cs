@@ -1,9 +1,6 @@
-﻿namespace Nine.SpatialQuery
+﻿namespace Nine.Geometry.SpatialQuery
 {
-    using Microsoft.Xna.Framework;
-    using Microsoft.Xna.Framework.Content;
-    using System.Collections.Generic;
-    using System.Collections.ObjectModel;
+    using System.Numerics;
 
     /// <summary>
     /// Represents a space partition structure based on QuadTree.
@@ -81,6 +78,7 @@
         internal QuadTreeNode() { }
     }
 
+    /*
     internal class QuadTreeReader<T> : ContentTypeReader<QuadTree<T>>
     {
         protected override QuadTree<T> Read(ContentReader input, QuadTree<T> existingInstance)
@@ -136,4 +134,5 @@
             return existingInstance;
         }
     }
+    */
 }

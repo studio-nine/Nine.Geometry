@@ -1,9 +1,8 @@
-namespace Nine.SpatialQuery
+namespace Nine.Geometry.SpatialQuery
 {
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
-    using Microsoft.Xna.Framework;
-    using Microsoft.Xna.Framework.Content;
+    using System.Numerics;
 
     /// <summary>
     /// Represents a space partition structure based on Octree.
@@ -42,8 +41,8 @@ namespace Nine.SpatialQuery
             Vector3 center;
             Vector3 min = octreeNode.bounds.Min;
             Vector3 max = octreeNode.bounds.Max;
-            Vector3.Add(ref min, ref max, out center);
-            Vector3.Multiply(ref center, 0.5f, out center);
+            center = Vector3.Add(min, max);
+            center = Vector3.Multiply(center, 0.5f);
 
             for (int i = 0; i < ChildCount; ++i)
             {
@@ -84,61 +83,5 @@ namespace Nine.SpatialQuery
         internal BoundingBox bounds;
 
         internal OctreeNode() { }
-    }
-
-    internal class OctreeReader<T> : ContentTypeReader<Octree<T>>
-    {
-        protected override Octree<T> Read(ContentReader input, Octree<T> existingInstance)
-        {
-            if (existingInstance == null)
-                existingInstance = new Octree<T>();
-
-            existingInstance.maxDepth = input.ReadInt32();
-            existingInstance.root = input.ReadRawObject<OctreeNode<T>>(new OctreeNodeReader<T>());
-
-            // Fix reference
-            Stack<OctreeNode<T>> stack = new Stack<OctreeNode<T>>();
-
-            stack.Push(existingInstance.root);
-
-            while (stack.Count > 0)
-            {
-                OctreeNode<T> node = stack.Pop();
-
-                node.Tree = existingInstance;
-
-                if (node.hasChildren)
-                {
-                    foreach (OctreeNode<T> child in node.Children)
-                    {
-                        child.parent = node;
-                        stack.Push(child);
-                    }
-                }
-            }
-
-            return existingInstance;
-        }
-    }
-
-    internal class OctreeNodeReader<T> : ContentTypeReader<OctreeNode<T>>
-    {
-        protected override OctreeNode<T> Read(ContentReader input, OctreeNode<T> existingInstance)
-        {
-            if (existingInstance == null)
-                existingInstance = new OctreeNode<T>();
-
-            existingInstance.hasChildren = input.ReadBoolean();
-            existingInstance.depth = input.ReadInt32();
-            existingInstance.bounds = input.ReadObject<BoundingBox>();
-            existingInstance.value = input.ReadObject<T>();
-
-            if (existingInstance.hasChildren)
-            {
-                existingInstance.childNodes = input.ReadObject<OctreeNode<T>[]>();
-                existingInstance.children = new ReadOnlyCollection<OctreeNode<T>>(existingInstance.childNodes);
-            }
-            return existingInstance;
-        }
     }
 }
