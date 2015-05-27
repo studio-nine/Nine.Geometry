@@ -10,33 +10,21 @@
         /// <summary>
         /// Checks whether the <see cref="Plane"/> intersects a <see cref="BoundingBox"/>.
         /// </summary>
-        public static void Intersects(this Plane plane, ref BoundingBox ray, out float? result)
+        public static ContainmentType Intersects(this Plane plane, BoundingBox boundingBox)
         {
-            result = ray.Intersects(plane);
+            ContainmentType result;
+            Intersection.Intersect(ref plane, ref boundingBox, out result);
+            return result;
         }
-
-        /// <summary>
-        /// Checks whether the <see cref="Plane"/> intersects a <see cref="BoundingBox"/>.
-        /// </summary>
-        public static float? Intersects(this Plane plane, BoundingBox ray)
-        {
-            return ray.Intersects(plane);
-        }
-
-        /// <summary>
-        /// Checks whether the <see cref="Plane"/> intersects a <see cref="Ray"/>.
-        /// </summary>
-        public static void Intersects(this Plane plane, ref Ray ray, out float? result)
-        {
-            result = ray.Intersects(plane);
-        }
-
+        
         /// <summary>
         /// Checks whether the <see cref="Plane"/> intersects a <see cref="Ray"/>.
         /// </summary>
         public static float? Intersects(this Plane plane, Ray ray)
         {
-            return ray.Intersects(plane);
+            float? result;
+            Intersection.Intersect(ref ray, ref plane, out result);
+            return result;
         }
     }
 }

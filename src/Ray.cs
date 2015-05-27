@@ -28,7 +28,8 @@
         /// </summary>
         public void Transform(ref Matrix4x4 transform, out Ray result)
         {
-            result = this.Transform(transform);
+            result.Position = Vector3.Transform(this.Position, transform);
+            result.Direction = Vector3.TransformNormal(this.Direction, transform);
         }
 
         /// <summary>
@@ -37,77 +38,48 @@
         public Ray Transform(Matrix4x4 transform)
         {
             Ray result;
-            result.Position = Vector3.Transform(this.Position, transform);
-            result.Direction = Vector3.TransformNormal(this.Direction, transform);
+            this.Transform(ref transform, out result);
             return result;
         }
-
-        /// <summary>
-        /// Checks whether the <see cref="Ray"/> intersects a <see cref="BoundingBox"/>.
-        /// </summary>
-        public void Intersects(ref BoundingBox boundingBox, out float? result)
-        {
-            result = this.Intersects(boundingBox);
-        }
-
+        
         /// <summary>
         /// Checks whether the <see cref="Ray"/> intersects a <see cref="BoundingBox"/>.
         /// </summary>
         public float? Intersects(BoundingBox boundingBox)
         {
-            // TODO: Ray intersect with BoundingBox
-            throw new NotImplementedException();
+            float? result;
+            Intersection.Intersect(ref this, ref boundingBox, out result);
+            return result;
         }
-
-        /// <summary>
-        /// Checks whether the <see cref="Ray"/> intersects a <see cref="BoundingFrustum"/>.
-        /// </summary>
-        public void Intersects(ref BoundingFrustum boundingfrustum, out float? result)
-        {
-            result = this.Intersects(boundingfrustum);
-        }
-
+        
         /// <summary>
         /// Checks whether the <see cref="Ray"/> intersects a <see cref="BoundingFrustum"/>.
         /// </summary>
         public float? Intersects(BoundingFrustum boundingfrustum)
         {
-            // TODO: Ray intersect with BoundingFrustum
-            throw new NotImplementedException();
+            float? result;
+            Intersection.Intersect(ref this, ref boundingfrustum, out result);
+            return result;
         }
-
-        /// <summary>
-        /// Checks whether the <see cref="Ray"/> intersects a <see cref="BoundingSphere"/>.
-        /// </summary>
-        public void Intersects(ref BoundingSphere boundingSphere, out float? result)
-        {
-            result = this.Intersects(boundingSphere);
-        }
-
+        
         /// <summary>
         /// Checks whether the <see cref="Ray"/> intersects a <see cref="BoundingSphere"/>.
         /// </summary>
         public float? Intersects(BoundingSphere boundingSphere)
         {
-            // TODO: Ray intersect with BoundingSphere
-            throw new NotImplementedException();
+            float? result;
+            Intersection.Intersect(ref this, ref boundingSphere, out result);
+            return result;
         }
-
-        /// <summary>
-        /// Checks whether the <see cref="Ray"/> intersects a <see cref="Plane"/>.
-        /// </summary>
-        public void Intersects(ref Plane plane, out float? result)
-        {
-            result = this.Intersects(plane);
-        }
-
+        
         /// <summary>
         /// Checks whether the <see cref="Ray"/> intersects a <see cref="Plane"/>.
         /// </summary>
         public float? Intersects(Plane plane)
         {
-            // TODO: Ray intersect with Plane
-            throw new NotImplementedException();
+            float? result;
+            Intersection.Intersect(ref this, ref plane, out result);
+            return result;
         }
 
         /// <summary>
