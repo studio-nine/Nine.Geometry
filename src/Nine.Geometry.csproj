@@ -113,6 +113,7 @@
     <Compile Include="BoundingFrustum.cs" />
     <Compile Include="BoundingRectangle.cs" />
     <Compile Include="BoundingSphere.cs" />
+    <Compile Include="Geometry.cs" />
     <Compile Include="Interface.cs" />
     <Compile Include="PlaneExtensions.cs" />
     <Compile Include="Ray.cs" />

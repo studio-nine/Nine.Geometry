@@ -1,11 +1,28 @@
 ﻿namespace Nine.Geometry
 {
+    using System;
     using System.ComponentModel;
     using System.Numerics;
 
     [EditorBrowsable(EditorBrowsableState.Never)]
     public static class PlaneExtensions
     {
+        /// <summary>
+        /// Checks whether the <see cref="Plane"/> intersects a <see cref="BoundingBox"/>.
+        /// </summary>
+        public static void Intersects(this Plane plane, ref BoundingBox ray, out float? result)
+        {
+            result = ray.Intersects(plane);
+        }
+
+        /// <summary>
+        /// Checks whether the <see cref="Plane"/> intersects a <see cref="BoundingBox"/>.
+        /// </summary>
+        public static float? Intersects(this Plane plane, BoundingBox ray)
+        {
+            return ray.Intersects(plane);
+        }
+
         /// <summary>
         /// Checks whether the <see cref="Plane"/> intersects a <see cref="Ray"/>.
         /// </summary>

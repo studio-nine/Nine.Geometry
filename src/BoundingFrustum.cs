@@ -6,7 +6,7 @@
     /// <summary>
     /// Defines a frustum and helps determine whether forms intersect with it.
     /// </summary>
-    public class BoundingFrustum : IEquatable<BoundingFrustum>, IFormattable
+    public class BoundingFrustum : IEquatable<BoundingFrustum>, IGeometryShape, IFormattable
     {
         /// <summary> Specifies the total number of planes (6) in the <see cref="BoundingFrustum"/>. </summary>
         public const int PlaneCount = 6;
@@ -239,6 +239,13 @@
             IntersectionPoint(ref this.planes[1], ref this.planes[3], ref this.planes[4], out this.corners[5]);
             IntersectionPoint(ref this.planes[1], ref this.planes[3], ref this.planes[5], out this.corners[6]);
             IntersectionPoint(ref this.planes[1], ref this.planes[2], ref this.planes[5], out this.corners[7]);
+        }
+
+        /// <inheritdoc />
+        public void GetTriangles(out Vector3[] vertices)
+        {
+            // TODO: GetTriangles
+            throw new NotImplementedException();
         }
 
         /// <summary>

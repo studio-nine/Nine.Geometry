@@ -45,7 +45,7 @@
         /// <summary>
         /// Checks whether the <see cref="Ray"/> intersects a <see cref="BoundingBox"/>.
         /// </summary>
-        public void Intersects(ref BoundingBox boundingBox, out bool result)
+        public void Intersects(ref BoundingBox boundingBox, out float? result)
         {
             result = this.Intersects(boundingBox);
         }
@@ -53,7 +53,7 @@
         /// <summary>
         /// Checks whether the <see cref="Ray"/> intersects a <see cref="BoundingBox"/>.
         /// </summary>
-        public bool Intersects(BoundingBox boundingBox)
+        public float? Intersects(BoundingBox boundingBox)
         {
             // TODO: Ray intersect with BoundingBox
             throw new NotImplementedException();
@@ -79,7 +79,7 @@
         /// <summary>
         /// Checks whether the <see cref="Ray"/> intersects a <see cref="BoundingSphere"/>.
         /// </summary>
-        public void Intersects(ref BoundingSphere boundingSphere, out bool result)
+        public void Intersects(ref BoundingSphere boundingSphere, out float? result)
         {
             result = this.Intersects(boundingSphere);
         }
@@ -87,7 +87,7 @@
         /// <summary>
         /// Checks whether the <see cref="Ray"/> intersects a <see cref="BoundingSphere"/>.
         /// </summary>
-        public bool Intersects(BoundingSphere boundingSphere)
+        public float? Intersects(BoundingSphere boundingSphere)
         {
             // TODO: Ray intersect with BoundingSphere
             throw new NotImplementedException();

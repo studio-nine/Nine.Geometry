@@ -1,18 +1,35 @@
 ﻿namespace Nine.Geometry
 {
     using System;
+    using System.Collections.Generic;
     using System.Numerics;
+
+    // TODO: Missing Methods
 
     /// <summary>
     /// Defines an axis-aligned box-shaped 3D volume.
     /// </summary>
-    public struct BoundingBox : IEquatable<BoundingBox>, IFormattable
+    public struct BoundingBox : IEquatable<BoundingBox>, IGeometryShape, IFormattable
     {
         /// <summary> Gets or sets the minimum position. </summary>
         public Vector3 Min;
 
         /// <summary> Gets or sets the maximum position. </summary>
         public Vector3 Max;
+
+        /// <summary>
+        /// Gets the center.
+        /// </summary>
+        public Vector3 Center
+        {
+            get
+            {
+                return new Vector3(
+                    (this.Min.X + this.Max.X) / 2.0f,
+                    (this.Min.Y + this.Max.Y) / 2.0f,
+                    (this.Min.Z + this.Max.Z) / 2.0f);
+            }
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BoundingBox"/> class.
@@ -36,8 +53,21 @@
         /// </summary>
         public ContainmentType Contains(BoundingBox boundingBox)
         {
-            // TODO: BoundingBox contains BoundingBox
-            throw new NotImplementedException();
+            if (boundingBox.Max.X < this.Min.X || boundingBox.Min.X > this.Max.X ||
+                boundingBox.Max.Y < this.Min.Y || boundingBox.Min.Y > this.Max.Y ||
+                boundingBox.Max.Z < this.Min.Z || boundingBox.Min.Z > this.Max.Z)
+            {
+                return ContainmentType.Disjoint;
+            }
+
+            if (boundingBox.Min.X >= this.Min.X && boundingBox.Max.X <= this.Max.X &&
+                boundingBox.Min.Y >= this.Min.Y && boundingBox.Max.Y <= this.Max.Y &&
+                boundingBox.Min.Z >= this.Min.Z && boundingBox.Max.Z <= this.Max.Z)
+            {
+                return ContainmentType.Contains;
+            }
+
+            return ContainmentType.Intersects;
         }
 
         /// <summary>
@@ -53,8 +83,7 @@
         /// </summary>
         public ContainmentType Contains(BoundingFrustum boundingfrustum)
         {
-            // TODO: BoundingBox contains BoundingFrustum
-            throw new NotImplementedException();
+            return boundingfrustum.Contains(this);
         }
 
         /// <summary>
@@ -70,8 +99,7 @@
         /// </summary>
         public ContainmentType Contains(BoundingSphere boundingSphere)
         {
-            // TODO: BoundingBox contains BoundingSphere
-            throw new NotImplementedException();
+            return boundingSphere.Contains(this);
         }
 
         /// <summary>
@@ -87,8 +115,23 @@
         /// </summary>
         public ContainmentType Contains(Vector3 vector)
         {
-            // TODO: BoundingBox contains Vector3
-            throw new NotImplementedException();
+            if (vector.X < this.Min.X || vector.X > this.Max.X || 
+                vector.Y < this.Min.Y || vector.Y > this.Max.Y ||
+                vector.Z < this.Min.Z || vector.Z > this.Max.Z)
+            {
+                return ContainmentType.Disjoint;
+            }
+            else if (
+                vector.X == this.Min.X || vector.X == this.Max.X ||
+                vector.Y == this.Min.Y || vector.Y == this.Max.Y ||
+                vector.Z == this.Min.Z || vector.Z == this.Max.Z)
+            {
+                return ContainmentType.Intersects;
+            }
+            else
+            {
+                return ContainmentType.Contains;
+            }
         }
         
         /// <summary>
@@ -104,8 +147,7 @@
         /// </summary>
         public bool Intersects(BoundingBox boundingBox)
         {
-            // TODO: BoundingBox intersect with BoundingBox
-            throw new NotImplementedException();
+            return this.Contains(boundingBox) == ContainmentType.Intersects;
         }
 
         /// <summary>
@@ -121,8 +163,7 @@
         /// </summary>
         public bool Intersects(BoundingFrustum boundingfrustum)
         {
-            // TODO: BoundingBox intersect with BoundingFrustum
-            throw new NotImplementedException();
+            return boundingfrustum.Intersects(this);
         }
 
         /// <summary>
@@ -138,8 +179,7 @@
         /// </summary>
         public bool Intersects(BoundingSphere boundingSphere)
         {
-            // TODO: BoundingBox intersect with BoundingSphere
-            throw new NotImplementedException();
+            return boundingSphere.Intersects(this);
         }
 
         /// <summary>
@@ -155,7 +195,9 @@
         /// </summary>
         public float? Intersects(Plane plane)
         {
-            // TODO: BoundingBox intersect with Plane
+            // http://zach.in.tu-clausthal.de/teaching/cg_literatur/lighthouse3d_view_frustum_culling/index.html
+
+            // TODO: BoundingBox intersect Plane
             throw new NotImplementedException();
         }
 
@@ -172,8 +214,54 @@
         /// </summary>
         public float? Intersects(Ray ray)
         {
-            // TODO: BoundingBox intersect with Ray
-            throw new NotImplementedException();
+            return ray.Intersects(this);
+        }
+
+        /// <summary>
+        /// Creates the smallest <see cref="BoundingBox"/> that can contain a <see cref="BoundingSphere"/>.
+        /// </summary>
+        public static void CreateFromSphere(ref BoundingSphere sphere, out BoundingBox result)
+        {
+            result = BoundingBox.CreateFromSphere(sphere);
+        }
+
+        /// <summary>
+        /// Creates the smallest <see cref="BoundingBox"/> that can contain a <see cref="BoundingSphere"/>.
+        /// </summary>
+        public static BoundingBox CreateFromSphere(BoundingSphere sphere)
+        {
+            BoundingBox result;
+
+            var radius = new Vector3(sphere.Radius);
+            result.Min = sphere.Center - radius;
+            result.Max = sphere.Center + radius;
+
+            return result;
+        }
+
+        /// <summary>
+        /// Creates a <see cref="BoundingBox"/> that can contain a list of <see cref="Vector3"/>.
+        /// </summary>
+        public static BoundingBox CreateFromPoints(IEnumerable<Vector3> vectors)
+        {
+            if (vectors == null)
+                throw new ArgumentNullException(nameof(vectors));
+
+            var min = Vector3.One * float.MaxValue;
+            var max = Vector3.One * float.MinValue;
+
+            foreach (var vector in vectors)
+            {
+                if (vector.X < min.X) min.X = vector.X;
+                if (vector.Y < min.Y) min.Y = vector.Y;
+                if (vector.Z < min.Z) min.Z = vector.Z;
+
+                if (vector.X < max.X) max.X = vector.X;
+                if (vector.Y < max.Y) max.Y = vector.Y;
+                if (vector.Z < max.Z) max.Z = vector.Z;
+            }
+
+            return new BoundingBox(min, max);
         }
 
         /// <summary>
@@ -189,7 +277,23 @@
         /// </summary>
         public static BoundingBox CreateMerged(BoundingBox left, BoundingBox right)
         {
-            // TODO: BoundingBox Create Merged
+            BoundingBox result;
+
+            result.Min.X = Math.Min(left.Min.X, right.Min.X);
+            result.Min.Y = Math.Min(left.Min.Y, right.Min.Y);
+            result.Min.Z = Math.Min(left.Min.Z, right.Min.Z);
+
+            result.Max.X = Math.Max(left.Max.X, right.Max.X);
+            result.Max.Y = Math.Max(left.Max.Y, right.Max.Y);
+            result.Max.Z = Math.Max(left.Max.Z, right.Max.Z);
+
+            return result;
+        }
+
+        /// <inheritdoc />
+        public void GetTriangles(out Vector3[] vertices)
+        {
+            // TODO: GetTriangles
             throw new NotImplementedException();
         }
 

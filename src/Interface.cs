@@ -50,7 +50,7 @@
     }
 
     /// <summary>
-    /// Interface for a 3D geometry made up of triangles
+    /// Interface for a 3D geometry made up of triangles.
     /// </summary>
     public interface IGeometry
     {
@@ -68,5 +68,17 @@
         /// Returns whether the result contains any triangles.
         /// </returns>
         bool TryGetTriangles(out Vector3[] vertices, out ushort[] indices);
+    }
+
+    /// <summary>
+    /// Interface for a 3D geometry shape made up of triangles.
+    /// </summary>
+    public interface IGeometryShape
+    {
+        /// <summary>
+        /// Gets the triangle vertices of the target geometry.
+        /// </summary>
+        /// <param name="vertices">Output vertex buffer</param>
+        void GetTriangles(out Vector3[] vertices);
     }
 }

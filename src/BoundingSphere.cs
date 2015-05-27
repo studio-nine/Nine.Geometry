@@ -7,7 +7,7 @@
     /// <summary>
     /// Defines a sphere.
     /// </summary>
-    public struct BoundingSphere : IEquatable<BoundingSphere>, IFormattable
+    public struct BoundingSphere : IEquatable<BoundingSphere>, IGeometryShape, IFormattable
     {
         /// <summary> Gets or sets the center point. </summary>
         public Vector3 Center;
@@ -56,8 +56,19 @@
         /// </summary>
         public ContainmentType Contains(BoundingSphere boundingSphere)
         {
-            // TODO: BoundingSphere contains BoundingSphere
-            throw new NotImplementedException();
+            var distance = Vector3.DistanceSquared(boundingSphere.Center, this.Center);
+            if (distance > (boundingSphere.Radius + Radius) * (boundingSphere.Radius + Radius))
+            {
+                return ContainmentType.Disjoint;
+            }
+            else if (distance <= (Radius - boundingSphere.Radius) * (Radius - boundingSphere.Radius))
+            {
+                return ContainmentType.Contains;
+            }
+            else
+            {
+                return ContainmentType.Intersects;
+            }
         }
 
         /// <summary>
@@ -73,8 +84,21 @@
         /// </summary>
         public ContainmentType Contains(Vector3 vector)
         {
-            // TODO: BoundingSphere contains Vector3
-            throw new NotImplementedException();
+            var radius2 = Radius * Radius;
+            var distance = Vector3.DistanceSquared(vector, this.Center);
+
+            if (distance > radius2)
+            {
+                return ContainmentType.Disjoint;
+            }
+            else if (distance < radius2)
+            {
+                return ContainmentType.Contains;
+            }
+            else
+            {
+                return ContainmentType.Intersects;
+            }
         }
 
         /// <summary>
@@ -107,8 +131,33 @@
         /// </summary>
         public ContainmentType Contains(BoundingBox boundingBox)
         {
-            // TODO: BoundingSphere contains BoundingBox
-            throw new NotImplementedException();
+            Vector3[] triangles;
+            boundingBox.GetTriangles(out triangles);
+            foreach (var corner in triangles)
+            {
+                if (this.Contains(corner) == ContainmentType.Disjoint)
+                {
+                    return ContainmentType.Contains;
+                }
+            }
+
+            var min = 0.0;
+
+            if (this.Center.X < boundingBox.Min.X)      min += (this.Center.X - boundingBox.Min.X) * (this.Center.X - boundingBox.Min.X);
+            else if (this.Center.X > boundingBox.Max.X) min += (this.Center.X - boundingBox.Max.X) * (this.Center.X - boundingBox.Max.X);
+
+            if (this.Center.Y < boundingBox.Min.Y)      min += (this.Center.Y - boundingBox.Min.Y) * (this.Center.Y - boundingBox.Min.Y);
+            else if (this.Center.Y > boundingBox.Max.Y) min += (this.Center.Y - boundingBox.Max.Y) * (this.Center.Y - boundingBox.Max.Y);
+
+            if (this.Center.Z < boundingBox.Min.Z)      min += (this.Center.Z - boundingBox.Min.Z) * (this.Center.Z - boundingBox.Min.Z);
+            else if (this.Center.Z > boundingBox.Max.Z) min += (this.Center.Z - boundingBox.Max.Z) * (this.Center.Z - boundingBox.Max.Z);
+
+            if (min <= Radius * Radius)
+            {
+                return ContainmentType.Intersects;
+            }
+            
+            return ContainmentType.Disjoint;
         }
 
         /// <summary>
@@ -158,8 +207,7 @@
         /// </summary>
         public bool Intersects(BoundingSphere boundingSphere)
         {
-            // TODO: BoundingSphere intersect BoundingSphere
-            throw new NotImplementedException();
+            return this.Contains(boundingSphere) == ContainmentType.Intersects;
         }
 
         /// <summary>
@@ -194,7 +242,13 @@
         /// </summary>
         public float? Intersects(Ray ray)
         {
-            // TODO: BoundingSphere intersect Ray
+            return ray.Intersects(this);
+        }
+
+        /// <inheritdoc />
+        public void GetTriangles(out Vector3[] vertices)
+        {
+            // TODO: GetTriangles
             throw new NotImplementedException();
         }
 
@@ -211,8 +265,9 @@
         /// </summary>
         public static BoundingSphere CreateFromBoundingBox(BoundingBox boundingBox)
         {
-            // TODO: BoundingSphere CreateFromBoundingBox
-            throw new NotImplementedException();
+            var center = boundingBox.Center;
+            var radius = Vector3.Distance(center, boundingBox.Max);
+            return new BoundingSphere(center, radius);
         }
 
         /// <summary>
@@ -228,12 +283,13 @@
         /// </summary>
         public static BoundingSphere CreateFromFrustum(BoundingFrustum boundingFrustum)
         {
-            // TODO: BoundingSphere CreateFromFrustum
-            throw new NotImplementedException();
+            Vector3[] triangles;
+            boundingFrustum.GetTriangles(out triangles);
+            return BoundingSphere.CreateFromPoints(triangles);
         }
 
         /// <summary>
-        /// Creates a <see cref="BoundingSphere"/> that can contain a list of points.
+        /// Creates a <see cref="BoundingSphere"/> that can contain a list of <see cref="Vector3"/>.
         /// </summary>
         public static BoundingSphere CreateFromPoints(IEnumerable<Vector3> points)
         {
