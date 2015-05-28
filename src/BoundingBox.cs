@@ -40,12 +40,42 @@
             this.Max = max;
         }
         
-        /// <summary>
-        /// Checks whether the <see cref="BoundingBox"/> contains a <see cref="Vector3"/>.
-        /// </summary>
+        public void Contains(ref BoundingBox boundingBox, out ContainmentType result) { result = this.Contains(boundingBox); }
+        public ContainmentType Contains(BoundingBox boundingBox)
+        {
+            ContainmentType result;
+            Intersection.Intersect(ref boundingBox, ref this, out result);
+            return result;
+        }
+
+        public void Contains(ref BoundingFrustum boundingfrustum, out ContainmentType result) { result = this.Contains(boundingfrustum); }
+        public ContainmentType Contains(BoundingFrustum boundingfrustum)
+        {
+            ContainmentType result;
+            Intersection.Intersect(ref this, ref boundingfrustum, out result);
+            return result;
+        }
+
+        public void Contains(ref BoundingSphere boundingSphere, out ContainmentType result) { result = this.Contains(boundingSphere); }
+        public ContainmentType Contains(BoundingSphere boundingSphere)
+        {
+            ContainmentType result;
+            Intersection.Intersect(ref this, ref boundingSphere, out result);
+            return result;
+        }
+
+        public void Contains(ref Plane plane, out ContainmentType result) { result = this.Contains(plane); }
+        public ContainmentType Contains(Plane plane)
+        {
+            ContainmentType result;
+            Intersection.Intersect(ref plane, ref this, out result);
+            return result;
+        }
+
+        public void Contains(ref Vector3 vector, out ContainmentType result) { result = this.Contains(vector); }
         public ContainmentType Contains(Vector3 vector)
         {
-            if (vector.X < this.Min.X || vector.X > this.Max.X || 
+            if (vector.X < this.Min.X || vector.X > this.Max.X ||
                 vector.Y < this.Min.Y || vector.Y > this.Max.Y ||
                 vector.Z < this.Min.Z || vector.Z > this.Max.Z)
             {
@@ -64,66 +94,42 @@
             }
         }
 
-        /// <summary>
-        /// Checks whether the <see cref="BoundingBox"/> intersects a <see cref="BoundingBox"/>.
-        /// </summary>
-        public ContainmentType Intersects(BoundingBox boundingBox)
-        {
-            if (boundingBox.Max.X < this.Min.X || boundingBox.Min.X > this.Max.X ||
-                boundingBox.Max.Y < this.Min.Y || boundingBox.Min.Y > this.Max.Y ||
-                boundingBox.Max.Z < this.Min.Z || boundingBox.Min.Z > this.Max.Z)
-            {
-                return ContainmentType.Disjoint;
-            }
-
-            if (boundingBox.Min.X >= this.Min.X && boundingBox.Max.X <= this.Max.X &&
-                boundingBox.Min.Y >= this.Min.Y && boundingBox.Max.Y <= this.Max.Y &&
-                boundingBox.Min.Z >= this.Min.Z && boundingBox.Max.Z <= this.Max.Z)
-            {
-                return ContainmentType.Contains;
-            }
-
-            return ContainmentType.Intersects;
-        }
-        
-        /// <summary>
-        /// Checks whether the <see cref="BoundingBox"/> intersects a <see cref="BoundingFrustum"/>.
-        /// </summary>
-        public ContainmentType Intersects(BoundingFrustum boundingfrustum)
+        public void Intersects(ref BoundingBox boundingBox, out bool result) { result = this.Intersects(boundingBox); }
+        public bool Intersects(BoundingBox boundingBox)
         {
             ContainmentType result;
-            Intersection.Intersect(ref this, ref boundingfrustum, out result);
-            return result;
+            Intersection.Intersect(ref this, ref boundingBox, out result);
+            return this.DoesIntersect(result);
         }
-        
-        /// <summary>
-        /// Checks whether the <see cref="BoundingBox"/> intersects a <see cref="BoundingSphere"/>.
-        /// </summary>
-        public ContainmentType Intersects(BoundingSphere boundingSphere)
+
+        public void Intersects(ref BoundingSphere boundingSphere, out bool result) { result = this.Intersects(boundingSphere); }
+        public bool Intersects(BoundingSphere boundingSphere)
         {
             ContainmentType result;
             Intersection.Intersect(ref this, ref boundingSphere, out result);
-            return result;
+            return this.DoesIntersect(result);
         }
-        
-        /// <summary>
-        /// Checks whether the <see cref="BoundingBox"/> intersects a <see cref="Plane"/>.
-        /// </summary>
-        public ContainmentType Intersects(Plane plane)
+
+        public void Intersects(ref Plane plane, out bool result) { result = this.Intersects(plane); }
+        public bool Intersects(Plane plane)
         {
             ContainmentType result;
             Intersection.Intersect(ref plane, ref this, out result);
-            return result;
+            return this.DoesIntersect(result);
         }
-        
-        /// <summary>
-        /// Checks whether the <see cref="BoundingBox"/> intersects a <see cref="Ray"/>.
-        /// </summary>
+
+        public void Intersects(ref Ray ray, out float? result) { result = this.Intersects(ray); }
         public float? Intersects(Ray ray)
         {
             float? result;
             Intersection.Intersect(ref ray, ref this, out result);
             return result;
+        }
+
+        private bool DoesIntersect(ContainmentType containmentType)
+        {
+            // TODO: I am not sure here!
+            return containmentType == ContainmentType.Contains || containmentType == ContainmentType.Intersects;
         }
 
         /// <summary>
@@ -202,8 +208,18 @@
         /// <inheritdoc />
         public void GetTriangles(out Vector3[] vertices)
         {
-            // TODO: GetTriangles
-            throw new NotImplementedException();
+            // TODO: this is quads, is there something I can do to the interface instead?
+            vertices = new Vector3[]
+            {
+                new Vector3(this.Min.X, this.Max.Y, this.Max.Z),
+                new Vector3(this.Max.X, this.Max.Y, this.Max.Z),
+                new Vector3(this.Max.X, this.Min.Y, this.Max.Z),
+                new Vector3(this.Min.X, this.Min.Y, this.Max.Z),
+                new Vector3(this.Min.X, this.Max.Y, this.Min.Z),
+                new Vector3(this.Max.X, this.Max.Y, this.Min.Z),
+                new Vector3(this.Max.X, this.Min.Y, this.Min.Z),
+                new Vector3(this.Min.X, this.Min.Y, this.Min.Z),
+            };
         }
 
         /// <summary>

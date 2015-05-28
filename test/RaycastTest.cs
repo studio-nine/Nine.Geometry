@@ -10,7 +10,7 @@
         {
             var boundingBox = new BoundingBox(new Vector3(-10), new Vector3(10));
             var ray = new Ray(new Vector3(-20, 0, 0), Vector3.UnitX);
-            Assert.True(ray.Intersects(boundingBox));
+            Assert.Equal(10, ray.Intersects(boundingBox));
         }
     }
 }

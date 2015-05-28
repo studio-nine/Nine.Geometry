@@ -2,5 +2,6 @@
 {
     public struct BoundingCircle
     {
+        // TODO: Add struct
     }
 }

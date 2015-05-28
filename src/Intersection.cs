@@ -5,6 +5,7 @@
 
     // TODO: Rename ContainmentType to IntersectionType
     // TODO: Ray intersect Triangle
+    // TODO: Add LineSegments
 
     /// <summary>
     /// Indicates the extent to which bounding volumes intersect or contain one another.
@@ -46,7 +47,91 @@
         /// </summary>
         public static void Intersect(ref Ray ray, ref BoundingBox boundingBox, out float? result)
         {
-            throw new NotImplementedException();
+            // TODO: Beak this down into two methods (?)
+
+            if (Math.Abs(ray.Direction.X) < Single.Epsilon && 
+                (ray.Position.X < boundingBox.Min.X || ray.Position.X > boundingBox.Max.X))
+            {
+                result = null;
+                return;
+            }
+
+            var min = 0.0f;
+            var max = float.MaxValue;
+
+            var inverseDirection = 1 / ray.Direction.X;
+            var t1 = (boundingBox.Min.X - ray.Position.X) * inverseDirection;
+            var t2 = (boundingBox.Max.X - ray.Position.X) * inverseDirection;
+
+            if (t1 > t2)
+            {
+                var temp = t1;
+                t1 = t2; t2 = temp;
+            }
+
+            min = Math.Max(min, t1);
+            max = Math.Min(max, t2);
+
+            if (min > max)
+            {
+                result = null;
+                return;
+            }
+
+            if (Math.Abs(ray.Direction.Y) < Single.Epsilon && 
+                (ray.Position.Y < boundingBox.Min.Y || ray.Position.Y > boundingBox.Max.Y))
+            {
+                result = null;
+                return;
+            }
+
+            inverseDirection = 1 / ray.Direction.Y;
+            t1 = (boundingBox.Min.Y - ray.Position.Y) * inverseDirection;
+            t2 = (boundingBox.Max.Y - ray.Position.Y) * inverseDirection;
+
+            if (t1 > t2)
+            {
+                var temp = t1;
+                t1 = t2; t2 = temp;
+            }
+
+            min = Math.Max(min, t1);
+            max = Math.Min(max, t2);
+
+            if (min > max)
+            {
+                result = null;
+                return;
+            }
+
+            if (Math.Abs(ray.Direction.Z) < Single.Epsilon && 
+                (ray.Position.Z < boundingBox.Min.Z || ray.Position.Z > boundingBox.Max.Z))
+            {
+                result = null;
+                return;
+            }
+
+            inverseDirection = 1 / ray.Direction.Z;
+            t1 = (boundingBox.Min.Z - ray.Position.Z) * inverseDirection;
+            t2 = (boundingBox.Max.Z - ray.Position.Z) * inverseDirection;
+
+            if (t1 > t2)
+            {
+                float temp = t1;
+                t1 = t2;
+                t2 = temp;
+            }
+
+            min = Math.Max(min, t1);
+            max = Math.Min(max, t2);
+
+            if (min > max)
+            {
+                result = null;
+                return;
+            }
+
+            result = min;
         }
 
         /// <summary>
@@ -70,7 +155,17 @@
         /// </summary>
         public static void Intersect(ref Ray ray, ref Plane plane, out float? result)
         {
-            throw new NotImplementedException();
+            var velocity = Vector3.Dot(ray.Direction, plane.Normal);
+            if (Math.Abs(velocity) < Single.Epsilon)
+            {
+                result = null;
+            }
+            else
+            {
+                var distanceAlongNormal = Vector3.Dot(ray.Position, plane.Normal);
+                distanceAlongNormal += plane.D;
+                result = -distanceAlongNormal / velocity;
+            }
         }
 
         /// <summary>
@@ -124,6 +219,30 @@
 
 
         /// <summary>
+        /// Checks whether a <see cref="BoundingBox"/> intersects a <see cref="BoundingBox"/>.
+        /// </summary>
+        public static void Intersect(ref BoundingBox boundingBox1, ref BoundingBox boundingBox2, out ContainmentType result)
+        {
+            if (boundingBox2.Max.X < boundingBox1.Min.X || boundingBox2.Min.X > boundingBox1.Max.X ||
+                boundingBox2.Max.Y < boundingBox1.Min.Y || boundingBox2.Min.Y > boundingBox1.Max.Y ||
+                boundingBox2.Max.Z < boundingBox1.Min.Z || boundingBox2.Min.Z > boundingBox1.Max.Z)
+            {
+                result = ContainmentType.Disjoint;
+            }
+            else if (
+                boundingBox2.Min.X >= boundingBox1.Min.X && boundingBox2.Max.X <= boundingBox1.Max.X &&
+                boundingBox2.Min.Y >= boundingBox1.Min.Y && boundingBox2.Max.Y <= boundingBox1.Max.Y &&
+                boundingBox2.Min.Z >= boundingBox1.Min.Z && boundingBox2.Max.Z <= boundingBox1.Max.Z)
+            {
+                result = ContainmentType.Contains;
+            }
+            else
+            {
+                result = ContainmentType.Intersects;
+            }
+        }
+
+        /// <summary>
         /// Checks whether a <see cref="BoundingSphere"/> intersects a <see cref="BoundingSphere"/>.
         /// </summary>
         public static void Intersect(ref BoundingSphere boundingSphere1, ref BoundingSphere boundingSphere2, out ContainmentType result)
@@ -139,34 +258,6 @@
     [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
     public static class XNASyntaxSugerExtensions
     {
-        #region BoundingBox
-
-        /// <summary>
-        /// Checks whether the <see cref="BoundingBox"/> contains a <see cref="BoundingBox"/>.
-        /// </summary>
-        public static ContainmentType Contains(this BoundingBox boundingBox1, BoundingBox boundingBox2)
-        {
-            return boundingBox1.Intersects(boundingBox2);
-        }
-
-        /// <summary>
-        /// Checks whether the <see cref="BoundingBox"/> contains a <see cref="BoundingFrustum"/>.
-        /// </summary>
-        public static ContainmentType Contains(this BoundingBox boundingBox, BoundingFrustum boundingfrustum)
-        {
-            return boundingBox.Intersects(boundingfrustum);
-        }
-
-        /// <summary>
-        /// Checks whether the <see cref="BoundingBox"/> contains a <see cref="BoundingSphere"/>.
-        /// </summary>
-        public static ContainmentType Contains(this BoundingBox boundingBox, BoundingSphere boundingSphere)
-        {
-            return boundingBox.Intersects(boundingSphere);
-        }
-
-        #endregion
-
         #region BoundingFrustum
 
         /// <summary>
