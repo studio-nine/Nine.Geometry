@@ -141,12 +141,6 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\src\Nine.Geometry.csproj">
-      <Project>{0e06199e-10ce-4fb6-976d-8a0616c7acf9}</Project>
-      <Name>Nine.Geometry</Name>
-    </ProjectReference>
-  </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

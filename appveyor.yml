@@ -6,7 +6,7 @@ install:
   - set PATH=C:\Program Files (x86)\MSBuild\14.0\Bin;%PATH%
 
 before_build:
-  - nuget restore Nine.SpatialQuery.sln
+  - nuget restore Nine.Geometry.sln
 
 version: 1.0.{build}
 

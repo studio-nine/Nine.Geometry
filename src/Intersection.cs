@@ -42,9 +42,6 @@
     /// </summary>
     public static class Intersection
     {
-        /// <summary>
-        /// Checks whether a <see cref="Ray"/> intersects a <see cref="BoundingBox"/>.
-        /// </summary>
         public static void Intersect(ref Ray ray, ref BoundingBox boundingBox, out float? result)
         {
             // TODO: Beak this down into two methods (?)
@@ -133,26 +130,12 @@
 
             result = min;
         }
-
-        /// <summary>
-        /// Checks whether a <see cref="Ray"/> intersects a <see cref="BoundingSphere"/>.
-        /// </summary>
+        
         public static void Intersect(ref Ray ray, ref BoundingSphere boundingSphere, out float? result)
         {
             throw new NotImplementedException();
         }
-
-        /// <summary>
-        /// Checks whether a <see cref="Ray"/> intersects a <see cref="BoundingFrustum"/>.
-        /// </summary>
-        public static void Intersect(ref Ray ray, ref BoundingFrustum boundingFrustum, out float? result)
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <summary>
-        /// Checks whether a <see cref="Ray"/> intersects a <see cref="Plane"/>.
-        /// </summary>
+        
         public static void Intersect(ref Ray ray, ref Plane plane, out float? result)
         {
             var velocity = Vector3.Dot(ray.Direction, plane.Normal);
@@ -167,60 +150,52 @@
                 result = -distanceAlongNormal / velocity;
             }
         }
-
-        /// <summary>
-        /// Checks whether a <see cref="BoundingBox"/> intersects a <see cref="BoundingFrustum"/>.
-        /// </summary>
-        public static void Intersect(ref BoundingBox boundingBox, ref BoundingFrustum boundingFrustum, out ContainmentType result)
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <summary>
-        /// Checks whether a <see cref="BoundingBox"/> intersects a <see cref="BoundingSphere"/>.
-        /// </summary>
+        
         public static void Intersect(ref BoundingBox boundingBox, ref BoundingSphere boundingFrustum, out ContainmentType result)
         {
             throw new NotImplementedException();
         }
-
-        /// <summary>
-        /// Checks whether a <see cref="BoundingFrustum"/> intersects a <see cref="BoundingSphere"/>.
-        /// </summary>
-        public static void Intersect(ref BoundingFrustum boundingFrustum, ref BoundingSphere boundingSphere, out ContainmentType result)
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <summary>
-        /// Checks whether a <see cref="Plane"/> intersects a <see cref="BoundingBox"/>.
-        /// </summary>
+        
         public static void Intersect(ref Plane plane, ref BoundingBox boundingBox, out ContainmentType result)
         {
             // http://zach.in.tu-clausthal.de/teaching/cg_literatur/lighthouse3d_view_frustum_culling/index.html
             throw new NotImplementedException();
         }
-
-        /// <summary>
-        /// Checks whether a <see cref="Plane"/> intersects a <see cref="BoundingFrustum"/>.
-        /// </summary>
-        public static void Intersect(ref Plane plane, ref BoundingFrustum boundingFrustum, out ContainmentType result)
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <summary>
-        /// Checks whether a <see cref="Plane"/> intersects a <see cref="BoundingSphere"/>.
-        /// </summary>
+        
         public static void Intersect(ref Plane plane, ref BoundingSphere boundingSphere, out ContainmentType result)
         {
             throw new NotImplementedException();
         }
 
+        #region BoundingFrustum
 
-        /// <summary>
-        /// Checks whether a <see cref="BoundingBox"/> intersects a <see cref="BoundingBox"/>.
-        /// </summary>
+        public static ContainmentType Intersect(BoundingFrustum boundingFrustum1, BoundingFrustum boundingFrustum2)
+        {
+            throw new NotImplementedException();
+        }
+
+        public static ContainmentType Intersect(BoundingFrustum boundingFrustum, BoundingBox boundingBox)
+        {
+            throw new NotImplementedException();
+        }
+
+        public static ContainmentType Intersect(BoundingFrustum boundingFrustum, BoundingSphere boundingSphere)
+        {
+            throw new NotImplementedException();
+        }
+        
+        public static ContainmentType Intersect(BoundingFrustum boundingFrustum, Plane plane)
+        {
+            throw new NotImplementedException();
+        }
+        
+        public static float? Intersect(BoundingFrustum boundingFrustum, Ray ray)
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
+
         public static void Intersect(ref BoundingBox boundingBox1, ref BoundingBox boundingBox2, out ContainmentType result)
         {
             if (boundingBox2.Max.X < boundingBox1.Min.X || boundingBox2.Min.X > boundingBox1.Max.X ||
@@ -241,10 +216,7 @@
                 result = ContainmentType.Intersects;
             }
         }
-
-        /// <summary>
-        /// Checks whether a <see cref="BoundingSphere"/> intersects a <see cref="BoundingSphere"/>.
-        /// </summary>
+        
         public static void Intersect(ref BoundingSphere boundingSphere1, ref BoundingSphere boundingSphere2, out ContainmentType result)
         {
             throw new NotImplementedException();

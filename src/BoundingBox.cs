@@ -9,7 +9,7 @@
     /// <summary>
     /// Defines an axis-aligned box-shaped 3D volume.
     /// </summary>
-    public struct BoundingBox : IEquatable<BoundingBox>, IGeometryShape, IFormattable
+    public struct BoundingBox : IEquatable<BoundingBox>, IFormattable
     {
         /// <summary> Gets or sets the minimum position. </summary>
         public Vector3 Min;
@@ -39,7 +39,9 @@
             this.Min = min;
             this.Max = max;
         }
-        
+
+        #region Contains & Intersects Methods
+
         public void Contains(ref BoundingBox boundingBox, out ContainmentType result) { result = this.Contains(boundingBox); }
         public ContainmentType Contains(BoundingBox boundingBox)
         {
@@ -48,12 +50,9 @@
             return result;
         }
 
-        public void Contains(ref BoundingFrustum boundingfrustum, out ContainmentType result) { result = this.Contains(boundingfrustum); }
         public ContainmentType Contains(BoundingFrustum boundingfrustum)
         {
-            ContainmentType result;
-            Intersection.Intersect(ref this, ref boundingfrustum, out result);
-            return result;
+            return Intersection.Intersect(boundingfrustum, this);
         }
 
         public void Contains(ref BoundingSphere boundingSphere, out ContainmentType result) { result = this.Contains(boundingSphere); }
@@ -128,9 +127,11 @@
 
         private bool DoesIntersect(ContainmentType containmentType)
         {
-            // TODO: I am not sure here!
+            // TODO: Optimize
             return containmentType == ContainmentType.Contains || containmentType == ContainmentType.Intersects;
         }
+
+        #endregion
 
         /// <summary>
         /// Creates the smallest <see cref="BoundingBox"/> that can contain a <see cref="BoundingSphere"/>.
@@ -192,7 +193,7 @@
         /// </summary>
         public static BoundingBox CreateMerged(BoundingBox left, BoundingBox right)
         {
-            BoundingBox result;
+            BoundingBox result = new BoundingBox();
 
             result.Min.X = Math.Min(left.Min.X, right.Min.X);
             result.Min.Y = Math.Min(left.Min.Y, right.Min.Y);
@@ -204,12 +205,11 @@
 
             return result;
         }
-
-        /// <inheritdoc />
-        public void GetTriangles(out Vector3[] vertices)
+        
+        public void GetCorners(ref Vector3[] vertices) { vertices = this.GetCorners(); }
+        public Vector3[] GetCorners()
         {
-            // TODO: this is quads, is there something I can do to the interface instead?
-            vertices = new Vector3[]
+            return new Vector3[]
             {
                 new Vector3(this.Min.X, this.Max.Y, this.Max.Z),
                 new Vector3(this.Max.X, this.Max.Y, this.Max.Z),

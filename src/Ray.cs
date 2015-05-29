@@ -52,14 +52,9 @@
             return result;
         }
         
-        /// <summary>
-        /// Checks whether the <see cref="Ray"/> intersects a <see cref="BoundingFrustum"/>.
-        /// </summary>
         public float? Intersects(BoundingFrustum boundingfrustum)
         {
-            float? result;
-            Intersection.Intersect(ref this, ref boundingfrustum, out result);
-            return result;
+            return Intersection.Intersect(boundingfrustum, this);
         }
         
         /// <summary>

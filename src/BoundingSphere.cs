@@ -7,7 +7,7 @@
     /// <summary>
     /// Defines a sphere.
     /// </summary>
-    public struct BoundingSphere : IEquatable<BoundingSphere>, IGeometryShape, IFormattable
+    public struct BoundingSphere : IEquatable<BoundingSphere>, IFormattable
     {
         /// <summary> Gets or sets the center point. </summary>
         public Vector3 Center;
@@ -42,10 +42,15 @@
             this.Transform(ref transform, out result);
             return result;
         }
-        
-        /// <summary>
-        /// Checks whether the <see cref="BoundingSphere"/> contains a <see cref="Vector3"/>.
-        /// </summary>
+
+        public void Contains(ref BoundingBox boundingBox, out ContainmentType result) { result = this.Contains(boundingBox); }
+        public ContainmentType Contains(BoundingBox boundingBox)
+        {
+            ContainmentType result;
+            Intersection.Intersect(ref boundingBox, ref this, out result);
+            return result;
+        }
+
         public ContainmentType Contains(Vector3 vector)
         {
             var radius2 = Radius * Radius;
@@ -75,14 +80,9 @@
             return result;
         }
         
-        /// <summary>
-        /// Checks whether the <see cref="BoundingSphere"/> intersects a <see cref="BoundingFrustum"/>.
-        /// </summary>
         public ContainmentType Intersects(BoundingFrustum boundingfrustum)
         {
-            ContainmentType result;
-            Intersection.Intersect(ref boundingfrustum, ref this, out result);
-            return result;
+            return Intersection.Intersect(boundingfrustum, this);
         }
         
         /// <summary>
@@ -114,15 +114,7 @@
             Intersection.Intersect(ref ray, ref this, out result);
             return result;
         }
-
-        /// <inheritdoc />
-        public void GetTriangles(out Vector3[] vertices)
-        {
-            // TODO: How should I handle indices?
-            ushort[] indices;
-            Geometry.CreateSphere(this, 16, out vertices, out indices);
-        }
-
+        
         /// <summary>
         /// Creates the smallest <see cref="BoundingSphere"/> that can contain a <see cref="BoundingBox"/>.
         /// </summary>
@@ -154,8 +146,12 @@
         /// </summary>
         public static BoundingSphere CreateFromFrustum(BoundingFrustum boundingFrustum)
         {
+            // TODO: Use indices?
             Vector3[] triangles;
-            boundingFrustum.GetTriangles(out triangles);
+            ushort[] indices;
+
+            Geometry.CreateFrustum(boundingFrustum, out triangles, out indices);
+
             return BoundingSphere.CreateFromPoints(triangles);
         }
 

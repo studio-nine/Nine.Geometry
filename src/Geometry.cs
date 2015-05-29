@@ -2,37 +2,38 @@
 {
     using System;
     using System.Numerics;
-
-    // TODO: This is just an idea
-
+    
+    /// <summary>
+    /// 
+    /// </summary>
     public static class Geometry
     {
-        public static void CreateBox(BoundingBox boundingBox, out Vector3[] triangles, out ushort[] indices)
+        public static void CreateBox(this BoundingBox boundingBox, out Vector3[] triangles, out ushort[] indices)
         {
             throw new NotImplementedException();
         }
 
-        public static void CreateSolidBox(BoundingBox boundingBox, out Vector3[] triangles, out ushort[] indices)
+        public static void CreateSolidBox(this BoundingBox boundingBox, out Vector3[] triangles, out ushort[] indices)
         {
             throw new NotImplementedException();
         }
 
-        public static void CreateSphere(BoundingSphere boundingSphere, int tessellation, out Vector3[] triangles, out ushort[] indices)
+        public static void CreateSphere(this BoundingSphere boundingSphere, int tessellation, out Vector3[] triangles, out ushort[] indices)
         {
             throw new NotImplementedException();
         }
 
-        public static void CreateSolidSphere(BoundingSphere boundingSphere, int tessellation, out Vector3[] triangles, out ushort[] indices)
+        public static void CreateSolidSphere(this BoundingSphere boundingSphere, int tessellation, out Vector3[] triangles, out ushort[] indices)
         {
             throw new NotImplementedException();
         }
 
-        public static void CreateFrustum(BoundingFrustum boundingFrustum, out Vector3[] triangles, out ushort[] indices)
+        public static void CreateFrustum(this BoundingFrustum boundingFrustum, out Vector3[] triangles, out ushort[] indices)
         {
             throw new NotImplementedException();
         }
 
-        public static void CreateSolidFrustum(BoundingFrustum boundingFrustum, out Vector3[] triangles, out ushort[] indices)
+        public static void CreateSolidFrustum(this BoundingFrustum boundingFrustum, out Vector3[] triangles, out ushort[] indices)
         {
             throw new NotImplementedException();
         }

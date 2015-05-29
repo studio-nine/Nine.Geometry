@@ -1,0 +1,33 @@
+﻿{
+  "version": "1.0.0-*",
+  "description": "",
+  "authors": [ "" ],
+  "tags": [ "" ],
+  "projectUrl": "https://github.com/studio-nine/Nine.Geometry",
+  "licenseUrl": "https://github.com/studio-nine/Nine.Geometry/blob/master/LICENSE",
+
+  "dependencies": {
+    "System.Numerics.Vectors": "4.0.0"
+  },
+
+  "frameworks": {
+    "dnx451": {
+      "frameworkAssemblies": {
+        "System.Runtime": "4.0.10.0",
+        "System.Globalization": "4.0.0.0"
+      }
+    },
+    "dnxcore50": {
+      "dependencies": {
+        "System.Collections": "4.0.10-beta-22816",
+        "System.ComponentModel": "4.0.0-beta-22816",
+        "System.Diagnostics.Debug": "4.0.10-beta-22816",
+        "System.Runtime": "4.0.20-beta-22816",
+        "System.Runtime.Extensions": "4.0.10-beta-22816",
+        "System.Runtime.InteropServices": "4.0.20-beta-22816",
+        "System.Globalization": "4.0.10-beta-22816",
+        "Microsoft.CSharp": "4.0.0-beta-22816"
+      }
+    }
+  }
+}
