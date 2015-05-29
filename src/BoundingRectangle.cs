@@ -161,43 +161,8 @@
             containmentType = ContainmentType.Intersects;
         }
 
-        public bool Equals(BoundingRectangle other)
-        {
-            return X == other.X && Y == other.Y && Width == other.Width && Height == other.Height;
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (obj is BoundingRectangle)
-                return Equals((BoundingRectangle)obj);
-
-            return false;
-        }
-
-        public static bool operator ==(BoundingRectangle value1, BoundingRectangle value2)
-        {
-            return (value1.X == value2.X) && (value1.Y == value2.Y) &&
-                   (value1.Width == value2.Width) && (value1.Height == value2.Height);
-        }
-
-        public static bool operator !=(BoundingRectangle value1, BoundingRectangle value2)
-        {
-            return !(value1 == value2);
-        }
-        
-        public override int GetHashCode()
-        {
-            return X.GetHashCode() ^ Y.GetHashCode() ^ Width.GetHashCode() ^ Height.GetHashCode();
-        }
-
-        public override string ToString()
-        {
-            return X.ToString() + ", " + Y.ToString() + ", " +
-                   Width.ToString() + ", " + Height.ToString();
-        }
-
         /// <summary>
-        /// Creates the smallest BoundingBox that will contain a group of points.
+        /// Creates the smallest <see cref="BoundingRectangle"/> that will contain a group of points.
         /// </summary>
         public static BoundingRectangle CreateFromPoints(IEnumerable<Vector2> points)
         {
@@ -220,7 +185,7 @@
         }
 
         /// <summary>
-        /// Creates the merged bounding rectangle.
+        /// Creates the merged <see cref="BoundingRectangle"/>.
         /// </summary>        
         public static void CreateMerged(ref BoundingRectangle original, ref BoundingRectangle additional, out BoundingRectangle result)
         {
@@ -234,13 +199,48 @@
         }
 
         /// <summary>
-        /// Creates the merged bounding rectangle.
+        /// Creates the merged <see cref="BoundingRectangle"/>.
         /// </summary>
         public static BoundingRectangle CreateMerged(BoundingRectangle original, BoundingRectangle additional)
         {
             BoundingRectangle result = new BoundingRectangle();
             CreateMerged(ref original, ref additional, out result);
             return result;
+        }
+
+        public static bool operator ==(BoundingRectangle value1, BoundingRectangle value2)
+        {
+            return (value1.X == value2.X) && (value1.Y == value2.Y) &&
+                   (value1.Width == value2.Width) && (value1.Height == value2.Height);
+        }
+
+        public static bool operator !=(BoundingRectangle value1, BoundingRectangle value2)
+        {
+            return !(value1 == value2);
+        }
+
+        public bool Equals(BoundingRectangle other)
+        {
+            return X == other.X && Y == other.Y && Width == other.Width && Height == other.Height;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is BoundingRectangle)
+                return Equals((BoundingRectangle)obj);
+
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return X.GetHashCode() ^ Y.GetHashCode() ^ Width.GetHashCode() ^ Height.GetHashCode();
+        }
+
+        public override string ToString()
+        {
+            return X.ToString() + ", " + Y.ToString() + ", " +
+                   Width.ToString() + ", " + Height.ToString();
         }
     }
 }

@@ -43,12 +43,43 @@
             return result;
         }
 
-        public void Contains(ref BoundingBox boundingBox, out ContainmentType result) { result = this.Contains(boundingBox); }
+        public void Contains(ref BoundingBox boundingBox, out ContainmentType result)
+        {
+            result = this.Contains(boundingBox);
+        }
+
         public ContainmentType Contains(BoundingBox boundingBox)
         {
             ContainmentType result;
             Intersection.Intersect(ref boundingBox, ref this, out result);
             return result;
+        }
+
+        public void Contains(ref BoundingFrustum boundingfrustum, out ContainmentType result)
+        {
+            result = this.Contains(boundingfrustum);
+        }
+
+        public ContainmentType Contains(BoundingFrustum boundingfrustum)
+        {
+            return Intersection.Intersect(boundingfrustum, this);
+        }
+
+        public void Contains(ref BoundingSphere boundingSphere, out ContainmentType result)
+        {
+            result = this.Contains(boundingSphere);
+        }
+
+        public ContainmentType Contains(BoundingSphere boundingSphere)
+        {
+            ContainmentType result;
+            Intersection.Intersect(ref this, ref boundingSphere, out result);
+            return result;
+        }
+
+        public void Contains(ref Vector3 vector, out ContainmentType result)
+        {
+            result = this.Contains(vector);
         }
 
         public ContainmentType Contains(Vector3 vector)
@@ -69,52 +100,72 @@
                 return ContainmentType.Intersects;
             }
         }
-        
-        /// <summary>
-        /// Checks whether the <see cref="BoundingSphere"/> intersects a <see cref="BoundingBox"/>.
-        /// </summary>
-        public ContainmentType Intersects(BoundingBox boundingBox)
+
+        public void Intersects(ref BoundingBox boundingBox, out bool result)
+        {
+            result = this.Intersects(boundingBox);
+        }
+
+        public bool Intersects(BoundingBox boundingBox)
         {
             ContainmentType result;
             Intersection.Intersect(ref boundingBox, ref this, out result);
-            return result;
+            return this.DoesIntersect(result);
         }
-        
-        public ContainmentType Intersects(BoundingFrustum boundingfrustum)
+
+        public void Intersects(ref BoundingFrustum boundingfrustum, out bool result)
         {
-            return Intersection.Intersect(boundingfrustum, this);
+            result = this.Intersects(boundingfrustum);
         }
-        
-        /// <summary>
-        /// Checks whether the <see cref="BoundingSphere"/> intersects a <see cref="BoundingSphere"/>.
-        /// </summary>
-        public ContainmentType Intersects(BoundingSphere boundingSphere)
+
+        public bool Intersects(BoundingFrustum boundingfrustum)
+        {
+            ContainmentType result = Intersection.Intersect(boundingfrustum, this);
+            return this.DoesIntersect(result);
+        }
+
+        public void Intersects(ref BoundingSphere boundingSphere, out bool result)
+        {
+            result = this.Intersects(boundingSphere);
+        }
+
+        public bool Intersects(BoundingSphere boundingSphere)
         {
             ContainmentType result;
             Intersection.Intersect(ref boundingSphere, ref this, out result);
-            return result;
+            return this.DoesIntersect(result);
         }
-        
-        /// <summary>
-        /// Checks whether the <see cref="BoundingSphere"/> intersects a <see cref="Plane"/>.
-        /// </summary>
-        public ContainmentType Intersects(Plane plane)
+
+        public void Intersects(ref Plane plane, out bool result)
+        {
+            result = this.Intersects(plane);
+        }
+
+        public bool Intersects(Plane plane)
         {
             ContainmentType result;
             Intersection.Intersect(ref plane, ref this, out result);
-            return result;
+            return this.DoesIntersect(result);
         }
-        
-        /// <summary>
-        /// Checks whether the <see cref="BoundingSphere"/> intersects a <see cref="Ray"/>.
-        /// </summary>
+
+        public void Intersects(ref Ray ray, out float? result)
+        {
+            result = this.Intersects(ray);
+        }
+
         public float? Intersects(Ray ray)
         {
             float? result;
             Intersection.Intersect(ref ray, ref this, out result);
             return result;
         }
-        
+
+        private bool DoesIntersect(ContainmentType containmentType)
+        {
+            // TODO: Optimize
+            return containmentType == ContainmentType.Contains || containmentType == ContainmentType.Intersects;
+        }
+
         /// <summary>
         /// Creates the smallest <see cref="BoundingSphere"/> that can contain a <see cref="BoundingBox"/>.
         /// </summary>
@@ -167,15 +218,15 @@
         /// <summary>
         /// Creates the smallest <see cref="BoundingSphere"/> that contains the two <see cref="BoundingSphere"/>s.
         /// </summary>
-        public static void CreateMerged(BoundingSphere left, BoundingSphere right, out BoundingSphere result)
+        public static void CreateMerged(BoundingSphere original, BoundingSphere additional, out BoundingSphere result)
         {
-            result = BoundingSphere.CreateMerged(left, right);
+            result = BoundingSphere.CreateMerged(original, additional);
         }
 
         /// <summary>
         /// Creates the smallest <see cref="BoundingSphere"/> that contains the two <see cref="BoundingSphere"/>s.
         /// </summary>
-        public static BoundingSphere CreateMerged(BoundingSphere left, BoundingSphere right)
+        public static BoundingSphere CreateMerged(BoundingSphere original, BoundingSphere additional)
         {
             // TODO: BoundingSphere CreateMerged
             throw new NotImplementedException();

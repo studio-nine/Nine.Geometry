@@ -4,7 +4,8 @@
     using System.Collections.Generic;
     using System.Numerics;
 
-    // TODO: Missing Methods
+    // TODO: Add features that Engine Nine provides
+    // https://github.com/studio-nine/Engine-Nine/blob/master/Source/Nine/BoundingBoxExtensions.cs
 
     /// <summary>
     /// Defines an axis-aligned box-shaped 3D volume.
@@ -18,7 +19,7 @@
         public Vector3 Max;
 
         /// <summary>
-        /// Gets the center.
+        /// Gets the center of the <see cref="BoundingBox"/>.
         /// </summary>
         public Vector3 Center
         {
@@ -39,10 +40,12 @@
             this.Min = min;
             this.Max = max;
         }
-
-        #region Contains & Intersects Methods
-
-        public void Contains(ref BoundingBox boundingBox, out ContainmentType result) { result = this.Contains(boundingBox); }
+        
+        public void Contains(ref BoundingBox boundingBox, out ContainmentType result)
+        {
+            result = this.Contains(boundingBox);
+        }
+        
         public ContainmentType Contains(BoundingBox boundingBox)
         {
             ContainmentType result;
@@ -55,7 +58,11 @@
             return Intersection.Intersect(boundingfrustum, this);
         }
 
-        public void Contains(ref BoundingSphere boundingSphere, out ContainmentType result) { result = this.Contains(boundingSphere); }
+        public void Contains(ref BoundingSphere boundingSphere, out ContainmentType result)
+        {
+            result = this.Contains(boundingSphere);
+        }
+
         public ContainmentType Contains(BoundingSphere boundingSphere)
         {
             ContainmentType result;
@@ -63,7 +70,11 @@
             return result;
         }
 
-        public void Contains(ref Plane plane, out ContainmentType result) { result = this.Contains(plane); }
+        public void Contains(ref Plane plane, out ContainmentType result)
+        {
+            result = this.Contains(plane);
+        }
+
         public ContainmentType Contains(Plane plane)
         {
             ContainmentType result;
@@ -71,7 +82,11 @@
             return result;
         }
 
-        public void Contains(ref Vector3 vector, out ContainmentType result) { result = this.Contains(vector); }
+        public void Contains(ref Vector3 vector, out ContainmentType result)
+        {
+            result = this.Contains(vector);
+        }
+
         public ContainmentType Contains(Vector3 vector)
         {
             if (vector.X < this.Min.X || vector.X > this.Max.X ||
@@ -93,7 +108,11 @@
             }
         }
 
-        public void Intersects(ref BoundingBox boundingBox, out bool result) { result = this.Intersects(boundingBox); }
+        public void Intersects(ref BoundingBox boundingBox, out bool result)
+        {
+            result = this.Intersects(boundingBox);
+        }
+
         public bool Intersects(BoundingBox boundingBox)
         {
             ContainmentType result;
@@ -101,7 +120,11 @@
             return this.DoesIntersect(result);
         }
 
-        public void Intersects(ref BoundingSphere boundingSphere, out bool result) { result = this.Intersects(boundingSphere); }
+        public void Intersects(ref BoundingSphere boundingSphere, out bool result)
+        {
+            result = this.Intersects(boundingSphere);
+        }
+
         public bool Intersects(BoundingSphere boundingSphere)
         {
             ContainmentType result;
@@ -109,7 +132,11 @@
             return this.DoesIntersect(result);
         }
 
-        public void Intersects(ref Plane plane, out bool result) { result = this.Intersects(plane); }
+        public void Intersects(ref Plane plane, out bool result)
+        {
+            result = this.Intersects(plane);
+        }
+
         public bool Intersects(Plane plane)
         {
             ContainmentType result;
@@ -117,7 +144,11 @@
             return this.DoesIntersect(result);
         }
 
-        public void Intersects(ref Ray ray, out float? result) { result = this.Intersects(ray); }
+        public void Intersects(ref Ray ray, out float? result)
+        {
+            result = this.Intersects(ray);
+        }
+
         public float? Intersects(Ray ray)
         {
             float? result;
@@ -130,31 +161,7 @@
             // TODO: Optimize
             return containmentType == ContainmentType.Contains || containmentType == ContainmentType.Intersects;
         }
-
-        #endregion
-
-        /// <summary>
-        /// Creates the smallest <see cref="BoundingBox"/> that can contain a <see cref="BoundingSphere"/>.
-        /// </summary>
-        public static void CreateFromSphere(ref BoundingSphere sphere, out BoundingBox result)
-        {
-            result = BoundingBox.CreateFromSphere(sphere);
-        }
-
-        /// <summary>
-        /// Creates the smallest <see cref="BoundingBox"/> that can contain a <see cref="BoundingSphere"/>.
-        /// </summary>
-        public static BoundingBox CreateFromSphere(BoundingSphere sphere)
-        {
-            BoundingBox result;
-
-            var radius = new Vector3(sphere.Radius);
-            result.Min = sphere.Center - radius;
-            result.Max = sphere.Center + radius;
-
-            return result;
-        }
-
+        
         /// <summary>
         /// Creates a <see cref="BoundingBox"/> that can contain a list of <see cref="Vector3"/>.
         /// </summary>
@@ -181,32 +188,62 @@
         }
 
         /// <summary>
-        /// Creates the smallest <see cref="BoundingBox"/> that contains the two <see cref="BoundingBox"/>es.
+        /// Creates the smallest <see cref="BoundingBox"/> that can contain a <see cref="BoundingSphere"/>.
         /// </summary>
-        public static void CreateMerged(BoundingBox left, BoundingBox right, out BoundingBox result)
+        public static void CreateFromSphere(ref BoundingSphere boundingSphere, out BoundingBox boundingBox)
         {
-            result = BoundingBox.CreateMerged(left, right);
+            var radius = new Vector3(boundingSphere.Radius);
+            boundingBox.Min = boundingSphere.Center - radius;
+            boundingBox.Max = boundingSphere.Center + radius;
+        }
+
+        /// <summary>
+        /// Creates the smallest <see cref="BoundingBox"/> that can contain a <see cref="BoundingSphere"/>.
+        /// </summary>
+        public static BoundingBox CreateFromSphere(BoundingSphere sphere)
+        {
+            BoundingBox result;
+            BoundingBox.CreateFromSphere(ref sphere, out result);
+            return result;
         }
 
         /// <summary>
         /// Creates the smallest <see cref="BoundingBox"/> that contains the two <see cref="BoundingBox"/>es.
         /// </summary>
-        public static BoundingBox CreateMerged(BoundingBox left, BoundingBox right)
+        public static void CreateMerged(BoundingBox original, BoundingBox additional, out BoundingBox result)
+        {
+            result = BoundingBox.CreateMerged(original, additional);
+        }
+
+        /// <summary>
+        /// Creates the smallest <see cref="BoundingBox"/> that contains the two <see cref="BoundingBox"/>es.
+        /// </summary>
+        public static BoundingBox CreateMerged(BoundingBox original, BoundingBox additional)
         {
             BoundingBox result = new BoundingBox();
 
-            result.Min.X = Math.Min(left.Min.X, right.Min.X);
-            result.Min.Y = Math.Min(left.Min.Y, right.Min.Y);
-            result.Min.Z = Math.Min(left.Min.Z, right.Min.Z);
+            result.Min.X = Math.Min(original.Min.X, additional.Min.X);
+            result.Min.Y = Math.Min(original.Min.Y, additional.Min.Y);
+            result.Min.Z = Math.Min(original.Min.Z, additional.Min.Z);
 
-            result.Max.X = Math.Max(left.Max.X, right.Max.X);
-            result.Max.Y = Math.Max(left.Max.Y, right.Max.Y);
-            result.Max.Z = Math.Max(left.Max.Z, right.Max.Z);
+            result.Max.X = Math.Max(original.Max.X, additional.Max.X);
+            result.Max.Y = Math.Max(original.Max.Y, additional.Max.Y);
+            result.Max.Z = Math.Max(original.Max.Z, additional.Max.Z);
 
             return result;
         }
-        
-        public void GetCorners(ref Vector3[] vertices) { vertices = this.GetCorners(); }
+
+        /// <summary>
+        /// Gets an array of points that make up the corners of the <see cref="BoundingBox"/>.
+        /// </summary>
+        public void GetCorners(ref Vector3[] vertices)
+        {
+            vertices = this.GetCorners();
+        }
+
+        /// <summary>
+        /// Gets an array of points that make up the corners of the <see cref="BoundingBox"/>.
+        /// </summary>
         public Vector3[] GetCorners()
         {
             return new Vector3[]

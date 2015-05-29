@@ -1,13 +1,15 @@
 ﻿namespace Nine.Geometry
 {
+    using System;
+    using System.Collections.Generic;
     using System.Numerics;
 
     /// <summary>
     /// 
     /// </summary>
-    public struct BoundingCircle
+    public struct BoundingCircle : IEquatable<BoundingCircle>, IFormattable
     {
-        /// <summary> GEts or sets the center point. </summary>
+        /// <summary> Gets or sets the center point. </summary>
         public Vector2 Center;
 
         /// <summary> Gets or sets the radius. </summary>
@@ -21,7 +23,106 @@
             this.Center = center;
             this.Radius = radius;
         }
+        
+        public ContainmentType Contains(Vector2 point)
+        {
+            throw new NotImplementedException();
+        }
 
-        // TODO: Add struct
+        public void Contains(ref BoundingCircle boundingCircle, out ContainmentType result)
+        {
+            result = this.Contains(boundingCircle);
+        }
+
+        public ContainmentType Contains(BoundingCircle boundingCircle)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Contains(ref BoundingRectangle boundingRectangle, out ContainmentType result)
+        {
+            result = this.Contains(boundingRectangle);
+        }
+
+        public ContainmentType Contains(BoundingRectangle boundingRectangle)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool Intersects(BoundingCircle boundingCircle)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Intersects(ref BoundingCircle boundingCircle, out bool result)
+        {
+            result = this.Intersects(boundingCircle);
+        }
+        
+        public bool Intersects(BoundingRectangle boundingRectangle)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Intersects(ref BoundingRectangle boundingRectangle, out bool result)
+        {
+            result = this.Intersects(boundingRectangle);
+        }
+
+        /// <summary>
+        /// Creates the smallest <see cref="BoundingRectangle"/> that will contain a group of points.
+        /// </summary>
+        public static BoundingCircle CreateFromPoints(IEnumerable<Vector2> points)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Creates the merged <see cref="BoundingCircle"/>.
+        /// </summary>        
+        public static void CreateMerged(ref BoundingCircle original, ref BoundingCircle additional, out BoundingCircle result)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Creates the merged <see cref="BoundingCircle"/>.
+        /// </summary>
+        public static BoundingCircle CreateMerged(BoundingCircle original, BoundingCircle additional)
+        {
+            BoundingCircle result;
+            BoundingCircle.CreateMerged(ref original, ref additional, out result);
+            return result;
+        }
+
+        /// <inheritdoc />
+        public bool Equals(BoundingCircle other)
+        {
+            return (this.Center == other.Center) && (this.Radius == other.Radius);
+        }
+
+        /// <inheritdoc />
+        public override bool Equals(object obj)
+        {
+            return (obj is BoundingCircle) && this.Equals((BoundingCircle)obj);
+        }
+
+        /// <inheritdoc />
+        public override int GetHashCode()
+        {
+            return this.Center.GetHashCode() ^ this.Radius.GetHashCode();
+        }
+
+        /// <inheritdoc />
+        public string ToString(string format, IFormatProvider formatProvider)
+        {
+            return string.Format(formatProvider, format ?? "Center: {0}, Radius: {1}", this.Center, this.Radius);
+        }
+
+        /// <inheritdoc />
+        public override string ToString()
+        {
+            return this.ToString(null, System.Globalization.CultureInfo.CurrentCulture);
+        }
     }
 }

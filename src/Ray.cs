@@ -3,6 +3,8 @@
     using System;
     using System.Numerics;
 
+    // TODO: Add addition operator
+
     /// <summary>
     /// Defines a ray.
     /// </summary>

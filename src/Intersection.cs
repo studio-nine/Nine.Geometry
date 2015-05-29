@@ -3,9 +3,8 @@
     using System;
     using System.Numerics;
 
-    // TODO: Rename ContainmentType to IntersectionType
-    // TODO: Ray intersect Triangle
-    // TODO: Add LineSegments
+    // TODO: All the structures 'Contains(..)' methods should simpler than the methods in Intersection for optimization.
+    // TODO: Move Ray intersect Triangle
 
     /// <summary>
     /// Indicates the extent to which bounding volumes intersect or contain one another.
@@ -167,34 +166,6 @@
             throw new NotImplementedException();
         }
 
-        #region BoundingFrustum
-
-        public static ContainmentType Intersect(BoundingFrustum boundingFrustum1, BoundingFrustum boundingFrustum2)
-        {
-            throw new NotImplementedException();
-        }
-
-        public static ContainmentType Intersect(BoundingFrustum boundingFrustum, BoundingBox boundingBox)
-        {
-            throw new NotImplementedException();
-        }
-
-        public static ContainmentType Intersect(BoundingFrustum boundingFrustum, BoundingSphere boundingSphere)
-        {
-            throw new NotImplementedException();
-        }
-        
-        public static ContainmentType Intersect(BoundingFrustum boundingFrustum, Plane plane)
-        {
-            throw new NotImplementedException();
-        }
-        
-        public static float? Intersect(BoundingFrustum boundingFrustum, Ray ray)
-        {
-            throw new NotImplementedException();
-        }
-
-        #endregion
 
         public static void Intersect(ref BoundingBox boundingBox1, ref BoundingBox boundingBox2, out ContainmentType result)
         {
@@ -221,72 +192,31 @@
         {
             throw new NotImplementedException();
         }
-    }
 
-    // Expand on this if you want the XNA syntax
-    // The current structures only contan a custom Intersect method.
-    // In XNA 'Contains(...)' is basically the same as 'Intersect(...)' 
-    // and XNA's 'Intersect(...)' gives simpler return value.
-    [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-    public static class XNASyntaxSugerExtensions
-    {
-        #region BoundingFrustum
 
-        /// <summary>
-        /// Checks whether the <see cref="BoundingFrustum"/> contains a <see cref="BoundingBox"/>.
-        /// </summary>
-        public static ContainmentType Contains(this BoundingFrustum boundingFrustum, BoundingBox boundingBox)
-        {
-            // TODO: BoundingFrustum contains BoundingBox
-            throw new NotImplementedException();
-        }
-
-        /// <summary>
-        /// Checks whether the <see cref="BoundingFrustum"/> contains a <see cref="BoundingFrustum"/>.
-        /// </summary>
-        public static ContainmentType Contains(this BoundingFrustum boundingFrustum, BoundingFrustum boundingfrustum)
-        {
-            // TODO: BoundingFrustum contains BoundingFrustum
-            throw new NotImplementedException();
-        }
-
-        /// <summary>
-        /// Checks whether the <see cref="BoundingFrustum"/> contains a <see cref="BoundingSphere"/>.
-        /// </summary>
-        public static ContainmentType Contains(this BoundingFrustum boundingFrustum, BoundingSphere boundingSphere)
-        {
-            // TODO: BoundingFrustum contains BoundingSphere
-            throw new NotImplementedException();
-        }
-
-        #endregion
-
-        #region BoundingSphere
-
-        /// <summary>
-        /// Checks whether the <see cref="BoundingSphere"/> contains a <see cref="BoundingSphere"/>.
-        /// </summary>
-        public static ContainmentType Contains(this BoundingSphere boundingSphere1, BoundingSphere boundingSphere2)
+        public static ContainmentType Intersect(BoundingFrustum boundingFrustum1, BoundingFrustum boundingFrustum2)
         {
             throw new NotImplementedException();
         }
 
-        /// <summary>
-        /// Checks whether the <see cref="BoundingSphere"/> contains a <see cref="BoundingFrustum"/>.
-        /// </summary>
-        public static ContainmentType Contains(this BoundingSphere boundingSphere, BoundingFrustum boundingfrustum)
+        public static ContainmentType Intersect(BoundingFrustum boundingFrustum, BoundingBox boundingBox)
         {
             throw new NotImplementedException();
         }
 
-        /// <summary>
-        /// Checks whether the <see cref="BoundingSphere"/> contains a <see cref="BoundingBox"/>.
-        /// </summary>
-        public static ContainmentType Contains(this BoundingSphere boundingSphere, BoundingBox boundingBox)
+        public static ContainmentType Intersect(BoundingFrustum boundingFrustum, BoundingSphere boundingSphere)
         {
             throw new NotImplementedException();
         }
 
-        #endregion
+        public static ContainmentType Intersect(BoundingFrustum boundingFrustum, Plane plane)
+        {
+            throw new NotImplementedException();
+        }
+
+        public static float? Intersect(BoundingFrustum boundingFrustum, Ray ray)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
