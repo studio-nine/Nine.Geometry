@@ -211,40 +211,18 @@
 
             result = rayDistance;
         }
-
-        /// <summary>
-        /// Returns a boolean indicating whether the two given <see cref="Ray"/>s are equal.
-        /// </summary>
-        public static bool operator ==(Ray left, Ray right)
-        {
-            return (left.Position == right.Position) && (left.Direction == right.Direction);
-        }
-
-        /// <summary>
-        /// Returns a boolean indicating whether the two given <see cref="Ray"/>s are not equal.
-        /// </summary>
-        public static bool operator !=(Ray left, Ray right)
-        {
-            return (left.Position != right.Position) && (left.Direction != right.Direction);
-        }
+        
+        public static bool operator ==(Ray left, Ray right) => (left.Position == right.Position) && (left.Direction == right.Direction);
+        public static bool operator !=(Ray left, Ray right) => (left.Position != right.Position) && (left.Direction != right.Direction);
 
         /// <inheritdoc />
-        public bool Equals(Ray other)
-        {
-            return (this.Position == other.Position) && (this.Direction == other.Direction);
-        }
+        public bool Equals(Ray other) => (this.Position == other.Position) && (this.Direction == other.Direction);
 
         /// <inheritdoc />
-        public override bool Equals(object obj)
-        {
-            return (obj is Ray) && this.Equals((Ray)obj);
-        }
+        public override bool Equals(object obj) => (obj is Ray) && this.Equals((Ray)obj);
 
         /// <inheritdoc />
-        public override int GetHashCode()
-        {
-            return this.Direction.GetHashCode() ^ this.Position.GetHashCode();
-        }
+        public override int GetHashCode() => this.Direction.GetHashCode() ^ this.Position.GetHashCode();
         
         /// <inheritdoc />
         public override string ToString() => "Position: " + this.Position + ", Direction: " + this.Direction;

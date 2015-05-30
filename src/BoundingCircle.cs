@@ -96,22 +96,13 @@
         }
 
         /// <inheritdoc />
-        public bool Equals(BoundingCircle other)
-        {
-            return (this.Center == other.Center) && (this.Radius == other.Radius);
-        }
+        public bool Equals(BoundingCircle other) => (this.Center == other.Center) && (this.Radius == other.Radius);
 
         /// <inheritdoc />
-        public override bool Equals(object obj)
-        {
-            return (obj is BoundingCircle) && this.Equals((BoundingCircle)obj);
-        }
+        public override bool Equals(object obj) => (obj is BoundingCircle) && this.Equals((BoundingCircle)obj);
 
         /// <inheritdoc />
-        public override int GetHashCode()
-        {
-            return this.Center.GetHashCode() ^ this.Radius.GetHashCode();
-        }
+        public override int GetHashCode() => this.Center.GetHashCode() ^ this.Radius.GetHashCode();
         
         /// <inheritdoc />
         public override string ToString() => "Center: " + this.Center + ", Radius: " + this.Radius;

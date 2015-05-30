@@ -151,39 +151,17 @@
             return containmentType == ContainmentType.Contains || containmentType == ContainmentType.Intersects;
         }
 
-        /// <summary>
-        /// Returns a boolean indicating whether the two given <see cref="BoundingFrustum"/>s are equal.
-        /// </summary>
-        public static bool operator ==(BoundingFrustum left, BoundingFrustum right)
-        {
-            return (left.Matrix == right.Matrix);
-        }
-
-        /// <summary>
-        /// Returns a boolean indicating whether the two given <see cref="BoundingFrustum"/>s are not equal.
-        /// </summary>
-        public static bool operator !=(BoundingFrustum left, BoundingFrustum right)
-        {
-            return (left.Matrix != right.Matrix);
-        }
+        public static bool operator ==(BoundingFrustum left, BoundingFrustum right) => (left.Matrix == right.Matrix);
+        public static bool operator !=(BoundingFrustum left, BoundingFrustum right) => (left.Matrix != right.Matrix);
 
         /// <inheritdoc />
-        public bool Equals(BoundingFrustum other)
-        {
-            return (this.Matrix == other.Matrix);
-        }
+        public bool Equals(BoundingFrustum other) => (this.Matrix == other.Matrix);
 
         /// <inheritdoc />
-        public override bool Equals(object obj)
-        {
-            return (obj is BoundingFrustum) && this.Equals((BoundingFrustum)obj);
-        }
+        public override bool Equals(object obj) => (obj is BoundingFrustum) && this.Equals((BoundingFrustum)obj);
 
         /// <inheritdoc />
-        public override int GetHashCode()
-        {
-            return this.matrix.GetHashCode();
-        }
+        public override int GetHashCode() => this.matrix.GetHashCode();
         
         /// <inheritdoc />
         public override string ToString() => 

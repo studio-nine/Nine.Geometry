@@ -19,6 +19,8 @@
         float? Intersects(Ray ray);
     }
 
+    // TODO: Remove IGeometry
+
     /// <summary>
     /// Interface for a 3D geometry made up of triangles.
     /// </summary>

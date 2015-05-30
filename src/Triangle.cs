@@ -360,79 +360,19 @@
         /// </summary>
         static Vector3[] IntersectionPoints = new Vector3[32];
 
-        /// <summary>
-        /// Indicates whether the current object is equal to another object of the same type.
-        /// </summary>
-        /// <param name="other">An object to compare with this object.</param>
-        /// <returns>
-        /// true if the current object is equal to the <paramref name="other"/> parameter; otherwise, false.
-        /// </returns>
-        public bool Equals(Triangle other)
-        {
-            return V1 == other.V1 && V2 == other.V2 && V3 == other.V3;
-        }
+        public static bool operator ==(Triangle value1, Triangle value2) => ((value1.V1 == value2.V1) && (value1.V2 == value2.V2) && (value1.V3 == value2.V3));
+        public static bool operator !=(Triangle value1, Triangle value2) => !(value1.V1 == value2.V1 && value1.V2 == value2.V2 && value1.V3 == value2.V3);
 
-        /// <summary>
-        /// Determines whether the specified <see cref="System.Object"/> is equal to this instance.
-        /// </summary>
-        /// <param name="obj">The <see cref="System.Object"/> to compare with this instance.</param>
-        /// <returns>
-        ///   <c>true</c> if the specified <see cref="System.Object"/> is equal to this instance; otherwise, <c>false</c>.
-        /// </returns>
-        public override bool Equals(object obj)
-        {
-            if (obj is Triangle)
-                return Equals((Triangle)obj);
+        /// <inheritdoc />
+        public bool Equals(Triangle other) => V1 == other.V1 && V2 == other.V2 && V3 == other.V3;
 
-            return false;
-        }
+        /// <inheritdoc />
+        public override bool Equals(object obj) => (obj is Triangle) && this.Equals((Triangle)obj);
 
-        /// <summary>
-        /// Implements the operator ==.
-        /// </summary>
-        /// <param name="value1">The value1.</param>
-        /// <param name="value2">The value2.</param>
-        /// <returns>
-        /// The result of the operator.
-        /// </returns>
-        public static bool operator ==(Triangle value1, Triangle value2)
-        {
-            return ((value1.V1 == value2.V1) && (value1.V2 == value2.V2) && (value1.V3 == value2.V3));
-        }
+        /// <inheritdoc />
+        public override int GetHashCode() => this.V1.GetHashCode() ^ this.V2.GetHashCode() ^ this.V3.GetHashCode();
 
-        /// <summary>
-        /// Implements the operator !=.
-        /// </summary>
-        /// <param name="value1">The value1.</param>
-        /// <param name="value2">The value2.</param>
-        /// <returns>
-        /// The result of the operator.
-        /// </returns>
-        public static bool operator !=(Triangle value1, Triangle value2)
-        {
-            return !(value1.V1 == value2.V1 && value1.V2 == value2.V2 && value1.V3 == value2.V3);
-        }
-
-        /// <summary>
-        /// Returns a hash code for this instance.
-        /// </summary>
-        /// <returns>
-        /// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table. 
-        /// </returns>
-        public override int GetHashCode()
-        {
-            return V1.GetHashCode() ^ V2.GetHashCode() ^ V3.GetHashCode();
-        }
-
-        /// <summary>
-        /// Returns a <see cref="System.String"/> that represents this instance.
-        /// </summary>
-        /// <returns>
-        /// A <see cref="System.String"/> that represents this instance.
-        /// </returns>
-        public override string ToString()
-        {
-            return V1.ToString() + "|" + V2.ToString() + "|" + V3.ToString();
-        }
+        /// <inheritdoc />
+        public override string ToString() => this.V1.ToString() + ", " + this.V2.ToString() + ", " + this.V3.ToString();
     }
 }

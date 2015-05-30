@@ -259,39 +259,17 @@
             };
         }
 
-        /// <summary>
-        /// Returns a boolean indicating whether the two given <see cref="BoundingBox"/>es are equal.
-        /// </summary>
-        public static bool operator ==(BoundingBox left, BoundingBox right)
-        {
-            return (left.Min == right.Min) && (left.Max == right.Max);
-        }
-
-        /// <summary>
-        /// Returns a boolean indicating whether the two given <see cref="BoundingBox"/>es are not equal.
-        /// </summary>
-        public static bool operator !=(BoundingBox left, BoundingBox right)
-        {
-            return (left.Min != right.Min) && (left.Max != right.Max);
-        }
+        public static bool operator ==(BoundingBox left, BoundingBox right) => (left.Min == right.Min) && (left.Max == right.Max);
+        public static bool operator !=(BoundingBox left, BoundingBox right) => (left.Min != right.Min) && (left.Max != right.Max);
 
         /// <inheritdoc />
-        public bool Equals(BoundingBox other)
-        {
-            return (this.Min == other.Min) && (this.Max == other.Max);
-        }
+        public bool Equals(BoundingBox other) => (this.Min == other.Min) && (this.Max == other.Max);
 
         /// <inheritdoc />
-        public override bool Equals(object obj)
-        {
-            return (obj is BoundingBox) && this.Equals((BoundingBox)obj);
-        }
+        public override bool Equals(object obj) => (obj is BoundingBox) && this.Equals((BoundingBox)obj);
 
         /// <inheritdoc />
-        public override int GetHashCode()
-        {
-            return this.Min.GetHashCode() ^ this.Max.GetHashCode();
-        }
+        public override int GetHashCode() => this.Min.GetHashCode() ^ this.Max.GetHashCode();
         
         /// <inheritdoc />
         public override string ToString() => "Min: " + this.Min + ", Max: " + this.Max;

@@ -232,39 +232,17 @@
             throw new NotImplementedException();
         }
 
-        /// <summary>
-        /// Returns a boolean indicating whether the two given <see cref="BoundingSphere"/>s are equal.
-        /// </summary>
-        public static bool operator ==(BoundingSphere left, BoundingSphere right)
-        {
-            return (left.Center == right.Center) && (left.Radius == right.Radius);
-        }
-
-        /// <summary>
-        /// Returns a boolean indicating whether the two given <see cref="BoundingSphere"/>s are not equal.
-        /// </summary>
-        public static bool operator !=(BoundingSphere left, BoundingSphere right)
-        {
-            return (left.Center != right.Center) && (left.Radius != right.Radius);
-        }
+        public static bool operator ==(BoundingSphere left, BoundingSphere right) => (left.Center == right.Center) && (left.Radius == right.Radius);
+        public static bool operator !=(BoundingSphere left, BoundingSphere right) => (left.Center != right.Center) && (left.Radius != right.Radius);
 
         /// <inheritdoc />
-        public bool Equals(BoundingSphere other)
-        {
-            return (this.Center == other.Center) && (this.Radius == other.Radius);
-        }
+        public bool Equals(BoundingSphere other) => (this.Center == other.Center) && (this.Radius == other.Radius);
 
         /// <inheritdoc />
-        public override bool Equals(object obj)
-        {
-            return (obj is BoundingSphere) && this.Equals((BoundingSphere)obj);
-        }
+        public override bool Equals(object obj) => (obj is BoundingSphere) && this.Equals((BoundingSphere)obj);
 
         /// <inheritdoc />
-        public override int GetHashCode()
-        {
-            return this.Center.GetHashCode() ^ this.Radius.GetHashCode();
-        }
+        public override int GetHashCode() => this.Center.GetHashCode() ^ this.Radius.GetHashCode();
         
         /// <inheritdoc />
         public override string ToString() => "Center: " + this.Center + ", Radius: " + this.Radius;
