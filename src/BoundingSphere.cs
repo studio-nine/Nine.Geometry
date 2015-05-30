@@ -7,7 +7,7 @@
     /// <summary>
     /// Defines a sphere.
     /// </summary>
-    public struct BoundingSphere : IEquatable<BoundingSphere>, IFormattable
+    public struct BoundingSphere : IEquatable<BoundingSphere>
     {
         /// <summary> Gets or sets the center point. </summary>
         public Vector3 Center;
@@ -265,17 +265,8 @@
         {
             return this.Center.GetHashCode() ^ this.Radius.GetHashCode();
         }
-
+        
         /// <inheritdoc />
-        public string ToString(string format, IFormatProvider formatProvider)
-        {
-            return string.Format(formatProvider, format ?? "Center: {0}, Radius: {1}", this.Center, this.Radius);
-        }
-
-        /// <inheritdoc />
-        public override string ToString()
-        {
-            return this.ToString(null, System.Globalization.CultureInfo.CurrentCulture);
-        }
+        public override string ToString() => "Center: " + this.Center + ", Radius: " + this.Radius;
     }
 }

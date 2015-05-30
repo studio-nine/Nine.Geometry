@@ -3,9 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Numerics;
-
-    // TODO: Should we switch to System.Numerics.Vector4?
-
+    
     /// <summary>
     /// Defines an axis-aligned rectangle-shaped 2D volume.
     /// </summary>

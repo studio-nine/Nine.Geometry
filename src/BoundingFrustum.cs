@@ -6,7 +6,7 @@
     /// <summary>
     /// Defines a frustum and helps determine whether forms intersect with it.
     /// </summary>
-    public class BoundingFrustum : IEquatable<BoundingFrustum>, IFormattable
+    public class BoundingFrustum : IEquatable<BoundingFrustum>
     {
         /// <summary> Specifies the total number of planes (6) in the <see cref="BoundingFrustum"/>. </summary>
         public const int PlaneCount = 6;
@@ -184,21 +184,12 @@
         {
             return this.matrix.GetHashCode();
         }
-
+        
         /// <inheritdoc />
-        public string ToString(string format, IFormatProvider formatProvider)
-        {
-            const string textFormat = "Near: {0}, Far: {1}, Left: {2}, Right: {3}, Top: {4}, Bottom: {5}";
-            return string.Format(formatProvider, format ?? textFormat, 
-                this.planes[0], this.planes[1], this.planes[2], 
+        public override string ToString() => 
+            string.Format("Near: {0}, Far: {1}, Left: {2}, Right: {3}, Top: {4}, Bottom: {5}",
+                this.planes[0], this.planes[1], this.planes[2],
                 this.planes[3], this.planes[4], this.planes[5]);
-        }
-
-        /// <inheritdoc />
-        public override string ToString()
-        {
-            return this.ToString(null, System.Globalization.CultureInfo.CurrentCulture);
-        }
 
         private static void IntersectionPoint(ref Plane a, ref Plane b, ref Plane c, out Vector3 result)
         {

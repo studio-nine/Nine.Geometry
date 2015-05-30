@@ -8,7 +8,7 @@
     /// <summary>
     /// Defines a ray.
     /// </summary>
-    public struct Ray : IEquatable<Ray>, IFormattable
+    public struct Ray : IEquatable<Ray>
     {
         /// <summary> Gets or sets the position. </summary>
         public Vector3 Position;
@@ -245,17 +245,8 @@
         {
             return this.Direction.GetHashCode() ^ this.Position.GetHashCode();
         }
-
+        
         /// <inheritdoc />
-        public string ToString(string format, IFormatProvider formatProvider)
-        {
-            return string.Format(formatProvider, format ?? "Position: {0}, Direction: {1}", this.Position, this.Direction);
-        }
-
-        /// <inheritdoc />
-        public override string ToString()
-        {
-            return this.ToString(null, System.Globalization.CultureInfo.CurrentCulture);
-        }
+        public override string ToString() => "Position: " + this.Position + ", Direction: " + this.Direction;
     }
 }

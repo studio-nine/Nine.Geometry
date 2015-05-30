@@ -10,7 +10,7 @@
     /// <summary>
     /// Defines an axis-aligned box-shaped 3D volume.
     /// </summary>
-    public struct BoundingBox : IEquatable<BoundingBox>, IFormattable
+    public struct BoundingBox : IEquatable<BoundingBox>
     {
         /// <summary> Gets or sets the minimum position. </summary>
         public Vector3 Min;
@@ -292,17 +292,8 @@
         {
             return this.Min.GetHashCode() ^ this.Max.GetHashCode();
         }
-
+        
         /// <inheritdoc />
-        public string ToString(string format, IFormatProvider formatProvider)
-        {
-            return string.Format(formatProvider, format ?? "Min: {0}, Max: {1}", this.Min, this.Max);
-        }
-
-        /// <inheritdoc />
-        public override string ToString()
-        {
-            return this.ToString(null, System.Globalization.CultureInfo.CurrentCulture);
-        }
+        public override string ToString() => "Min: " + this.Min + ", Max: " + this.Max;
     }
 }
