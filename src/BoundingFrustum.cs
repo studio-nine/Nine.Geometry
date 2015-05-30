@@ -92,19 +92,22 @@
             return Intersection.Intersect(this, boundingfrustum);
         }
 
-        public void Contains(ref BoundingBox boundingBox, out ContainmentType result) { result = this.Contains(boundingBox); }
+        public void Contains(ref BoundingBox boundingBox, out ContainmentType result) => result = this.Contains(boundingBox); 
+
         public ContainmentType Contains(BoundingBox boundingBox)
         {
             return Intersection.Intersect(this, boundingBox);
         }
 
-        public void Contains(ref BoundingSphere boundingSphere, out ContainmentType result) { result = this.Contains(boundingSphere); }
+        public void Contains(ref BoundingSphere boundingSphere, out ContainmentType result) => result = this.Contains(boundingSphere);
+
         public ContainmentType Contains(BoundingSphere boundingSphere)
         {
             return Intersection.Intersect(this, boundingSphere);
         }
 
-        public void Contains(ref Plane plane, out ContainmentType result) { result = this.Contains(plane); }
+        public void Contains(ref Plane plane, out ContainmentType result) => result = this.Contains(plane);
+
         public ContainmentType Contains(Plane plane)
         {
             return Intersection.Intersect(this, plane);
@@ -116,40 +119,21 @@
             throw new NotImplementedException();
         }
 
-        public bool Intersects(BoundingFrustum boundingfrustum)
-        {
-            return this.DoesIntersect(Intersection.Intersect(this, boundingfrustum));
-        }
+        public bool Intersects(BoundingFrustum boundingfrustum) => this.DoesIntersect(Intersection.Intersect(this, boundingfrustum));
 
-        public void Intersects(ref BoundingBox boundingBox, out bool result) { result = this.Intersects(boundingBox); }
-        public bool Intersects(BoundingBox boundingBox)
-        {
-            return this.DoesIntersect(Intersection.Intersect(this, boundingBox));
-        }
+        public void Intersects(ref BoundingBox boundingBox, out bool result) => result = this.Intersects(boundingBox);
+        public bool Intersects(BoundingBox boundingBox) => this.DoesIntersect(Intersection.Intersect(this, boundingBox));
 
-        public void Intersects(ref BoundingSphere boundingSphere, out bool result) { result = this.Intersects(boundingSphere); }
-        public bool Intersects(BoundingSphere boundingSphere)
-        {
-            return this.DoesIntersect(Intersection.Intersect(this, boundingSphere));
-        }
+        public void Intersects(ref BoundingSphere boundingSphere, out bool result) => result = this.Intersects(boundingSphere);
+        public bool Intersects(BoundingSphere boundingSphere) => this.DoesIntersect(Intersection.Intersect(this, boundingSphere));
 
-        public void Intersects(ref Plane plane, out bool result) { result = this.Intersects(plane); }
-        public bool Intersects(Plane plane)
-        {
-            return this.DoesIntersect(Intersection.Intersect(this, plane));
-        }
+        public void Intersects(ref Plane plane, out bool result) => result = this.Intersects(plane);
+        public bool Intersects(Plane plane) => this.DoesIntersect(Intersection.Intersect(this, plane));
 
-        public void Intersects(ref Ray ray, out float? result) { result = this.Intersects(ray); }
-        public float? Intersects(Ray ray)
-        {
-            return Intersection.Intersect(this, ray);
-        }
+        public void Intersects(ref Ray ray, out float? result) => result = this.Intersects(ray);
+        public float? Intersects(Ray ray) => Intersection.Intersect(this, ray);
 
-        private bool DoesIntersect(ContainmentType containmentType)
-        {
-            // Optimize same as BoundingBox
-            return containmentType == ContainmentType.Contains || containmentType == ContainmentType.Intersects;
-        }
+        private bool DoesIntersect(ContainmentType containmentType) => containmentType == ContainmentType.Contains || containmentType == ContainmentType.Intersects;
 
         public static bool operator ==(BoundingFrustum left, BoundingFrustum right) => (left.Matrix == right.Matrix);
         public static bool operator !=(BoundingFrustum left, BoundingFrustum right) => (left.Matrix != right.Matrix);
@@ -188,11 +172,9 @@
             v1 = Vector3.Multiply(cross, a.D);
             //v1 = (a.D * (Vector3.Cross(b.Normal, c.Normal)));
 
-
             cross = Vector3.Cross(c.Normal, a.Normal);
             v2 = Vector3.Multiply(cross, b.D);
             //v2 = (b.D * (Vector3.Cross(c.Normal, a.Normal)));
-
 
             cross = Vector3.Cross(a.Normal, b.Normal);
             v3 = Vector3.Multiply(cross, c.D);

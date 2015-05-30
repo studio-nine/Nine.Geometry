@@ -160,11 +160,7 @@
             return result;
         }
 
-        private bool DoesIntersect(ContainmentType containmentType)
-        {
-            // TODO: Optimize
-            return containmentType == ContainmentType.Contains || containmentType == ContainmentType.Intersects;
-        }
+        private bool DoesIntersect(ContainmentType containmentType) => containmentType == ContainmentType.Contains || containmentType == ContainmentType.Intersects;
 
         /// <summary>
         /// Creates the smallest <see cref="BoundingSphere"/> that can contain a <see cref="BoundingBox"/>.
