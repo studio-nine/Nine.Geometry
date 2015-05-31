@@ -210,7 +210,7 @@
             return startIndex + count;
         }
 
-        // TODO: Make this public
+        // TODO: Make this public (?)
         internal static readonly ushort[] TriangleIndices = new ushort[]
         {
             0,1,2,  3,0,2,
