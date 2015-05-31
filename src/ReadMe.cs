@@ -1,2 +1,0 @@
-﻿
-// TODO: Add Curve

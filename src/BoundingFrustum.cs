@@ -87,36 +87,29 @@
             IntersectionPoint(ref this.planes[1], ref this.planes[2], ref this.planes[5], out this.corners[7]);
         }
 
-        public ContainmentType Contains(BoundingFrustum boundingfrustum)
-        {
-            return Intersection.Intersect(this, boundingfrustum);
-        }
+        public ContainmentType Contains(BoundingFrustum boundingfrustum) => Intersection.Intersect(this, boundingfrustum);
 
         public void Contains(ref BoundingBox boundingBox, out ContainmentType result) => result = this.Contains(boundingBox); 
-
-        public ContainmentType Contains(BoundingBox boundingBox)
-        {
-            return Intersection.Intersect(this, boundingBox);
-        }
+        public ContainmentType Contains(BoundingBox boundingBox) => Intersection.Intersect(this, boundingBox);
 
         public void Contains(ref BoundingSphere boundingSphere, out ContainmentType result) => result = this.Contains(boundingSphere);
-
-        public ContainmentType Contains(BoundingSphere boundingSphere)
-        {
-            return Intersection.Intersect(this, boundingSphere);
-        }
+        public ContainmentType Contains(BoundingSphere boundingSphere) => Intersection.Intersect(this, boundingSphere);
 
         public void Contains(ref Plane plane, out ContainmentType result) => result = this.Contains(plane);
-
-        public ContainmentType Contains(Plane plane)
-        {
-            return Intersection.Intersect(this, plane);
-        }
+        public ContainmentType Contains(Plane plane) => Intersection.Intersect(this, plane);
 
         public ContainmentType Contains(Vector3 vector)
         {
-            // TODO: BoundingFrustum contains Vector3
-            throw new NotImplementedException();
+            for (var i = 0; i < PlaneCount; ++i)
+            {
+                var value = vector * planes[i].Normal;
+                if ((value.X + value.Y + value.Z + planes[i].D) > 0)
+                {
+                    return ContainmentType.Disjoint;
+                }
+            }
+
+            return ContainmentType.Contains;
         }
 
         public bool Intersects(BoundingFrustum boundingfrustum) => this.DoesIntersect(Intersection.Intersect(this, boundingfrustum));
@@ -134,6 +127,9 @@
         public float? Intersects(Ray ray) => Intersection.Intersect(this, ray);
 
         private bool DoesIntersect(ContainmentType containmentType) => containmentType == ContainmentType.Contains || containmentType == ContainmentType.Intersects;
+
+        public void GetCorners(ref Vector3[] result) => result = this.GetCorners();
+        public Vector3[] GetCorners() => corners;
 
         public static bool operator ==(BoundingFrustum left, BoundingFrustum right) => (left.Matrix == right.Matrix);
         public static bool operator !=(BoundingFrustum left, BoundingFrustum right) => (left.Matrix != right.Matrix);

@@ -9,9 +9,9 @@
         public object SpatialData { get; set; }
         public event EventHandler<EventArgs> BoundingBoxChanged;
         
-        public SampleObject()
+        public SampleObject(BoundingBox boundingBox)
         {
-
+            this.BoundingBox = boundingBox;
         }
     }
 }

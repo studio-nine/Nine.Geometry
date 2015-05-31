@@ -43,5 +43,35 @@
             Assert.Equal(0.0f, new Ray(center,  Vector3.UnitZ).Intersects(boundingBox));
             Assert.Equal(0.0f, new Ray(center, -Vector3.UnitZ).Intersects(boundingBox));
         }
+
+        [Fact]
+        public void ray_boundingfrustum()
+        {
+
+        }
+
+        [Fact]
+        public void ray_boundingsphere()
+        {
+
+        }
+
+        [Fact]
+        public void ray_plane()
+        {
+
+        }
+
+        [Fact]
+        public void ray_triangle()
+        {
+
+        }
+
+        [Fact]
+        public void ray_custom_geometry()
+        {
+
+        }
     }
 }

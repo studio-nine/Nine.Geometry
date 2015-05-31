@@ -105,20 +105,16 @@
         /// The geometry and bounding sphere will be transformed by the specified
         /// transformation matrix before and intersection tests.
         /// </summary>
-        public float? Intersects(IGeometry geometry)
+        public float? Intersects(Vector3[] positions, ushort[] indices, Matrix4x4 world)
         {
             float? result = null;
             float? point = null;
             Ray ray;
-
-            var transform = geometry.Transform;
-            Matrix4x4.Invert(transform, out transform);
-            this.Transform(ref transform, out ray);
+            
+            Matrix4x4.Invert(world, out world);
+            this.Transform(ref world, out ray);
 
             // Test each triangle
-            Vector3[] positions;
-            ushort[] indices;
-            geometry.TryGetTriangles(out positions, out indices);
             for (int i = 0; i < indices.Length; i += 3)
             {
                 this.Intersects(ref positions[indices[i]],

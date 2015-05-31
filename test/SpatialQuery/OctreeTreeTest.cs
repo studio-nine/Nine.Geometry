@@ -20,9 +20,9 @@
 
             for (int i = 0; i < 10; i++)
             {
-                //this.octree.Add(new SampleObject(
-                //    new Vector3(10 * i, 10 * i, 10 * i),
-                //    new Vector3(10, 10, 10)));
+                var min = new Vector3(10 * i, 10 * i, 10 * i);
+                var max = min + new Vector3(10, 10, 10);
+                this.octree.Add(new SampleObject(new BoundingBox(min, max)));
             }
 
             var queryBox = new BoundingBox(new Vector3(0, 0, 0), new Vector3(49, 49, 49));

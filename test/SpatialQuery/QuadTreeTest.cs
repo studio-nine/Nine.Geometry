@@ -20,7 +20,9 @@
 
             for (int i = 0; i < 10; i++)
             {
-                //this.quadtree.Add(new SampleObject(new Rectangle(10 * i, 10 * i, 10, 10), Color.Gray));
+                var min = new Vector3(10 * i, 10 * i, 0);
+                var max = min + new Vector3(10, 10, 0);
+                this.quadtree.Add(new SampleObject(new BoundingBox(min, max)));
             }
 
             var queryBox = new BoundingBox(new Vector3(0, 0, 0), new Vector3(50, 50, 0));

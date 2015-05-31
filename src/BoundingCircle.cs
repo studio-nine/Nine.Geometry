@@ -7,6 +7,7 @@
     /// <summary>
     /// 
     /// </summary>
+    [Obsolete("Not Implemented")]
     public struct BoundingCircle : IEquatable<BoundingCircle>
     {
         /// <summary> Gets or sets the center point. </summary>
