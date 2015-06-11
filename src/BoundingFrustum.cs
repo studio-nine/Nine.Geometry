@@ -89,29 +89,33 @@
 
         public ContainmentType Contains(BoundingFrustum boundingfrustum)
         {
+            var me = this;
             ContainmentType result;
-            Intersection.Contains(ref this, ref boundingfrustum, out result);
+            Intersection.Contains(ref me, ref boundingfrustum, out result);
             return result;
         }
 
         public ContainmentType Contains(BoundingBox boundingBox)
         {
+            var me = this;
             ContainmentType result;
-            Intersection.Contains(ref this, ref boundingBox, out result);
+            Intersection.Contains(ref me, ref boundingBox, out result);
             return result;
         }
 
         public ContainmentType Contains(BoundingSphere boundingSphere)
         {
+            var me = this;
             ContainmentType result;
-            Intersection.Contains(ref this, ref boundingSphere, out result);
+            Intersection.Contains(ref me, ref boundingSphere, out result);
             return result;
         }
 
         public ContainmentType Contains(Plane plane)
         {
+            var me = this;
             ContainmentType result;
-            Intersection.Contains(ref this, ref plane, out result);
+            Intersection.Contains(ref me, ref plane, out result);
             return result;
         }
 
@@ -131,36 +135,41 @@
 
         public bool Intersects(BoundingFrustum boundingfrustum)
         {
+            var me = this;
             bool result;
-            Intersection.Intersect(ref this, ref boundingfrustum, out result);
+            Intersection.Intersect(ref me, ref boundingfrustum, out result);
             return result;
         }
 
         public bool Intersects(BoundingBox boundingBox)
         {
+            var me = this;
             bool result;
-            Intersection.Intersect(ref this, ref boundingBox, out result);
+            Intersection.Intersect(ref me, ref boundingBox, out result);
             return result;
         }
 
         public bool Intersects(BoundingSphere boundingSphere)
         {
+            var me = this;
             bool result;
-            Intersection.Intersect(ref this, ref boundingSphere, out result);
+            Intersection.Intersect(ref me, ref boundingSphere, out result);
             return result;
         }
 
         public bool Intersects(Plane plane)
         {
+            var me = this;
             bool result;
-            Intersection.Intersect(ref this, ref plane, out result);
+            Intersection.Intersect(ref me, ref plane, out result);
             return result;
         }
 
         public float? Intersects(Ray ray)
         {
+            var me = this;
             float? result;
-            Intersection.Intersect(ref ray, ref this, out result);
+            Intersection.Intersect(ref ray, ref me, out result);
             return result;
         }
         

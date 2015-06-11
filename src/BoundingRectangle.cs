@@ -21,53 +21,28 @@
         /// <summary> Gets or sets the height. </summary>
         public float Height;
 
-        /// <summary>
-        /// Returns the x-coordinate of the left side of the rectangle.
-        /// </summary>
-        public float Left { get { return X; } }
+        /// <summary> Returns the x-coordinate of the left side of the rectangle. </summary>
+        public float Left => X;
 
-        /// <summary>
-        /// Returns the x-coordinate of the right side of the rectangle.
-        /// </summary>
-        public float Right { get { return X + Width; } }
+        /// <summary> Returns the x-coordinate of the right side of the rectangle. </summary>
+        public float Right => X + Width;
 
-        /// <summary>
-        /// Returns the y-coordinate of the top of the rectangle.
-        /// </summary>
-        public float Top { get { return Y; } }
+        /// <summary> Returns the y-coordinate of the top of the rectangle. </summary>
+        public float Top => Y;
 
-        /// <summary>
-        /// Returns the y-coordinate of the bottom of the rectangle.
-        /// </summary>
-        public float Bottom { get { return Y + Height; } }
+        /// <summary> Returns the y-coordinate of the bottom of the rectangle. </summary>
+        public float Bottom => Y + Height;
 
-        /// <summary>
-        /// Returns the center point of the bottom of the rectangle.
-        /// </summary>
-        public Vector2 Center
-        {
-            get { return new Vector2(X + Width * 0.5f, Y + Height * 0.5f); }
-        }
+        /// <summary> Returns the center point of the bottom of the rectangle. </summary>
+        public Vector2 Center => new Vector2(X + Width * 0.5f, Y + Height * 0.5f); 
 
-        /// <summary>
-        /// Returns the top left corner of the rectangle.
-        /// </summary>
-        public Vector2 Location
-        {
-            get { return new Vector2(X, Y); }
-        }
+        /// <summary> Returns the top left corner of the rectangle. </summary>
+        public Vector2 Location => new Vector2(X, Y);
 
-        /// <summary>
-        /// Returns the size of the rectangle.
-        /// </summary>
-        public Vector2 Size
-        {
-            get { return new Vector2(Width, Height); }
-        }
+        /// <summary> Returns the size of the rectangle. </summary>
+        public Vector2 Size => new Vector2(Width, Height); 
 
-        /// <summary>
-        /// Returns a Rectangle with all of its values set to zero.
-        /// </summary>
+        /// <summary> Returns a Rectangle with all of its values set to zero. </summary>
         public static BoundingRectangle Empty { get; private set; }
 
         /// <summary>

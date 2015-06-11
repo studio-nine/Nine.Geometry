@@ -43,6 +43,7 @@
     {
         #region Ray
 
+        public static void Intersect(ref BoundingBox boundingBox, ref Ray ray, out float? result) => Intersect(ref ray, ref boundingBox, out result);
         public static void Intersect(ref Ray ray, ref BoundingBox boundingBox, out float? result)
         {
             if (Math.Abs(ray.Direction.X) < Single.Epsilon && 
@@ -129,12 +130,14 @@
 
             result = min;
         }
-        
+
+        public static void Intersect(ref BoundingSphere boundingSphere, ref Ray ray, out float? result) => Intersect(ref ray, ref boundingSphere, out result);
         public static void Intersect(ref Ray ray, ref BoundingSphere boundingSphere, out float? result)
         {
             throw new NotImplementedException();
         }
-        
+
+        public static void Intersect(ref Plane plane, ref Ray ray, out float? result) => Intersect(ref ray, ref plane, out result);
         public static void Intersect(ref Ray ray, ref Plane plane, out float? result)
         {
             var velocity = Vector3.Dot(ray.Direction, plane.Normal);
@@ -150,6 +153,7 @@
             }
         }
 
+        public static void Intersect(ref BoundingFrustum boundingFrustum, ref Ray ray, out float? result) => Intersect(ref ray, ref boundingFrustum, out result);
         public static void Intersect(ref Ray ray, ref BoundingFrustum boundingFrustum, out float? result)
         {
             throw new NotImplementedException();
@@ -320,7 +324,12 @@
 
         #region BoundingSphere
 
-        public static void Intersect(ref BoundingSphere boundingSphere1, ref BoundingSphere boundingSphere2, out ContainmentType result)
+        public static void Contains(ref BoundingSphere boundingSphere1, ref BoundingSphere boundingSphere2, out ContainmentType result)
+        {
+            throw new NotImplementedException();
+        }
+
+        public static void Intersect(ref BoundingSphere boundingSphere1, ref BoundingSphere boundingSphere2, out bool result)
         {
             throw new NotImplementedException();
         }
@@ -330,6 +339,11 @@
         #region BoundingFrustum
 
         public static void Contains(ref BoundingFrustum boundingFrustum1, ref BoundingFrustum boundingFrustum2, out ContainmentType result)
+        {
+            throw new NotImplementedException();
+        }
+
+        public static void Intersect(ref BoundingFrustum boundingFrustum1, ref BoundingFrustum boundingFrustum2, out bool result)
         {
             throw new NotImplementedException();
         }

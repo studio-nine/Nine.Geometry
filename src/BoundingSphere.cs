@@ -42,46 +42,28 @@
             this.Transform(ref transform, out result);
             return result;
         }
-
-        public void Contains(ref BoundingBox boundingBox, out ContainmentType result)
-        {
-            result = this.Contains(boundingBox);
-        }
-
+        
         public ContainmentType Contains(BoundingBox boundingBox)
         {
             ContainmentType result;
-            Intersection.Intersect(ref boundingBox, ref this, out result);
+            Intersection.Contains(ref boundingBox, ref this, out result);
             return result;
         }
-
-        public void Contains(ref BoundingFrustum boundingfrustum, out ContainmentType result)
-        {
-            result = this.Contains(boundingfrustum);
-        }
-
+        
         public ContainmentType Contains(BoundingFrustum boundingfrustum)
         {
-            return Intersection.Intersect(boundingfrustum, this);
+            ContainmentType result;
+            Intersection.Contains(ref boundingfrustum, ref this, out result);
+            return result;
         }
-
-        public void Contains(ref BoundingSphere boundingSphere, out ContainmentType result)
-        {
-            result = this.Contains(boundingSphere);
-        }
-
+        
         public ContainmentType Contains(BoundingSphere boundingSphere)
         {
             ContainmentType result;
-            Intersection.Intersect(ref this, ref boundingSphere, out result);
+            Intersection.Contains(ref this, ref boundingSphere, out result);
             return result;
         }
-
-        public void Contains(ref Vector3 vector, out ContainmentType result)
-        {
-            result = this.Contains(vector);
-        }
-
+        
         public ContainmentType Contains(Vector3 vector)
         {
             var radius2 = Radius * Radius;
@@ -100,59 +82,35 @@
                 return ContainmentType.Intersects;
             }
         }
-
-        public void Intersects(ref BoundingBox boundingBox, out bool result)
-        {
-            result = this.Intersects(boundingBox);
-        }
-
+        
         public bool Intersects(BoundingBox boundingBox)
         {
-            ContainmentType result;
-            Intersection.Intersect(ref boundingBox, ref this, out result);
-            return Geometry.DoesIntersect(result);
+            bool result;
+            Intersection.Intersect(ref this, ref boundingBox, out result);
+            return result;
         }
-
-        public void Intersects(ref BoundingFrustum boundingfrustum, out bool result)
-        {
-            result = this.Intersects(boundingfrustum);
-        }
-
+        
         public bool Intersects(BoundingFrustum boundingfrustum)
         {
-            ContainmentType result = Intersection.Intersect(boundingfrustum, this);
-            return Geometry.DoesIntersect(result);
+            bool result;
+            Intersection.Intersect(ref this, ref boundingfrustum, out result);
+            return result;
         }
-
-        public void Intersects(ref BoundingSphere boundingSphere, out bool result)
-        {
-            result = this.Intersects(boundingSphere);
-        }
-
+        
         public bool Intersects(BoundingSphere boundingSphere)
         {
-            ContainmentType result;
-            Intersection.Intersect(ref boundingSphere, ref this, out result);
-            return Geometry.DoesIntersect(result);
+            bool result;
+            Intersection.Intersect(ref this, ref boundingSphere, out result);
+            return result;
         }
-
-        public void Intersects(ref Plane plane, out bool result)
-        {
-            result = this.Intersects(plane);
-        }
-
+        
         public bool Intersects(Plane plane)
         {
-            ContainmentType result;
+            bool result;
             Intersection.Intersect(ref plane, ref this, out result);
-            return Geometry.DoesIntersect(result);
+            return result;
         }
-
-        public void Intersects(ref Ray ray, out float? result)
-        {
-            result = this.Intersects(ray);
-        }
-
+        
         public float? Intersects(Ray ray)
         {
             float? result;

@@ -42,9 +42,6 @@
             return result;
         }
         
-        /// <summary>
-        /// Checks whether the <see cref="Ray"/> intersects a <see cref="BoundingBox"/>.
-        /// </summary>
         public float? Intersects(BoundingBox boundingBox)
         {
             float? result;
@@ -54,12 +51,11 @@
         
         public float? Intersects(BoundingFrustum boundingfrustum)
         {
-            return Intersection.Intersect(boundingfrustum, this);
+            float? result;
+            Intersection.Intersect(ref this, ref boundingfrustum, out result);
+            return result;
         }
         
-        /// <summary>
-        /// Checks whether the <see cref="Ray"/> intersects a <see cref="BoundingSphere"/>.
-        /// </summary>
         public float? Intersects(BoundingSphere boundingSphere)
         {
             float? result;
@@ -67,9 +63,6 @@
             return result;
         }
         
-        /// <summary>
-        /// Checks whether the <see cref="Ray"/> intersects a <see cref="Plane"/>.
-        /// </summary>
         public float? Intersects(Plane plane)
         {
             float? result;
@@ -77,17 +70,11 @@
             return result;
         }
 
-        /// <summary>
-        /// Checks whether a <see cref="Ray"/> intersects a <see cref="Triangle"/>.
-        /// </summary>
         public void Intersects(ref Triangle triangle, out float? result)
         {
             this.Intersects(ref triangle.V1, ref triangle.V2, ref triangle.V3, out result);
         }
 
-        /// <summary>
-        /// Checks whether a <see cref="Ray"/> intersects a <see cref="Triangle"/>.
-        /// </summary>
         public bool Intersects(Triangle triangle)
         {
             float? result;
@@ -95,14 +82,6 @@
             return result.HasValue;
         }
 
-        /// <summary>
-        /// Tests to see if a geometry intersects with the specified ray.
-        /// If a bounding sphere is provided, the algorithm will perform bounding sphere
-        /// intersection test before per triangle test.
-        /// 
-        /// The geometry and bounding sphere will be transformed by the specified
-        /// transformation matrix before and intersection tests.
-        /// </summary>
         public float? Intersects(Vector3[] positions, ushort[] indices, Matrix4x4 world)
         {
             float? result = null;
@@ -129,22 +108,6 @@
             return result;
         }
 
-        /// <summary>
-        /// Checks whether a <see cref="Ray"/> intersects a <see cref="Triangle"/>.
-        /// </summary>
-        /// <remarks> 
-        /// This uses the algorithm
-        /// developed by Tomas Moller and Ben Trumbore, which was published in the
-        /// Journal of Graphics Tools, volume 2, "Fast, Minimum Storage Ray-Triangle
-        /// Intersection".
-        /// 
-        /// This method is implemented using the pass-by-reference versions. 
-        /// Using these overloads is generally not recommended, because they make the 
-        /// code less readable than the normal pass-by-value versions. This method can 
-        /// be called very frequently in a tight inner loop, however, so in this 
-        /// particular case the performance benefits from passing
-        /// everything by reference outweigh the loss of readability.
-        /// </remarks>
         public void Intersects(ref Vector3 vertex1, ref Vector3 vertex2, ref Vector3 vertex3, out float? result)
         {
             const float Epsilon = 1E-10F;
