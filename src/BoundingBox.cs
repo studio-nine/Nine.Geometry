@@ -17,9 +17,7 @@
         /// <summary> Gets or sets the maximum position. </summary>
         public Vector3 Max;
 
-        /// <summary>
-        /// Gets the center of the <see cref="BoundingBox"/>.
-        /// </summary>
+        /// <summary> Gets the center of the <see cref="BoundingBox"/>. </summary>
         public Vector3 Center
         {
             get
@@ -40,36 +38,33 @@
             this.Max = max;
         }
         
-        public void Contains(ref BoundingBox boundingBox, out ContainmentType result) => result = this.Contains(boundingBox);
-        
         public ContainmentType Contains(BoundingBox boundingBox)
         {
             ContainmentType result;
-            Intersection.Intersect(ref boundingBox, ref this, out result);
+            Intersection.Contains(ref this, ref boundingBox, out result);
             return result;
         }
-
-        public ContainmentType Contains(BoundingFrustum boundingfrustum) => Intersection.Intersect(boundingfrustum, this);
-
-        public void Contains(ref BoundingSphere boundingSphere, out ContainmentType result) => result = this.Contains(boundingSphere);
+        
+        public ContainmentType Contains(BoundingFrustum boundingfrustum)
+        {
+            ContainmentType result;
+            Intersection.Contains(ref this, ref boundingfrustum, out result);
+            return result;
+        }
 
         public ContainmentType Contains(BoundingSphere boundingSphere)
         {
             ContainmentType result;
-            Intersection.Intersect(ref this, ref boundingSphere, out result);
+            Intersection.Contains(ref this, ref boundingSphere, out result);
             return result;
         }
-
-        public void Contains(ref Plane plane, out ContainmentType result) => result = this.Contains(plane);
-
+        
         public ContainmentType Contains(Plane plane)
         {
             ContainmentType result;
-            Intersection.Intersect(ref plane, ref this, out result);
+            Intersection.Contains(ref this, ref plane, out result);
             return result;
         }
-
-        public void Contains(ref Vector3 vector, out ContainmentType result) => result = this.Contains(vector);
 
         public ContainmentType Contains(Vector3 vector)
         {
@@ -91,84 +86,35 @@
                 return ContainmentType.Contains;
             }
         }
-
-        /// <summary>
-        /// Tests whether the BoundingBox intersects with a line segment.
-        /// </summary>
-        public void Intersects(ref Vector3 v1, ref Vector3 v2, out float? result)
-        {
-            const float Epsilon = 1E-10F;
-
-            var dir = Vector3.Subtract(v2, v1);
-
-            float length = dir.Length();
-            if (length <= Epsilon)
-            {
-                result = null;
-                return;
-            }
-
-            float inv = 1.0f / length;
-            dir.X *= inv;
-            dir.Y *= inv;
-            dir.Z *= inv;
-
-            Ray ray = new Ray(v1, dir);
-            this.Intersects(ref ray, out result);
-            if (result.HasValue && result.Value > length)
-            {
-                result = null;
-            }
-        }
-
+        
         public float? Intersects(Vector3 v1, Vector3 v2)
         {
-            float? distance;
-            Intersects(ref v1, ref v2, out distance);
-            return distance;
+            float? result;
+            Intersection.Intersect(ref this, ref v1, ref v2, out result);
+            return result;
         }
-
-        public void Intersects(ref BoundingBox boundingBox, out bool result)
-        {
-            result = this.Intersects(boundingBox);
-        }
-
+        
         public bool Intersects(BoundingBox boundingBox)
         {
-            ContainmentType result;
+            bool result;
             Intersection.Intersect(ref this, ref boundingBox, out result);
-            return this.DoesIntersect(result);
+            return result;
         }
-
-        public void Intersects(ref BoundingSphere boundingSphere, out bool result)
-        {
-            result = this.Intersects(boundingSphere);
-        }
-
+        
         public bool Intersects(BoundingSphere boundingSphere)
         {
-            ContainmentType result;
+            bool result;
             Intersection.Intersect(ref this, ref boundingSphere, out result);
-            return this.DoesIntersect(result);
+            return result;
         }
-
-        public void Intersects(ref Plane plane, out bool result)
-        {
-            result = this.Intersects(plane);
-        }
-
+        
         public bool Intersects(Plane plane)
         {
-            ContainmentType result;
-            Intersection.Intersect(ref plane, ref this, out result);
-            return this.DoesIntersect(result);
+            bool result;
+            Intersection.Intersect(ref this, ref plane, out result);
+            return result;
         }
-
-        public void Intersects(ref Ray ray, out float? result)
-        {
-            result = this.Intersects(ray);
-        }
-
+        
         public float? Intersects(Ray ray)
         {
             float? result;
@@ -176,7 +122,6 @@
             return result;
         }
         
-
         /// <summary>
         /// Clips a box against a frustum and split the input triangle when they interests.
         /// </summary>
@@ -199,35 +144,17 @@
 
             var count = 0;
             frustum.GetCorners(ref FrustumCorners);
-            for (int i = 0; i < TriangleIndices.Length; i += 3)
+            for (int i = 0; i < Geometry.TriangleIndices.Length; i += 3)
             {
-                count += Triangle.Intersects(ref FrustumCorners[TriangleIndices[i]],
-                                             ref FrustumCorners[TriangleIndices[i + 1]],
-                                             ref FrustumCorners[TriangleIndices[i + 2]],
+                count += Triangle.Intersects(ref FrustumCorners[Geometry.TriangleIndices[i]],
+                                             ref FrustumCorners[Geometry.TriangleIndices[i + 1]],
+                                             ref FrustumCorners[Geometry.TriangleIndices[i + 2]],
                                              ref this, intersections, startIndex + count);
             }
 
             return startIndex + count;
         }
-
-        // TODO: Make this public (?)
-        internal static readonly ushort[] TriangleIndices = new ushort[]
-        {
-            0,1,2,  3,0,2,
-            4,6,5,  4,7,6,
-            0,3,4,  4,3,7,
-            5,1,0,  5,0,4,
-            5,6,2,  5,2,1,
-            3,2,6,  3,6,7,
-        };
-
-
-        private bool DoesIntersect(ContainmentType containmentType)
-        {
-            // TODO: Optimize
-            return containmentType == ContainmentType.Contains || containmentType == ContainmentType.Intersects;
-        }
-
+        
         /// <summary>
         /// Gets an array of points that make up the corners of the <see cref="BoundingBox"/>.
         /// </summary>

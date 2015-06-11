@@ -15,22 +15,22 @@
         public const int CornerCount = 8;
 
         /// <summary> Gets the near plane. </summary>
-        public Plane Near { get { return this.planes[0]; } }
+        public Plane Near => this.planes[0];
 
         /// <summary> Gets the far plane. </summary>
-        public Plane Far { get { return this.planes[1]; } }
+        public Plane Far => this.planes[1];
 
         /// <summary> Gets the left plane. </summary>
-        public Plane Left { get { return this.planes[2]; } }
+        public Plane Left => this.planes[2];
 
         /// <summary> Gets the right plane. </summary>
-        public Plane Right { get { return this.planes[3]; } }
+        public Plane Right => this.planes[3];
 
         /// <summary> Gets the top plane. </summary>
-        public Plane Top { get { return this.planes[4]; } }
+        public Plane Top => this.planes[4];
 
         /// <summary> Gets the bottom plane. </summary>
-        public Plane Bottom { get { return this.planes[5]; } }
+        public Plane Bottom => this.planes[5];
 
         /// <summary>
         /// Gets or sets the <see cref="Matrix4x4"/> that describes this <see cref="BoundingFrustum"/>.
@@ -87,16 +87,33 @@
             IntersectionPoint(ref this.planes[1], ref this.planes[2], ref this.planes[5], out this.corners[7]);
         }
 
-        public ContainmentType Contains(BoundingFrustum boundingfrustum) => Intersection.Intersect(this, boundingfrustum);
+        public ContainmentType Contains(BoundingFrustum boundingfrustum)
+        {
+            ContainmentType result;
+            Intersection.Contains(ref this, ref boundingfrustum, out result);
+            return result;
+        }
 
-        public void Contains(ref BoundingBox boundingBox, out ContainmentType result) => result = this.Contains(boundingBox); 
-        public ContainmentType Contains(BoundingBox boundingBox) => Intersection.Intersect(this, boundingBox);
+        public ContainmentType Contains(BoundingBox boundingBox)
+        {
+            ContainmentType result;
+            Intersection.Contains(ref this, ref boundingBox, out result);
+            return result;
+        }
 
-        public void Contains(ref BoundingSphere boundingSphere, out ContainmentType result) => result = this.Contains(boundingSphere);
-        public ContainmentType Contains(BoundingSphere boundingSphere) => Intersection.Intersect(this, boundingSphere);
+        public ContainmentType Contains(BoundingSphere boundingSphere)
+        {
+            ContainmentType result;
+            Intersection.Contains(ref this, ref boundingSphere, out result);
+            return result;
+        }
 
-        public void Contains(ref Plane plane, out ContainmentType result) => result = this.Contains(plane);
-        public ContainmentType Contains(Plane plane) => Intersection.Intersect(this, plane);
+        public ContainmentType Contains(Plane plane)
+        {
+            ContainmentType result;
+            Intersection.Contains(ref this, ref plane, out result);
+            return result;
+        }
 
         public ContainmentType Contains(Vector3 vector)
         {
@@ -112,22 +129,41 @@
             return ContainmentType.Contains;
         }
 
-        public bool Intersects(BoundingFrustum boundingfrustum) => this.DoesIntersect(Intersection.Intersect(this, boundingfrustum));
+        public bool Intersects(BoundingFrustum boundingfrustum)
+        {
+            bool result;
+            Intersection.Intersect(ref this, ref boundingfrustum, out result);
+            return result;
+        }
 
-        public void Intersects(ref BoundingBox boundingBox, out bool result) => result = this.Intersects(boundingBox);
-        public bool Intersects(BoundingBox boundingBox) => this.DoesIntersect(Intersection.Intersect(this, boundingBox));
+        public bool Intersects(BoundingBox boundingBox)
+        {
+            bool result;
+            Intersection.Intersect(ref this, ref boundingBox, out result);
+            return result;
+        }
 
-        public void Intersects(ref BoundingSphere boundingSphere, out bool result) => result = this.Intersects(boundingSphere);
-        public bool Intersects(BoundingSphere boundingSphere) => this.DoesIntersect(Intersection.Intersect(this, boundingSphere));
+        public bool Intersects(BoundingSphere boundingSphere)
+        {
+            bool result;
+            Intersection.Intersect(ref this, ref boundingSphere, out result);
+            return result;
+        }
 
-        public void Intersects(ref Plane plane, out bool result) => result = this.Intersects(plane);
-        public bool Intersects(Plane plane) => this.DoesIntersect(Intersection.Intersect(this, plane));
+        public bool Intersects(Plane plane)
+        {
+            bool result;
+            Intersection.Intersect(ref this, ref plane, out result);
+            return result;
+        }
 
-        public void Intersects(ref Ray ray, out float? result) => result = this.Intersects(ray);
-        public float? Intersects(Ray ray) => Intersection.Intersect(this, ray);
-
-        private bool DoesIntersect(ContainmentType containmentType) => containmentType == ContainmentType.Contains || containmentType == ContainmentType.Intersects;
-
+        public float? Intersects(Ray ray)
+        {
+            float? result;
+            Intersection.Intersect(ref ray, ref this, out result);
+            return result;
+        }
+        
         public void GetCorners(ref Vector3[] result) => result = this.GetCorners();
         public Vector3[] GetCorners() => corners;
 

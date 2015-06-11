@@ -110,7 +110,7 @@
         {
             ContainmentType result;
             Intersection.Intersect(ref boundingBox, ref this, out result);
-            return this.DoesIntersect(result);
+            return Geometry.DoesIntersect(result);
         }
 
         public void Intersects(ref BoundingFrustum boundingfrustum, out bool result)
@@ -121,7 +121,7 @@
         public bool Intersects(BoundingFrustum boundingfrustum)
         {
             ContainmentType result = Intersection.Intersect(boundingfrustum, this);
-            return this.DoesIntersect(result);
+            return Geometry.DoesIntersect(result);
         }
 
         public void Intersects(ref BoundingSphere boundingSphere, out bool result)
@@ -133,7 +133,7 @@
         {
             ContainmentType result;
             Intersection.Intersect(ref boundingSphere, ref this, out result);
-            return this.DoesIntersect(result);
+            return Geometry.DoesIntersect(result);
         }
 
         public void Intersects(ref Plane plane, out bool result)
@@ -145,7 +145,7 @@
         {
             ContainmentType result;
             Intersection.Intersect(ref plane, ref this, out result);
-            return this.DoesIntersect(result);
+            return Geometry.DoesIntersect(result);
         }
 
         public void Intersects(ref Ray ray, out float? result)
@@ -159,9 +159,7 @@
             Intersection.Intersect(ref ray, ref this, out result);
             return result;
         }
-
-        private bool DoesIntersect(ContainmentType containmentType) => containmentType == ContainmentType.Contains || containmentType == ContainmentType.Intersects;
-
+        
         /// <summary>
         /// Creates the smallest <see cref="BoundingSphere"/> that can contain a <see cref="BoundingBox"/>.
         /// </summary>
@@ -193,7 +191,6 @@
         /// </summary>
         public static BoundingSphere CreateFromFrustum(BoundingFrustum boundingFrustum)
         {
-            // TODO: Use indices?
             Vector3[] triangles;
             ushort[] indices;
 
@@ -215,17 +212,33 @@
         /// Creates the smallest <see cref="BoundingSphere"/> that contains the two <see cref="BoundingSphere"/>s.
         /// </summary>
         public static void CreateMerged(BoundingSphere original, BoundingSphere additional, out BoundingSphere result)
-        {
-            result = BoundingSphere.CreateMerged(original, additional);
-        }
+            => result = BoundingSphere.CreateMerged(original, additional);
 
         /// <summary>
         /// Creates the smallest <see cref="BoundingSphere"/> that contains the two <see cref="BoundingSphere"/>s.
         /// </summary>
         public static BoundingSphere CreateMerged(BoundingSphere original, BoundingSphere additional)
         {
-            // TODO: BoundingSphere CreateMerged
-            throw new NotImplementedException();
+            var difference = Vector3.Subtract(additional.Center, original.Center);
+            var distance = difference.Length();
+            if (distance <= (original.Radius + additional.Radius))
+            {
+                if (distance <= (original.Radius - additional.Radius))
+                    return original;
+                
+                if (distance <= additional.Radius - original.Radius)
+                    return additional;
+            }
+
+            var radius1 = Math.Max(original.Radius - distance, additional.Radius);
+            var radius2 = Math.Max(original.Radius + distance, additional.Radius);
+
+            difference += (((radius1 - radius2) / (2 * difference.Length())) * difference);
+
+            var result = new BoundingSphere();
+            result.Center = original.Center + difference;
+            result.Radius = (radius1 + radius2) / 2;
+            return result;
         }
 
         public static bool operator ==(BoundingSphere left, BoundingSphere right) => (left.Center == right.Center) && (left.Radius == right.Radius);

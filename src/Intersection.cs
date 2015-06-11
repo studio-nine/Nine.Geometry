@@ -41,10 +41,10 @@
     /// </summary>
     public static class Intersection
     {
+        #region Ray
+
         public static void Intersect(ref Ray ray, ref BoundingBox boundingBox, out float? result)
         {
-            // TODO: Beak this down into two methods (?)
-
             if (Math.Abs(ray.Direction.X) < Single.Epsilon && 
                 (ray.Position.X < boundingBox.Min.X || ray.Position.X > boundingBox.Max.X))
             {
@@ -138,7 +138,7 @@
         public static void Intersect(ref Ray ray, ref Plane plane, out float? result)
         {
             var velocity = Vector3.Dot(ray.Direction, plane.Normal);
-            if (Math.Abs(velocity) < Single.Epsilon)
+            if (Math.Abs(velocity) < float.Epsilon)
             {
                 result = null;
             }
@@ -149,25 +149,148 @@
                 result = -distanceAlongNormal / velocity;
             }
         }
-        
-        public static void Intersect(ref BoundingBox boundingBox, ref BoundingSphere boundingFrustum, out ContainmentType result)
+
+        public static void Intersect(ref Ray ray, ref BoundingFrustum boundingFrustum, out float? result)
         {
             throw new NotImplementedException();
         }
-        
-        public static void Intersect(ref Plane plane, ref BoundingBox boundingBox, out ContainmentType result)
+
+        #endregion
+
+        #region BoundingBox & BoundingSphere
+
+        public static void Contains(ref BoundingSphere boundingSphere, ref BoundingBox boundingBox, out ContainmentType result) => Contains(ref boundingBox, ref boundingSphere, out result);
+        public static void Contains(ref BoundingBox boundingBox, ref BoundingSphere boundingSphere, out ContainmentType result)
+        {
+            throw new NotImplementedException();
+        }
+
+        public static void Intersect(ref BoundingSphere boundingSphere, ref BoundingBox boundingBox, out bool result) => Intersect(ref boundingBox, ref boundingSphere, out result);
+        public static void Intersect(ref BoundingBox boundingBox, ref BoundingSphere boundingSphere, out bool result)
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
+
+        #region BoundingBox & Plane
+
+        public static void Contains(ref BoundingBox boundingBox, ref Plane plane, out ContainmentType result) => Contains(ref plane, ref boundingBox, out result);
+        public static void Contains(ref Plane plane, ref BoundingBox boundingBox, out ContainmentType result)
         {
             // http://zach.in.tu-clausthal.de/teaching/cg_literatur/lighthouse3d_view_frustum_culling/index.html
             throw new NotImplementedException();
         }
-        
-        public static void Intersect(ref Plane plane, ref BoundingSphere boundingSphere, out ContainmentType result)
+ 
+        public static void Intersect(ref BoundingBox boundingBox, ref Plane plane, out bool result) => Intersect(ref plane, ref boundingBox, out result);
+        public static void Intersect(ref Plane plane, ref BoundingBox boundingBox, out bool result)
         {
             throw new NotImplementedException();
         }
 
+        #endregion
 
-        public static void Intersect(ref BoundingBox boundingBox1, ref BoundingBox boundingBox2, out ContainmentType result)
+        #region Plane & BoundingSphere
+
+        public static void Contains(ref BoundingSphere boundingSphere, ref Plane plane, out ContainmentType result) => Contains(ref plane, ref boundingSphere, out result);
+        public static void Contains(ref Plane plane, ref BoundingSphere boundingSphere, out ContainmentType result)
+        {
+            throw new NotImplementedException();
+        }
+
+        public static void Intersect(ref BoundingSphere boundingSphere, ref Plane plane, out bool result) => Intersect(ref plane, ref boundingSphere, out result);
+        public static void Intersect(ref Plane plane, ref BoundingSphere boundingSphere, out bool result)
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
+
+        #region BoundingFrustum & BoundingBox
+
+        public static void Contains(ref BoundingBox boundingBox, ref BoundingFrustum boundingFrustum, out ContainmentType result) => Contains(ref boundingFrustum, ref boundingBox, out result);
+        public static void Contains(ref BoundingFrustum boundingFrustum, ref BoundingBox boundingBox, out ContainmentType result)
+        {
+            throw new NotImplementedException();
+        }
+
+        public static void Intersect(ref BoundingBox boundingBox, ref BoundingFrustum boundingFrustum, out bool result) => Intersect(ref boundingFrustum, ref boundingBox, out result);
+        public static void Intersect(ref BoundingFrustum boundingFrustum, ref BoundingBox boundingBox, out bool result)
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
+
+        #region BoundingFrustum & BoundingSphere
+
+        public static void Contains(ref BoundingSphere boundingSphere, ref BoundingFrustum boundingFrustum, out ContainmentType result) => Contains(ref boundingFrustum, ref boundingSphere, out result);
+        public static void Contains(ref BoundingFrustum boundingFrustum, ref BoundingSphere boundingSphere, out ContainmentType result)
+        {
+            throw new NotImplementedException();
+        }
+
+        public static void Intersect(ref BoundingSphere boundingSphere, ref BoundingFrustum boundingFrustum, out bool result) => Intersect(ref boundingFrustum, ref boundingSphere, out result);
+        public static void Intersect(ref BoundingFrustum boundingFrustum, ref BoundingSphere boundingSphere, out bool result)
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
+
+        #region BoundingFrustum & Plane
+
+        public static void Contains(ref Plane plane, ref BoundingFrustum boundingFrustum, out ContainmentType result) => Contains(ref boundingFrustum, ref plane, out result);
+        public static void Contains(ref BoundingFrustum boundingFrustum, ref Plane plane, out ContainmentType result)
+        {
+            throw new NotImplementedException();
+        }
+
+        public static void Intersect(ref Plane plane, ref BoundingFrustum boundingFrustum, out bool result) => Intersect(ref boundingFrustum, ref plane, out result);
+        public static void Intersect(ref BoundingFrustum boundingFrustum, ref Plane plane, out bool result)
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
+
+        #region LineSegment & BoundingBox
+
+        public static void Intersect(ref BoundingBox boundingBox, ref LineSegment lineSegment, out float? result)
+        {
+            Vector3 v1 = new Vector3(lineSegment.Start, 0), v2 = new Vector3(lineSegment.End, 0);
+            Intersect(ref boundingBox, ref v1, ref v2, out result);
+        }
+
+        public static void Intersect(ref BoundingBox boundingBox, ref Vector3 v1, ref Vector3 v2, out float? result)
+        {
+            var dir = Vector3.Subtract(v2, v1);
+
+            var length = dir.Length();
+            if (length <= float.Epsilon)
+            {
+                result = null;
+            }
+            else
+            {
+                var inv = 1.0f / length;
+                dir.X *= inv;
+                dir.Y *= inv;
+                dir.Z *= inv;
+
+                var ray = new Ray(v1, dir);
+                Intersect(ref ray, ref boundingBox, out result);
+
+                if (result.HasValue && result.Value > length)
+                    result = null;
+            }
+        }
+
+        #endregion
+
+        #region BoundingBox
+
+        public static void Contains(ref BoundingBox boundingBox1, ref BoundingBox boundingBox2, out ContainmentType result)
         {
             if (boundingBox2.Max.X < boundingBox1.Min.X || boundingBox2.Min.X > boundingBox1.Max.X ||
                 boundingBox2.Max.Y < boundingBox1.Min.Y || boundingBox2.Min.Y > boundingBox1.Max.Y ||
@@ -187,36 +310,30 @@
                 result = ContainmentType.Intersects;
             }
         }
-        
+
+        public static void Intersect(ref BoundingBox boundingBox1, ref BoundingBox boundingBox2, out bool result)
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
+
+        #region BoundingSphere
+
         public static void Intersect(ref BoundingSphere boundingSphere1, ref BoundingSphere boundingSphere2, out ContainmentType result)
         {
             throw new NotImplementedException();
         }
 
+        #endregion
 
-        public static ContainmentType Intersect(BoundingFrustum boundingFrustum1, BoundingFrustum boundingFrustum2)
+        #region BoundingFrustum
+
+        public static void Contains(ref BoundingFrustum boundingFrustum1, ref BoundingFrustum boundingFrustum2, out ContainmentType result)
         {
             throw new NotImplementedException();
         }
 
-        public static ContainmentType Intersect(BoundingFrustum boundingFrustum, BoundingBox boundingBox)
-        {
-            throw new NotImplementedException();
-        }
-
-        public static ContainmentType Intersect(BoundingFrustum boundingFrustum, BoundingSphere boundingSphere)
-        {
-            throw new NotImplementedException();
-        }
-
-        public static ContainmentType Intersect(BoundingFrustum boundingFrustum, Plane plane)
-        {
-            throw new NotImplementedException();
-        }
-
-        public static float? Intersect(BoundingFrustum boundingFrustum, Ray ray)
-        {
-            throw new NotImplementedException();
-        }
+        #endregion
     }
 }

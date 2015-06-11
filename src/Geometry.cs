@@ -4,13 +4,33 @@
     using System.Collections.Generic;
     using System.Numerics;
 
-    // TODO: Optimize all Lists (?)
+    // TODO: Optimize all Lists / or remove
 
     /// <summary>
     /// Creates Geometry Shapes.
     /// </summary>
     public static class Geometry
     {
+        /// <summary> Triangle Indices used by BoundingBox and BoundingFrustum. </summary>
+        internal static readonly ushort[] TriangleIndices = new ushort[]
+        {
+            0,1,2,  3,0,2,
+            4,6,5,  4,7,6,
+            0,3,4,  4,3,7,
+            5,1,0,  5,0,4,
+            5,6,2,  5,2,1,
+            3,2,6,  3,6,7,
+        };
+
+        internal static bool DoesIntersect(ContainmentType containmentType)
+        {
+            return containmentType == ContainmentType.Contains || containmentType == ContainmentType.Intersects;
+        }
+
+
+        public static Vector3 Up => Vector3.UnitY;
+        public static Vector3 Down => -Vector3.UnitY;
+
         /// <remarks>
         /// Primitive Type: Line List
         /// </remarks>
@@ -31,7 +51,7 @@
         public static void CreateSolidBox(this BoundingBox boundingBox, out Vector3[] points, out ushort[] indices)
         {
             points = boundingBox.GetCorners();
-            indices = BoundingBox.TriangleIndices;
+            indices = TriangleIndices;
         }
 
         /// <remarks>
@@ -47,11 +67,11 @@
             int verticalSegments = tessellation;
             int horizontalSegments = tessellation;
 
-            var vertices = new List<Vector3>();
+            var vertices = new List<Vector3>( (verticalSegments - 1) * horizontalSegments + 2 );
             var indices2 = new List<ushort>();
 
             // Start with a single vertex at the bottom of the sphere.
-            vertices.Add(-Vector3.UnitY * boundingSphere.Radius + boundingSphere.Center);
+            vertices.Add(Down * boundingSphere.Radius + boundingSphere.Center);
 
             // Create rings of vertices at progressively higher latitudes.
             for (int i = 0; i < verticalSegments - 1; ++i)
@@ -77,7 +97,7 @@
             }
 
             // Finish with a single vertex at the top of the sphere.
-            vertices.Add(Vector3.UnitY * boundingSphere.Radius + boundingSphere.Center);
+            vertices.Add(Up * boundingSphere.Radius + boundingSphere.Center);
 
             // Create a fan connecting the bottom vertex to the bottom latitude ring.
             for (int i = 0; i < horizontalSegments; ++i)
@@ -133,7 +153,7 @@
             int horizontalSegments = tessellation * 2;
 
             // Start with a single vertex at the bottom of the sphere.
-            vertices.Add(-Vector3.UnitY * boundingSphere.Radius + boundingSphere.Center);
+            vertices.Add(Down * boundingSphere.Radius + boundingSphere.Center);
 
             // Create rings of vertices at progressively higher latitudes.
             for (int i = 0; i < verticalSegments - 1; ++i)
@@ -159,7 +179,7 @@
             }
 
             // Finish with a single vertex at the top of the sphere.
-            vertices.Add(Vector3.UnitY * boundingSphere.Radius + boundingSphere.Center);
+            vertices.Add(Up * boundingSphere.Radius + boundingSphere.Center);
 
             // Create a fan connecting the bottom vertex to the bottom latitude ring.
             for (int i = 0; i < horizontalSegments; ++i)
@@ -219,7 +239,7 @@
         public static void CreateSolidFrustum(this BoundingFrustum boundingFrustum, out Vector3[] points, out ushort[] indices)
         {
             points = boundingFrustum.GetCorners();
-            indices = BoundingBox.TriangleIndices;
+            indices = TriangleIndices;
         }
 
         /// <remarks>
@@ -234,7 +254,7 @@
             var vertices = new List<Vector3>();
             var indices2 = new List<ushort>();
 
-            vertices.Add(position + Vector3.UnitY * height);
+            vertices.Add(position + Up * height);
 
             for (int i = 0; i < tessellation; ++i)
             {
@@ -270,7 +290,7 @@
             var vertices = new List<Vector3>();
             var indices2 = new List<ushort>();
 
-            vertices.Add(position + Vector3.UnitY * height);
+            vertices.Add(position + Up * height);
 
             for (int i = 0; i < tessellation; ++i)
             {
@@ -308,7 +328,7 @@
             var vertices = new List<Vector3>();
             var indices2 = new List<ushort>();
 
-            vertices.Add(position + Vector3.UnitY * height);
+            vertices.Add(position + Up * height);
             vertices.Add(position);
 
             for (int i = 0; i < tessellation; ++i)
@@ -320,7 +340,7 @@
 
                 var normal = new Vector3(dx, 0, dz);
 
-                vertices.Add(position + normal * radius + Vector3.UnitY * height);
+                vertices.Add(position + normal * radius + Up * height);
                 vertices.Add(position + normal * radius);
 
                 indices2.Add((ushort)(2 + i * 2));
@@ -349,7 +369,7 @@
             var vertices = new List<Vector3>();
             var indices2 = new List<ushort>();
 
-            vertices.Add(position + Vector3.UnitY * height);
+            vertices.Add(position + Up * height);
             vertices.Add(position);
 
             for (int i = 0; i < tessellation; ++i)
@@ -361,7 +381,7 @@
 
                 var normal = new Vector3(dx, 0, dz);
 
-                vertices.Add(position + normal * radius + Vector3.UnitY * height);
+                vertices.Add(position + normal * radius + Up * height);
                 vertices.Add(position + normal * radius);
                 
                 indices2.Add((ushort)(2 + i * 2));
