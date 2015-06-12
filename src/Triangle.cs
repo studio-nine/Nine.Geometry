@@ -373,6 +373,6 @@
         public override int GetHashCode() => this.V1.GetHashCode() ^ this.V2.GetHashCode() ^ this.V3.GetHashCode();
 
         /// <inheritdoc />
-        public override string ToString() => this.V1.ToString() + ", " + this.V2.ToString() + ", " + this.V3.ToString();
+        public override string ToString() => $"<{this.V1}, {this.V2}, {this.V3}>";
     }
 }

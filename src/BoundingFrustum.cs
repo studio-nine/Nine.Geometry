@@ -193,7 +193,7 @@
         
         /// <inheritdoc />
         public override string ToString() => 
-            string.Format("Near: {0}, Far: {1}, Left: {2}, Right: {3}, Top: {4}, Bottom: {5}",
+            string.Format("<Near: {0}, Far: {1}, Left: {2}, Right: {3}, Top: {4}, Bottom: {5}>",
                 this.planes[0], this.planes[1], this.planes[2],
                 this.planes[3], this.planes[4], this.planes[5]);
 

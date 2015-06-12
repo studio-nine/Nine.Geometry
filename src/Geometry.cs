@@ -18,13 +18,7 @@
             5,6,2,  5,2,1,
             3,2,6,  3,6,7,
         };
-
-        internal static bool DoesIntersect(ContainmentType containmentType)
-        {
-            return containmentType == ContainmentType.Contains || containmentType == ContainmentType.Intersects;
-        }
-
-
+        
         public static Vector3 Up => Vector3.UnitY;
         public static Vector3 Down => -Vector3.UnitY;
 

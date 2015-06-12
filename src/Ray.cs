@@ -182,6 +182,6 @@
         public override int GetHashCode() => this.Direction.GetHashCode() ^ this.Position.GetHashCode();
         
         /// <inheritdoc />
-        public override string ToString() => "Position: " + this.Position + ", Direction: " + this.Direction;
+        public override string ToString() => $"<Position: {this.Position}, Direction: {this.Direction}>";
     }
 }

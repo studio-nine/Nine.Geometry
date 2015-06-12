@@ -327,6 +327,6 @@
         public override int GetHashCode() => this.Min.GetHashCode() ^ this.Max.GetHashCode();
         
         /// <inheritdoc />
-        public override string ToString() => "Min: " + this.Min + ", Max: " + this.Max;
+        public override string ToString() => $"<Min: {this.Min}, Max: {this.Max}>";
     }
 }

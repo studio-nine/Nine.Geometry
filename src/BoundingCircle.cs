@@ -29,22 +29,12 @@
         {
             throw new NotImplementedException();
         }
-
-        public void Contains(ref BoundingCircle boundingCircle, out ContainmentType result)
-        {
-            result = this.Contains(boundingCircle);
-        }
-
+        
         public ContainmentType Contains(BoundingCircle boundingCircle)
         {
             throw new NotImplementedException();
         }
-
-        public void Contains(ref BoundingRectangle boundingRectangle, out ContainmentType result)
-        {
-            result = this.Contains(boundingRectangle);
-        }
-
+        
         public ContainmentType Contains(BoundingRectangle boundingRectangle)
         {
             throw new NotImplementedException();
@@ -54,22 +44,12 @@
         {
             throw new NotImplementedException();
         }
-
-        public void Intersects(ref BoundingCircle boundingCircle, out bool result)
-        {
-            result = this.Intersects(boundingCircle);
-        }
         
         public bool Intersects(BoundingRectangle boundingRectangle)
         {
             throw new NotImplementedException();
         }
-
-        public void Intersects(ref BoundingRectangle boundingRectangle, out bool result)
-        {
-            result = this.Intersects(boundingRectangle);
-        }
-
+        
         /// <summary>
         /// Creates the smallest <see cref="BoundingRectangle"/> that will contain a group of points.
         /// </summary>
@@ -106,6 +86,6 @@
         public override int GetHashCode() => this.Center.GetHashCode() ^ this.Radius.GetHashCode();
         
         /// <inheritdoc />
-        public override string ToString() => "Center: " + this.Center + ", Radius: " + this.Radius;
+        public override string ToString() => "<Center: {this.Center}, Radius: {this.Radius}>";
     }
 }

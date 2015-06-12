@@ -181,39 +181,19 @@
             return result;
         }
 
-        public static bool operator ==(BoundingRectangle value1, BoundingRectangle value2)
-        {
-            return (value1.X == value2.X) && (value1.Y == value2.Y) &&
-                   (value1.Width == value2.Width) && (value1.Height == value2.Height);
-        }
+        public static bool operator ==(BoundingRectangle value1, BoundingRectangle value2) => (value1.X == value2.X) && (value1.Y == value2.Y) && (value1.Width == value2.Width) && (value1.Height == value2.Height);
+        public static bool operator !=(BoundingRectangle value1, BoundingRectangle value2) => (value1.X != value2.X) && (value1.Y != value2.Y) && (value1.Width != value2.Width) && (value1.Height != value2.Height);
 
-        public static bool operator !=(BoundingRectangle value1, BoundingRectangle value2)
-        {
-            return !(value1 == value2);
-        }
+        /// <inheritdoc />
+        public bool Equals(BoundingRectangle other) => (this.X == other.X) && (this.Y == other.Y) && (this.Width == other.Width) && (this.Height == other.Height);
 
-        public bool Equals(BoundingRectangle other)
-        {
-            return X == other.X && Y == other.Y && Width == other.Width && Height == other.Height;
-        }
+        /// <inheritdoc />
+        public override bool Equals(object obj) => (obj is BoundingRectangle) && this.Equals((BoundingRectangle)obj);
 
-        public override bool Equals(object obj)
-        {
-            if (obj is BoundingRectangle)
-                return Equals((BoundingRectangle)obj);
+        /// <inheritdoc />
+        public override int GetHashCode() => X.GetHashCode() ^ Y.GetHashCode() ^ Width.GetHashCode() ^ Height.GetHashCode();
 
-            return false;
-        }
-
-        public override int GetHashCode()
-        {
-            return X.GetHashCode() ^ Y.GetHashCode() ^ Width.GetHashCode() ^ Height.GetHashCode();
-        }
-
-        public override string ToString()
-        {
-            return X.ToString() + ", " + Y.ToString() + ", " +
-                   Width.ToString() + ", " + Height.ToString();
-        }
+        /// <inheritdoc />
+        public override string ToString() => $"<{this.X}, {this.Y}, {this.Width}, {this.Height}>";
     }
 }
