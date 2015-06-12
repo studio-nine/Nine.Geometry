@@ -111,10 +111,10 @@
             return result;
         }
 
-        public ContainmentType Contains(Plane plane)
+        public PlaneIntersectionType Contains(Plane plane)
         {
             var me = this;
-            ContainmentType result;
+            PlaneIntersectionType result;
             Intersection.Contains(ref me, ref plane, out result);
             return result;
         }
@@ -172,7 +172,10 @@
             Intersection.Intersect(ref ray, ref me, out result);
             return result;
         }
-        
+
+        public void GetPlanes(ref Plane[] result) => result = this.GetPlanes();
+        public Plane[] GetPlanes() => this.planes;
+
         public void GetCorners(ref Vector3[] result) => result = this.GetCorners();
         public Vector3[] GetCorners() => corners;
 

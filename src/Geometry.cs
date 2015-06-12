@@ -1,11 +1,8 @@
 ﻿namespace Nine.Geometry
 {
     using System;
-    using System.Collections.Generic;
     using System.Numerics;
-
-    // TODO: Optimize all Lists / or remove
-
+    
     /// <summary>
     /// Creates Geometry Shapes.
     /// </summary>
@@ -67,11 +64,13 @@
             int verticalSegments = tessellation;
             int horizontalSegments = tessellation;
 
-            var vertices = new List<Vector3>( (verticalSegments - 1) * horizontalSegments + 2 );
-            var indices2 = new List<ushort>();
+            points = new Vector3[(verticalSegments - 1) * horizontalSegments + 2];
+            indices = new ushort[(horizontalSegments * 4) + ( ((verticalSegments - 2) * horizontalSegments) * 6 )];
+
+            int pointsCurrentIndex = 0, indicesCurrentIndex = 0;
 
             // Start with a single vertex at the bottom of the sphere.
-            vertices.Add(Down * boundingSphere.Radius + boundingSphere.Center);
+            points[pointsCurrentIndex++] = Down * boundingSphere.Radius + boundingSphere.Center;
 
             // Create rings of vertices at progressively higher latitudes.
             for (int i = 0; i < verticalSegments - 1; ++i)
@@ -91,19 +90,19 @@
 
                     Vector3 normal = new Vector3(dx, dy, dz);
 
-                    vertices.Add(normal * boundingSphere.Radius + boundingSphere.Center);
+                    points[pointsCurrentIndex++] = normal * boundingSphere.Radius + boundingSphere.Center;
                     currentVertex++;
                 }
             }
 
             // Finish with a single vertex at the top of the sphere.
-            vertices.Add(Up * boundingSphere.Radius + boundingSphere.Center);
+            points[pointsCurrentIndex++] = Up * boundingSphere.Radius + boundingSphere.Center;
 
             // Create a fan connecting the bottom vertex to the bottom latitude ring.
             for (int i = 0; i < horizontalSegments; ++i)
             {
-                indices2.Add(0);
-                indices2.Add((ushort)(1 + (i + 1) % horizontalSegments));
+                indices[indicesCurrentIndex++] = 0;
+                indices[indicesCurrentIndex++] = (ushort)(1 + (i + 1) % horizontalSegments);
             }
 
             // Fill the sphere body with triangles joining each pair of latitude rings.
@@ -114,26 +113,23 @@
                     int nextI = i + 1;
                     int nextJ = (j + 1) % horizontalSegments;
 
-                    indices2.Add((ushort)(1 + i * horizontalSegments + j));
-                    indices2.Add((ushort)(1 + i * horizontalSegments + nextJ));
+                    indices[indicesCurrentIndex++] = (ushort)(1 + i * horizontalSegments + j);
+                    indices[indicesCurrentIndex++] = (ushort)(1 + i * horizontalSegments + nextJ);
 
-                    indices2.Add((ushort)(1 + i * horizontalSegments + nextJ));
-                    indices2.Add((ushort)(1 + nextI * horizontalSegments + nextJ));
+                    indices[indicesCurrentIndex++] = (ushort)(1 + i * horizontalSegments + nextJ);
+                    indices[indicesCurrentIndex++] = (ushort)(1 + nextI * horizontalSegments + nextJ);
 
-                    indices2.Add((ushort)(1 + nextI * horizontalSegments + j));
-                    indices2.Add((ushort)(1 + nextI * horizontalSegments + j));
+                    indices[indicesCurrentIndex++] = (ushort)(1 + nextI * horizontalSegments + j);
+                    indices[indicesCurrentIndex++] = (ushort)(1 + nextI * horizontalSegments + j);
                 }
             }
 
             // Create a fan connecting the top vertex to the top latitude ring.
             for (int i = 0; i < horizontalSegments; ++i)
             {
-                indices2.Add((ushort)(currentVertex - 1));
-                indices2.Add((ushort)(currentVertex - 2 - (i + 1) % horizontalSegments));
+                indices[indicesCurrentIndex++] = (ushort)(currentVertex - 1);
+                indices[indicesCurrentIndex++] = (ushort)(currentVertex - 2 - (i + 1) % horizontalSegments);
             }
-
-            points = vertices.ToArray();
-            indices = indices2.ToArray();
         }
 
         /// <remarks>
@@ -144,16 +140,18 @@
         {
             if (tessellation < 3)
                 throw new ArgumentOutOfRangeException(nameof(tessellation));
-
-            var vertices = new List<Vector3>();
-            var indices2 = new List<ushort>();
-
+            
             int currentVertex = 2;
             int verticalSegments = tessellation;
             int horizontalSegments = tessellation * 2;
 
+            points = new Vector3[(verticalSegments - 1) * horizontalSegments + 2];
+            indices = new ushort[(horizontalSegments * 6) + (((verticalSegments - 2) * horizontalSegments) * 6)];
+
+            int pointsCurrentIndex = 0, indicesCurrentIndex = 0;
+
             // Start with a single vertex at the bottom of the sphere.
-            vertices.Add(Down * boundingSphere.Radius + boundingSphere.Center);
+            points[pointsCurrentIndex++] = Down * boundingSphere.Radius + boundingSphere.Center;
 
             // Create rings of vertices at progressively higher latitudes.
             for (int i = 0; i < verticalSegments - 1; ++i)
@@ -173,20 +171,20 @@
 
                     Vector3 normal = new Vector3(dx, dy, dz);
 
-                    vertices.Add(normal * boundingSphere.Radius + boundingSphere.Center);
+                    points[pointsCurrentIndex++] = normal * boundingSphere.Radius + boundingSphere.Center;
                     currentVertex++;
                 }
             }
 
             // Finish with a single vertex at the top of the sphere.
-            vertices.Add(Up * boundingSphere.Radius + boundingSphere.Center);
+            points[pointsCurrentIndex++] = Up * boundingSphere.Radius + boundingSphere.Center;
 
             // Create a fan connecting the bottom vertex to the bottom latitude ring.
             for (int i = 0; i < horizontalSegments; ++i)
             {
-                indices2.Add(0);
-                indices2.Add((ushort)(1 + (i + 1) % horizontalSegments));
-                indices2.Add((ushort)(1 + i));
+                indices[indicesCurrentIndex++] = 0;
+                indices[indicesCurrentIndex++] = (ushort)(1 + (i + 1) % horizontalSegments);
+                indices[indicesCurrentIndex++] = (ushort)(1 + i);
             }
 
             // Fill the sphere body with triangles joining each pair of latitude rings.
@@ -197,26 +195,23 @@
                     int nextI = i + 1;
                     int nextJ = (j + 1) % horizontalSegments;
 
-                    indices2.Add((ushort)(1 + i * horizontalSegments + j));
-                    indices2.Add((ushort)(1 + i * horizontalSegments + nextJ));
-                    indices2.Add((ushort)(1 + nextI * horizontalSegments + j));
+                    indices[indicesCurrentIndex++] = (ushort)(1 + i * horizontalSegments + j);
+                    indices[indicesCurrentIndex++] = (ushort)(1 + i * horizontalSegments + nextJ);
+                    indices[indicesCurrentIndex++] = (ushort)(1 + nextI * horizontalSegments + j);
 
-                    indices2.Add((ushort)(1 + i * horizontalSegments + nextJ));
-                    indices2.Add((ushort)(1 + nextI * horizontalSegments + nextJ));
-                    indices2.Add((ushort)(1 + nextI * horizontalSegments + j));
+                    indices[indicesCurrentIndex++] = (ushort)(1 + i * horizontalSegments + nextJ);
+                    indices[indicesCurrentIndex++] = (ushort)(1 + nextI * horizontalSegments + nextJ);
+                    indices[indicesCurrentIndex++] = (ushort)(1 + nextI * horizontalSegments + j);
                 }
             }
 
             // Create a fan connecting the top vertex to the top latitude ring.
             for (int i = 0; i < horizontalSegments; ++i)
             {
-                indices2.Add((ushort)(currentVertex - 1));
-                indices2.Add((ushort)(currentVertex - 2 - (i + 1) % horizontalSegments));
-                indices2.Add((ushort)(currentVertex - 2 - i));
+                indices[indicesCurrentIndex++] = (ushort)(currentVertex - 1);
+                indices[indicesCurrentIndex++] = (ushort)(currentVertex - 2 - (i + 1) % horizontalSegments);
+                indices[indicesCurrentIndex++] = (ushort)(currentVertex - 2 - i);
             }
-
-            points = vertices.ToArray();
-            indices = indices2.ToArray();
         }
 
         /// <remarks>
@@ -250,11 +245,13 @@
         {
             if (tessellation < 3)
                 throw new ArgumentOutOfRangeException(nameof(tessellation));
+            
+            points = new Vector3[tessellation + 1];
+            indices = new ushort[tessellation * 4];
 
-            var vertices = new List<Vector3>();
-            var indices2 = new List<ushort>();
+            int pointsCurrentIndex = 0, indicesCurrentIndex = 0;
 
-            vertices.Add(position + Up * height);
+            points[pointsCurrentIndex++] = position + Up * height;
 
             for (int i = 0; i < tessellation; ++i)
             {
@@ -265,17 +262,14 @@
 
                 Vector3 normal = new Vector3(dx, 0, dz);
 
-                vertices.Add(position + normal * radius);
+                points[pointsCurrentIndex++] = position + normal * radius;
 
-                indices2.Add(0);
-                indices2.Add((ushort)(1 + i));
+                indices[indicesCurrentIndex++] = 0;
+                indices[indicesCurrentIndex++] = (ushort)(1 + i);
 
-                indices2.Add((ushort)(1 + i));
-                indices2.Add((ushort)(1 + (i + 1) % tessellation));
+                indices[indicesCurrentIndex++] = (ushort)(1 + i);
+                indices[indicesCurrentIndex++] = (ushort)(1 + (i + 1) % tessellation);
             }
-
-            points = vertices.ToArray();
-            indices = indices2.ToArray();
         }
 
         /// <remarks>
@@ -286,11 +280,13 @@
         {
             if (tessellation < 3)
                 throw new ArgumentOutOfRangeException(nameof(tessellation));
+            
+            points = new Vector3[tessellation + 1];
+            indices = new ushort[tessellation * 6];
 
-            var vertices = new List<Vector3>();
-            var indices2 = new List<ushort>();
+            int pointsCurrentIndex = 0, indicesCurrentIndex = 0;
 
-            vertices.Add(position + Up * height);
+            points[pointsCurrentIndex++] = position + Up * height;
 
             for (int i = 0; i < tessellation; ++i)
             {
@@ -301,19 +297,16 @@
 
                 Vector3 normal = new Vector3(dx, 0, dz);
 
-                vertices.Add(position + normal * radius);
+                points[pointsCurrentIndex++] = position + normal * radius;
 
-                indices2.Add(0);
-                indices2.Add((ushort)(1 + i));
-                indices2.Add((ushort)(2 + (i + 1) % tessellation));
+                indices[indicesCurrentIndex++] = 0;
+                indices[indicesCurrentIndex++] = (ushort)(1 + i);
+                indices[indicesCurrentIndex++] = (ushort)(2 + (i + 1) % tessellation);
 
-                indices2.Add((ushort)(1 + i));
-                indices2.Add((ushort)(1 + (i + 1) % tessellation));
-                indices2.Add((ushort)(2 + i));
+                indices[indicesCurrentIndex++] = (ushort)(1 + i);
+                indices[indicesCurrentIndex++] = (ushort)(1 + (i + 1) % tessellation);
+                indices[indicesCurrentIndex++] = (ushort)(2 + i);
             }
-
-            points = vertices.ToArray();
-            indices = indices2.ToArray();
         }
 
         /// <remarks>
@@ -325,11 +318,13 @@
             if (tessellation < 3)
                 throw new ArgumentOutOfRangeException(nameof(tessellation));
 
-            var vertices = new List<Vector3>();
-            var indices2 = new List<ushort>();
+            points = new Vector3[tessellation * 2 + 2];
+            indices = new ushort[tessellation * 6];
 
-            vertices.Add(position + Up * height);
-            vertices.Add(position);
+            int pointsCurrentIndex = 0, indicesCurrentIndex = 0;
+
+            points[pointsCurrentIndex++] = position + Up * height;
+            points[pointsCurrentIndex++] = position;
 
             for (int i = 0; i < tessellation; ++i)
             {
@@ -340,21 +335,18 @@
 
                 var normal = new Vector3(dx, 0, dz);
 
-                vertices.Add(position + normal * radius + Up * height);
-                vertices.Add(position + normal * radius);
+                points[pointsCurrentIndex++] = position + normal * radius + Up * height;
+                points[pointsCurrentIndex++] = position + normal * radius;
 
-                indices2.Add((ushort)(2 + i * 2));
-                indices2.Add((ushort)(3 + i * 2));
+                indices[indicesCurrentIndex++] = (ushort)(2 + i * 2);
+                indices[indicesCurrentIndex++] = (ushort)(3 + i * 2);
 
-                indices2.Add((ushort)(2 + i * 2));
-                indices2.Add((ushort)(2 + ((i + 1) % tessellation) * 2));
+                indices[indicesCurrentIndex++] = (ushort)(2 + i * 2);
+                indices[indicesCurrentIndex++] = (ushort)(2 + ((i + 1) % tessellation) * 2);
 
-                indices2.Add((ushort)(3 + i * 2));
-                indices2.Add((ushort)(3 + ((i + 1) % tessellation) * 2));
+                indices[indicesCurrentIndex++] = (ushort)(3 + i * 2);
+                indices[indicesCurrentIndex++] = (ushort)(3 + ((i + 1) % tessellation) * 2);
             }
-
-            points = vertices.ToArray();
-            indices = indices2.ToArray();
         }
 
         /// <remarks>
@@ -366,11 +358,13 @@
             if (tessellation < 3)
                 throw new ArgumentOutOfRangeException(nameof(tessellation));
 
-            var vertices = new List<Vector3>();
-            var indices2 = new List<ushort>();
+            points = new Vector3[tessellation * 2 + 2];
+            indices = new ushort[tessellation * 12];
 
-            vertices.Add(position + Up * height);
-            vertices.Add(position);
+            int pointsCurrentIndex = 0, indicesCurrentIndex = 0;
+
+            points[pointsCurrentIndex++] = position + Up * height;
+            points[pointsCurrentIndex++] = position;
 
             for (int i = 0; i < tessellation; ++i)
             {
@@ -381,28 +375,25 @@
 
                 var normal = new Vector3(dx, 0, dz);
 
-                vertices.Add(position + normal * radius + Up * height);
-                vertices.Add(position + normal * radius);
+                points[pointsCurrentIndex++] = position + normal * radius + Up * height;
+                points[pointsCurrentIndex++] = position + normal * radius;
                 
-                indices2.Add((ushort)(2 + i * 2));
-                indices2.Add((ushort)(2 + (i * 2 + 2) % (tessellation * 2)));
-                indices2.Add((ushort)(2 + i * 2 + 1));
+                indices[indicesCurrentIndex++] = (ushort)(2 + i * 2);
+                indices[indicesCurrentIndex++] = (ushort)(2 + (i * 2 + 2) % (tessellation * 2));
+                indices[indicesCurrentIndex++] = (ushort)(2 + i * 2 + 1);
 
-                indices2.Add((ushort)(2 + i * 2 + 1));
-                indices2.Add((ushort)(2 + (i * 2 + 2) % (tessellation * 2)));
-                indices2.Add((ushort)(2 + (i * 2 + 3) % (tessellation * 2)));
+                indices[indicesCurrentIndex++] = (ushort)(2 + i * 2 + 1);
+                indices[indicesCurrentIndex++] = (ushort)(2 + (i * 2 + 2) % (tessellation * 2));
+                indices[indicesCurrentIndex++] = (ushort)(2 + (i * 2 + 3) % (tessellation * 2));
 
-                indices2.Add(0);
-                indices2.Add((ushort)(2 + (i * 2 + 2) % (tessellation * 2)));
-                indices2.Add((ushort)(2 + i * 2));
+                indices[indicesCurrentIndex++] = 0;
+                indices[indicesCurrentIndex++] = (ushort)(2 + (i * 2 + 2) % (tessellation * 2));
+                indices[indicesCurrentIndex++] = (ushort)(2 + i * 2);
 
-                indices2.Add(1);
-                indices2.Add((ushort)(2 + i * 2 + 1));
-                indices2.Add((ushort)(2 + (i * 2 + 3) % (tessellation * 2)));
+                indices[indicesCurrentIndex++] = 1;
+                indices[indicesCurrentIndex++] = (ushort)(2 + i * 2 + 1);
+                indices[indicesCurrentIndex++] = (ushort)(2 + (i * 2 + 3) % (tessellation * 2));
             }
-
-            points = vertices.ToArray();
-            indices = indices2.ToArray();
         }
     }
 }

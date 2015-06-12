@@ -9,6 +9,11 @@
     {
         // TODO:
 
+        public static PlaneIntersectionType Intersects(this Plane plane, Vector3 vector)
+        {
+            throw new NotImplementedException();
+        }
+
         ///// <summary>
         ///// Checks whether the <see cref="Plane"/> intersects a <see cref="BoundingBox"/>.
         ///// </summary>

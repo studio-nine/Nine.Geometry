@@ -134,7 +134,27 @@
         public static void Intersect(ref BoundingSphere boundingSphere, ref Ray ray, out float? result) => Intersect(ref ray, ref boundingSphere, out result);
         public static void Intersect(ref Ray ray, ref BoundingSphere boundingSphere, out float? result)
         {
-            throw new NotImplementedException();
+            var difference = boundingSphere.Center - ray.Position;
+            var differenceLengthSquared = difference.LengthSquared();
+            var sphereRadiusSquared = boundingSphere.Radius * boundingSphere.Radius;
+
+            if (differenceLengthSquared < sphereRadiusSquared)
+            {
+                result = 0.0f;
+            }
+            else
+            {
+                var distanceAlongRay = Vector3.Dot(ray.Direction, difference);
+                if (distanceAlongRay < 0)
+                {
+                    result = null;
+                }
+                else
+                {
+                    var dist = sphereRadiusSquared + distanceAlongRay * distanceAlongRay - differenceLengthSquared;
+                    result = (dist < 0) ? null : distanceAlongRay - (float?)Math.Sqrt(dist);
+                }
+            }
         }
 
         public static void Intersect(ref Plane plane, ref Ray ray, out float? result) => Intersect(ref ray, ref plane, out result);
@@ -156,7 +176,24 @@
         public static void Intersect(ref BoundingFrustum boundingFrustum, ref Ray ray, out float? result) => Intersect(ref ray, ref boundingFrustum, out result);
         public static void Intersect(ref Ray ray, ref BoundingFrustum boundingFrustum, out float? result)
         {
-            throw new NotImplementedException();
+            var containmentType = boundingFrustum.Contains(ray.Position);
+            switch (containmentType)
+            {
+                case ContainmentType.Disjoint:
+                    result = null;
+                    return;
+
+                case ContainmentType.Contains:
+                    result = 0.0f;
+                    return;
+
+                case ContainmentType.Intersects:
+                    // TODO: 
+                    throw new NotImplementedException();
+
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
         }
 
         #endregion
@@ -179,8 +216,8 @@
 
         #region BoundingBox & Plane
 
-        public static void Contains(ref BoundingBox boundingBox, ref Plane plane, out ContainmentType result) => Contains(ref plane, ref boundingBox, out result);
-        public static void Contains(ref Plane plane, ref BoundingBox boundingBox, out ContainmentType result)
+        public static void Contains(ref BoundingBox boundingBox, ref Plane plane, out PlaneIntersectionType result) => Contains(ref plane, ref boundingBox, out result);
+        public static void Contains(ref Plane plane, ref BoundingBox boundingBox, out PlaneIntersectionType result)
         {
             // http://zach.in.tu-clausthal.de/teaching/cg_literatur/lighthouse3d_view_frustum_culling/index.html
             throw new NotImplementedException();
@@ -215,13 +252,33 @@
         public static void Contains(ref BoundingBox boundingBox, ref BoundingFrustum boundingFrustum, out ContainmentType result) => Contains(ref boundingFrustum, ref boundingBox, out result);
         public static void Contains(ref BoundingFrustum boundingFrustum, ref BoundingBox boundingBox, out ContainmentType result)
         {
-            throw new NotImplementedException();
+            var planes = boundingFrustum.GetPlanes();
+            var intersects = false;
+
+            for (var i = 0; i < BoundingFrustum.PlaneCount; ++i)
+            {
+                var planeIntersectionType = boundingBox.Contains(planes[i]);
+                switch (planeIntersectionType)
+                {
+                    case PlaneIntersectionType.Front:
+                        result = ContainmentType.Disjoint;
+                        return;
+
+                    case PlaneIntersectionType.Intersecting:
+                        intersects = true;
+                        break;
+                }
+            }
+
+            result = intersects ? ContainmentType.Intersects : ContainmentType.Contains;
         }
 
         public static void Intersect(ref BoundingBox boundingBox, ref BoundingFrustum boundingFrustum, out bool result) => Intersect(ref boundingFrustum, ref boundingBox, out result);
         public static void Intersect(ref BoundingFrustum boundingFrustum, ref BoundingBox boundingBox, out bool result)
         {
-            throw new NotImplementedException();
+            var containmentType = ContainmentType.Disjoint;
+            Contains(ref boundingFrustum, ref boundingBox, out containmentType);
+            result = containmentType != ContainmentType.Disjoint;
         }
 
         #endregion
@@ -244,16 +301,22 @@
 
         #region BoundingFrustum & Plane
 
-        public static void Contains(ref Plane plane, ref BoundingFrustum boundingFrustum, out ContainmentType result) => Contains(ref boundingFrustum, ref plane, out result);
-        public static void Contains(ref BoundingFrustum boundingFrustum, ref Plane plane, out ContainmentType result)
+        public static void Contains(ref Plane plane, ref BoundingFrustum boundingFrustum, out PlaneIntersectionType result) => Contains(ref boundingFrustum, ref plane, out result);
+        public static void Contains(ref BoundingFrustum boundingFrustum, ref Plane plane, out PlaneIntersectionType result)
         {
-            throw new NotImplementedException();
+            var corners = boundingFrustum.GetCorners();
+            result = plane.Intersects(corners[0]);
+            for (int i = 1; i < corners.Length; i++)
+                if (plane.Intersects(corners[i]) != result)
+                    result = PlaneIntersectionType.Intersecting;
         }
 
         public static void Intersect(ref Plane plane, ref BoundingFrustum boundingFrustum, out bool result) => Intersect(ref boundingFrustum, ref plane, out result);
         public static void Intersect(ref BoundingFrustum boundingFrustum, ref Plane plane, out bool result)
         {
-            throw new NotImplementedException();
+            PlaneIntersectionType planeIntersectionType;
+            Contains(ref boundingFrustum, ref plane, out planeIntersectionType);
+            result = (planeIntersectionType == PlaneIntersectionType.Intersecting);
         }
 
         #endregion

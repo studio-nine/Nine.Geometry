@@ -59,9 +59,9 @@
             return result;
         }
         
-        public ContainmentType Contains(Plane plane)
+        public PlaneIntersectionType Contains(Plane plane)
         {
-            ContainmentType result;
+            PlaneIntersectionType result;
             Intersection.Contains(ref this, ref plane, out result);
             return result;
         }
