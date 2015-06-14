@@ -15,28 +15,28 @@
         public static PlaneIntersectionType Intersects(this Plane plane, BoundingBox boundingBox)
         {
             PlaneIntersectionType result;
-            Intersection.Intersect(ref plane, ref boundingBox, out result);
+            Intersection.Intersects(ref plane, ref boundingBox, out result);
             return result;
         }
 
         public static PlaneIntersectionType Intersects(this Plane plane, BoundingFrustum boundingFrustum)
         {
             PlaneIntersectionType result;
-            Intersection.Intersect(ref plane, ref boundingFrustum, out result);
+            Intersection.Intersects(ref plane, ref boundingFrustum, out result);
             return result;
         }
 
         public static PlaneIntersectionType Intersects(this Plane plane, BoundingSphere boundingSphere)
         {
             PlaneIntersectionType result;
-            Intersection.Intersect(ref plane, ref boundingSphere, out result);
+            Intersection.Intersects(ref plane, ref boundingSphere, out result);
             return result;
         }
 
         public static float? Intersects(this Plane plane, Ray ray)
         {
             float? result;
-            Intersection.Intersect(ref ray, ref plane, out result);
+            Intersection.Intersects(ref ray, ref plane, out result);
             return result;
         }
     }

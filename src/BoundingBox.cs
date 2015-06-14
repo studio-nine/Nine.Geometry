@@ -62,7 +62,7 @@
         public PlaneIntersectionType Contains(Plane plane)
         {
             PlaneIntersectionType result;
-            Intersection.Intersect(ref this, ref plane, out result);
+            Intersection.Intersects(ref this, ref plane, out result);
             return result;
         }
 
@@ -90,28 +90,28 @@
         public float? Intersects(Vector3 v1, Vector3 v2)
         {
             float? result;
-            Intersection.Intersect(ref this, ref v1, ref v2, out result);
+            Intersection.Intersects(ref this, ref v1, ref v2, out result);
             return result;
         }
         
         public bool Intersects(BoundingBox boundingBox)
         {
             bool result;
-            Intersection.Intersect(ref this, ref boundingBox, out result);
+            Intersection.Intersects(ref this, ref boundingBox, out result);
             return result;
         }
         
         public bool Intersects(BoundingSphere boundingSphere)
         {
             bool result;
-            Intersection.Intersect(ref this, ref boundingSphere, out result);
+            Intersection.Intersects(ref this, ref boundingSphere, out result);
             return result;
         }
         
         public float? Intersects(Ray ray)
         {
             float? result;
-            Intersection.Intersect(ref ray, ref this, out result);
+            Intersection.Intersects(ref ray, ref this, out result);
             return result;
         }
         

@@ -92,7 +92,7 @@
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-        public bool Intersect(LineSegment value)
+        public bool Intersects(LineSegment value)
         {
             return (this.IntersectLine(value) != null);
         }

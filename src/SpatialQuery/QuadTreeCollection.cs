@@ -384,7 +384,7 @@
                 var nodeBounds = new BoundingBox(new Vector3(node.bounds.X, node.bounds.Y, node.value.MinHeight),
                                                  new Vector3(node.bounds.X + node.bounds.Width, node.bounds.Y + node.bounds.Height, node.value.MaxHeight));
 
-                Intersection.Intersect(ref nodeBounds, ref ray, out intersection);
+                Intersection.Intersects(ref nodeBounds, ref ray, out intersection);
                 if (intersection.HasValue)
                     skip = false;
             }

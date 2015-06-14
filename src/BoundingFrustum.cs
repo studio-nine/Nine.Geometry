@@ -115,7 +115,7 @@
         {
             var me = this;
             PlaneIntersectionType result;
-            Intersection.Intersect(ref me, ref plane, out result);
+            Intersection.Intersects(ref me, ref plane, out result);
             return result;
         }
 
@@ -137,7 +137,7 @@
         {
             var me = this;
             bool result;
-            Intersection.Intersect(ref me, ref boundingfrustum, out result);
+            Intersection.Intersects(ref me, ref boundingfrustum, out result);
             return result;
         }
 
@@ -145,7 +145,7 @@
         {
             var me = this;
             bool result;
-            Intersection.Intersect(ref me, ref boundingBox, out result);
+            Intersection.Intersects(ref me, ref boundingBox, out result);
             return result;
         }
 
@@ -153,7 +153,7 @@
         {
             var me = this;
             bool result;
-            Intersection.Intersect(ref me, ref boundingSphere, out result);
+            Intersection.Intersects(ref me, ref boundingSphere, out result);
             return result;
         }
         
@@ -161,7 +161,7 @@
         {
             var me = this;
             float? result;
-            Intersection.Intersect(ref ray, ref me, out result);
+            Intersection.Intersects(ref ray, ref me, out result);
             return result;
         }
 
