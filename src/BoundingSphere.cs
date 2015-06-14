@@ -104,9 +104,9 @@
             return result;
         }
         
-        public bool Intersects(Plane plane)
+        public PlaneIntersectionType Intersects(Plane plane)
         {
-            bool result;
+            PlaneIntersectionType result;
             Intersection.Intersect(ref plane, ref this, out result);
             return result;
         }

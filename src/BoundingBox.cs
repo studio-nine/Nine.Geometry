@@ -62,7 +62,7 @@
         public PlaneIntersectionType Contains(Plane plane)
         {
             PlaneIntersectionType result;
-            Intersection.Contains(ref this, ref plane, out result);
+            Intersection.Intersect(ref this, ref plane, out result);
             return result;
         }
 
@@ -105,13 +105,6 @@
         {
             bool result;
             Intersection.Intersect(ref this, ref boundingSphere, out result);
-            return result;
-        }
-        
-        public bool Intersects(Plane plane)
-        {
-            bool result;
-            Intersection.Intersect(ref this, ref plane, out result);
             return result;
         }
         
