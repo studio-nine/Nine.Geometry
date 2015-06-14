@@ -127,7 +127,8 @@
         {
             ContainmentType containment;
             BoundingBox itemBounds = item.BoundingBox;
-            node.bounds.Contains(ref itemBounds, out containment);
+
+            Intersection.Contains(ref node.bounds, ref itemBounds, out containment);
 
             // Expand the tree to root if the object is too large
             if (node == Tree.root && containment != ContainmentType.Contains)
@@ -204,7 +205,9 @@
             {
                 ContainmentType containment;
                 BoundingBox itemBounds = item.BoundingBox;
-                node.bounds.Contains(ref itemBounds, out containment);
+
+                Intersection.Contains(ref node.bounds, ref itemBounds, out containment);
+                
                 if (containment == ContainmentType.Contains || node.parent == null)
                     break;
                 node = node.parent;
@@ -305,7 +308,7 @@
             bool skip = (node != Tree.root);
             if (skip)
             {
-                node.bounds.Intersects(ref ray, out intersection);
+                Intersection.Intersects(ref node.bounds, ref ray, out intersection);
                 if (intersection.HasValue)
                 {
                     skip = false;
@@ -321,11 +324,9 @@
                 for (int i = 0; i < count; ++i)
                 {
                     var val = node.value[i];
-                    val.BoundingBox.Intersects(ref ray, out intersection);
+                    intersection = val.BoundingBox.Intersects(ray);
                     if (intersection.HasValue)
-                    {
                         result.Add(val);
-                    }
                 }
             }
             return TraverseOptions.Continue;
@@ -342,7 +343,7 @@
         private TraverseOptions FindAllBoundingBox(OctreeNode<List<ISpatialQueryable>> node)
         {
             var nodeContainment = ContainmentType.Intersects;
-            boundingBox.Contains(ref node.bounds, out nodeContainment);
+            Intersection.Contains(ref boundingBox, ref node.bounds, out nodeContainment);
 
             if (nodeContainment == ContainmentType.Disjoint)
                 return TraverseOptions.Skip;
@@ -359,8 +360,7 @@
                 for (int i = 0; i < count; ++i)
                 {
                     var val = node.value[i];
-                    ContainmentType objectContainment;
-                    val.BoundingBox.Contains(ref boundingBox, out objectContainment);
+                    var objectContainment = val.BoundingBox.Contains(boundingBox);
                     if (objectContainment != ContainmentType.Disjoint)
                         result.Add(val);
                 }
@@ -379,7 +379,7 @@
         private TraverseOptions FindAllBoundingSphere(OctreeNode<List<ISpatialQueryable>> node)
         {
             var nodeContainment = ContainmentType.Intersects;
-            boundingSphere.Contains(ref node.bounds, out nodeContainment);
+            Intersection.Contains(ref boundingSphere, ref node.bounds, out nodeContainment);
 
             if (nodeContainment == ContainmentType.Disjoint)
                 return TraverseOptions.Skip;
@@ -396,8 +396,7 @@
                 for (int i = 0; i < count; ++i)
                 {
                     var val = node.value[i];
-                    ContainmentType objectContainment;
-                    val.BoundingBox.Contains(ref boundingSphere, out objectContainment);
+                    var objectContainment = val.BoundingBox.Contains(boundingSphere);
                     if (objectContainment != ContainmentType.Disjoint)
                         result.Add(val);
                 }
@@ -416,7 +415,7 @@
         private TraverseOptions FindAllBoundingFrustum(OctreeNode<List<ISpatialQueryable>> node)
         {
             var nodeContainment = ContainmentType.Intersects;
-            boundingFrustum.Contains(ref node.bounds, out nodeContainment);
+            Intersection.Contains(ref boundingFrustum, ref node.bounds, out nodeContainment);
 
             if (nodeContainment == ContainmentType.Disjoint)
                 return TraverseOptions.Skip;
@@ -434,7 +433,7 @@
                 {
                     var val = node.value[i];
                     var boundingBox = val.BoundingBox;
-                    boundingFrustum.Contains(ref boundingBox, out nodeContainment);
+                    Intersection.Contains(ref boundingFrustum, ref boundingBox, out nodeContainment);
                     if (nodeContainment != ContainmentType.Disjoint)
                     {
                         result.Add(val);

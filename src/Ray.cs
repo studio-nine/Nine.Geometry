@@ -2,9 +2,7 @@
 {
     using System;
     using System.Numerics;
-
-    // TODO: Add addition operator
-
+    
     /// <summary>
     /// Defines a ray.
     /// </summary>
@@ -44,52 +42,39 @@
             return result;
         }
         
-        /// <summary>
-        /// Checks whether the <see cref="Ray"/> intersects a <see cref="BoundingBox"/>.
-        /// </summary>
         public float? Intersects(BoundingBox boundingBox)
         {
             float? result;
-            Intersection.Intersect(ref this, ref boundingBox, out result);
+            Intersection.Intersects(ref this, ref boundingBox, out result);
             return result;
         }
         
         public float? Intersects(BoundingFrustum boundingfrustum)
         {
-            return Intersection.Intersect(boundingfrustum, this);
+            float? result;
+            Intersection.Intersects(ref this, ref boundingfrustum, out result);
+            return result;
         }
         
-        /// <summary>
-        /// Checks whether the <see cref="Ray"/> intersects a <see cref="BoundingSphere"/>.
-        /// </summary>
         public float? Intersects(BoundingSphere boundingSphere)
         {
             float? result;
-            Intersection.Intersect(ref this, ref boundingSphere, out result);
+            Intersection.Intersects(ref this, ref boundingSphere, out result);
             return result;
         }
         
-        /// <summary>
-        /// Checks whether the <see cref="Ray"/> intersects a <see cref="Plane"/>.
-        /// </summary>
         public float? Intersects(Plane plane)
         {
             float? result;
-            Intersection.Intersect(ref this, ref plane, out result);
+            Intersection.Intersects(ref this, ref plane, out result);
             return result;
         }
 
-        /// <summary>
-        /// Checks whether a <see cref="Ray"/> intersects a <see cref="Triangle"/>.
-        /// </summary>
         public void Intersects(ref Triangle triangle, out float? result)
         {
             this.Intersects(ref triangle.V1, ref triangle.V2, ref triangle.V3, out result);
         }
 
-        /// <summary>
-        /// Checks whether a <see cref="Ray"/> intersects a <see cref="Triangle"/>.
-        /// </summary>
         public bool Intersects(Triangle triangle)
         {
             float? result;
@@ -97,28 +82,16 @@
             return result.HasValue;
         }
 
-        /// <summary>
-        /// Tests to see if a geometry intersects with the specified ray.
-        /// If a bounding sphere is provided, the algorithm will perform bounding sphere
-        /// intersection test before per triangle test.
-        /// 
-        /// The geometry and bounding sphere will be transformed by the specified
-        /// transformation matrix before and intersection tests.
-        /// </summary>
-        public float? Intersects(IGeometry geometry)
+        public float? Intersects(Vector3[] positions, ushort[] indices, Matrix4x4 world)
         {
             float? result = null;
             float? point = null;
             Ray ray;
-
-            var transform = geometry.Transform;
-            Matrix4x4.Invert(transform, out transform);
-            this.Transform(ref transform, out ray);
+            
+            Matrix4x4.Invert(world, out world);
+            this.Transform(ref world, out ray);
 
             // Test each triangle
-            Vector3[] positions;
-            ushort[] indices;
-            geometry.TryGetTriangles(out positions, out indices);
             for (int i = 0; i < indices.Length; i += 3)
             {
                 this.Intersects(ref positions[indices[i]],
@@ -135,22 +108,6 @@
             return result;
         }
 
-        /// <summary>
-        /// Checks whether a <see cref="Ray"/> intersects a <see cref="Triangle"/>.
-        /// </summary>
-        /// <remarks> 
-        /// This uses the algorithm
-        /// developed by Tomas Moller and Ben Trumbore, which was published in the
-        /// Journal of Graphics Tools, volume 2, "Fast, Minimum Storage Ray-Triangle
-        /// Intersection".
-        /// 
-        /// This method is implemented using the pass-by-reference versions. 
-        /// Using these overloads is generally not recommended, because they make the 
-        /// code less readable than the normal pass-by-value versions. This method can 
-        /// be called very frequently in a tight inner loop, however, so in this 
-        /// particular case the performance benefits from passing
-        /// everything by reference outweigh the loss of readability.
-        /// </remarks>
         public void Intersects(ref Vector3 vertex1, ref Vector3 vertex2, ref Vector3 vertex3, out float? result)
         {
             const float Epsilon = 1E-10F;
@@ -211,42 +168,20 @@
 
             result = rayDistance;
         }
-
-        /// <summary>
-        /// Returns a boolean indicating whether the two given <see cref="Ray"/>s are equal.
-        /// </summary>
-        public static bool operator ==(Ray left, Ray right)
-        {
-            return (left.Position == right.Position) && (left.Direction == right.Direction);
-        }
-
-        /// <summary>
-        /// Returns a boolean indicating whether the two given <see cref="Ray"/>s are not equal.
-        /// </summary>
-        public static bool operator !=(Ray left, Ray right)
-        {
-            return (left.Position != right.Position) && (left.Direction != right.Direction);
-        }
+        
+        public static bool operator ==(Ray left, Ray right) => (left.Position == right.Position) && (left.Direction == right.Direction);
+        public static bool operator !=(Ray left, Ray right) => (left.Position != right.Position) && (left.Direction != right.Direction);
 
         /// <inheritdoc />
-        public bool Equals(Ray other)
-        {
-            return (this.Position == other.Position) && (this.Direction == other.Direction);
-        }
+        public bool Equals(Ray other) => (this.Position == other.Position) && (this.Direction == other.Direction);
 
         /// <inheritdoc />
-        public override bool Equals(object obj)
-        {
-            return (obj is Ray) && this.Equals((Ray)obj);
-        }
+        public override bool Equals(object obj) => (obj is Ray) && this.Equals((Ray)obj);
 
         /// <inheritdoc />
-        public override int GetHashCode()
-        {
-            return this.Direction.GetHashCode() ^ this.Position.GetHashCode();
-        }
+        public override int GetHashCode() => this.Direction.GetHashCode() ^ this.Position.GetHashCode();
         
         /// <inheritdoc />
-        public override string ToString() => "Position: " + this.Position + ", Direction: " + this.Direction;
+        public override string ToString() => $"<Position: {this.Position}, Direction: {this.Direction}>";
     }
 }

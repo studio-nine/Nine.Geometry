@@ -15,22 +15,22 @@
         public const int CornerCount = 8;
 
         /// <summary> Gets the near plane. </summary>
-        public Plane Near { get { return this.planes[0]; } }
+        public Plane Near => this.planes[0];
 
         /// <summary> Gets the far plane. </summary>
-        public Plane Far { get { return this.planes[1]; } }
+        public Plane Far => this.planes[1];
 
         /// <summary> Gets the left plane. </summary>
-        public Plane Left { get { return this.planes[2]; } }
+        public Plane Left => this.planes[2];
 
         /// <summary> Gets the right plane. </summary>
-        public Plane Right { get { return this.planes[3]; } }
+        public Plane Right => this.planes[3];
 
         /// <summary> Gets the top plane. </summary>
-        public Plane Top { get { return this.planes[4]; } }
+        public Plane Top => this.planes[4];
 
         /// <summary> Gets the bottom plane. </summary>
-        public Plane Bottom { get { return this.planes[5]; } }
+        public Plane Bottom => this.planes[5];
 
         /// <summary>
         /// Gets or sets the <see cref="Matrix4x4"/> that describes this <see cref="BoundingFrustum"/>.
@@ -89,105 +89,103 @@
 
         public ContainmentType Contains(BoundingFrustum boundingfrustum)
         {
-            return Intersection.Intersect(this, boundingfrustum);
+            var me = this;
+            ContainmentType result;
+            Intersection.Contains(ref me, ref boundingfrustum, out result);
+            return result;
         }
 
-        public void Contains(ref BoundingBox boundingBox, out ContainmentType result) { result = this.Contains(boundingBox); }
         public ContainmentType Contains(BoundingBox boundingBox)
         {
-            return Intersection.Intersect(this, boundingBox);
+            var me = this;
+            ContainmentType result;
+            Intersection.Contains(ref me, ref boundingBox, out result);
+            return result;
         }
 
-        public void Contains(ref BoundingSphere boundingSphere, out ContainmentType result) { result = this.Contains(boundingSphere); }
         public ContainmentType Contains(BoundingSphere boundingSphere)
         {
-            return Intersection.Intersect(this, boundingSphere);
+            var me = this;
+            ContainmentType result;
+            Intersection.Contains(ref me, ref boundingSphere, out result);
+            return result;
         }
 
-        public void Contains(ref Plane plane, out ContainmentType result) { result = this.Contains(plane); }
-        public ContainmentType Contains(Plane plane)
+        public PlaneIntersectionType Intersects(Plane plane)
         {
-            return Intersection.Intersect(this, plane);
+            var me = this;
+            PlaneIntersectionType result;
+            Intersection.Intersects(ref me, ref plane, out result);
+            return result;
         }
 
         public ContainmentType Contains(Vector3 vector)
         {
-            // TODO: BoundingFrustum contains Vector3
-            throw new NotImplementedException();
+            for (var i = 0; i < PlaneCount; ++i)
+            {
+                var value = vector * planes[i].Normal;
+                if ((value.X + value.Y + value.Z + planes[i].D) > 0)
+                {
+                    return ContainmentType.Disjoint;
+                }
+            }
+
+            return ContainmentType.Contains;
         }
 
         public bool Intersects(BoundingFrustum boundingfrustum)
         {
-            return this.DoesIntersect(Intersection.Intersect(this, boundingfrustum));
+            var me = this;
+            bool result;
+            Intersection.Intersects(ref me, ref boundingfrustum, out result);
+            return result;
         }
 
-        public void Intersects(ref BoundingBox boundingBox, out bool result) { result = this.Intersects(boundingBox); }
         public bool Intersects(BoundingBox boundingBox)
         {
-            return this.DoesIntersect(Intersection.Intersect(this, boundingBox));
+            var me = this;
+            bool result;
+            Intersection.Intersects(ref me, ref boundingBox, out result);
+            return result;
         }
 
-        public void Intersects(ref BoundingSphere boundingSphere, out bool result) { result = this.Intersects(boundingSphere); }
         public bool Intersects(BoundingSphere boundingSphere)
         {
-            return this.DoesIntersect(Intersection.Intersect(this, boundingSphere));
+            var me = this;
+            bool result;
+            Intersection.Intersects(ref me, ref boundingSphere, out result);
+            return result;
         }
-
-        public void Intersects(ref Plane plane, out bool result) { result = this.Intersects(plane); }
-        public bool Intersects(Plane plane)
-        {
-            return this.DoesIntersect(Intersection.Intersect(this, plane));
-        }
-
-        public void Intersects(ref Ray ray, out float? result) { result = this.Intersects(ray); }
+        
         public float? Intersects(Ray ray)
         {
-            return Intersection.Intersect(this, ray);
+            var me = this;
+            float? result;
+            Intersection.Intersects(ref ray, ref me, out result);
+            return result;
         }
 
-        private bool DoesIntersect(ContainmentType containmentType)
-        {
-            // Optimize same as BoundingBox
-            return containmentType == ContainmentType.Contains || containmentType == ContainmentType.Intersects;
-        }
+        public void GetPlanes(ref Plane[] result) => result = this.GetPlanes();
+        public Plane[] GetPlanes() => this.planes;
 
-        /// <summary>
-        /// Returns a boolean indicating whether the two given <see cref="BoundingFrustum"/>s are equal.
-        /// </summary>
-        public static bool operator ==(BoundingFrustum left, BoundingFrustum right)
-        {
-            return (left.Matrix == right.Matrix);
-        }
+        public void GetCorners(ref Vector3[] result) => result = this.GetCorners();
+        public Vector3[] GetCorners() => corners;
 
-        /// <summary>
-        /// Returns a boolean indicating whether the two given <see cref="BoundingFrustum"/>s are not equal.
-        /// </summary>
-        public static bool operator !=(BoundingFrustum left, BoundingFrustum right)
-        {
-            return (left.Matrix != right.Matrix);
-        }
+        public static bool operator ==(BoundingFrustum left, BoundingFrustum right) => (left.Matrix == right.Matrix);
+        public static bool operator !=(BoundingFrustum left, BoundingFrustum right) => (left.Matrix != right.Matrix);
 
         /// <inheritdoc />
-        public bool Equals(BoundingFrustum other)
-        {
-            return (this.Matrix == other.Matrix);
-        }
+        public bool Equals(BoundingFrustum other) => (this.Matrix == other.Matrix);
 
         /// <inheritdoc />
-        public override bool Equals(object obj)
-        {
-            return (obj is BoundingFrustum) && this.Equals((BoundingFrustum)obj);
-        }
+        public override bool Equals(object obj) => (obj is BoundingFrustum) && this.Equals((BoundingFrustum)obj);
 
         /// <inheritdoc />
-        public override int GetHashCode()
-        {
-            return this.matrix.GetHashCode();
-        }
+        public override int GetHashCode() => this.matrix.GetHashCode();
         
         /// <inheritdoc />
         public override string ToString() => 
-            string.Format("Near: {0}, Far: {1}, Left: {2}, Right: {3}, Top: {4}, Bottom: {5}",
+            string.Format("<Near: {0}, Far: {1}, Left: {2}, Right: {3}, Top: {4}, Bottom: {5}>",
                 this.planes[0], this.planes[1], this.planes[2],
                 this.planes[3], this.planes[4], this.planes[5]);
 
@@ -210,11 +208,9 @@
             v1 = Vector3.Multiply(cross, a.D);
             //v1 = (a.D * (Vector3.Cross(b.Normal, c.Normal)));
 
-
             cross = Vector3.Cross(c.Normal, a.Normal);
             v2 = Vector3.Multiply(cross, b.D);
             //v2 = (b.D * (Vector3.Cross(c.Normal, a.Normal)));
-
 
             cross = Vector3.Cross(a.Normal, b.Normal);
             v3 = Vector3.Multiply(cross, c.D);

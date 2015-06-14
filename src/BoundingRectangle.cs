@@ -21,53 +21,28 @@
         /// <summary> Gets or sets the height. </summary>
         public float Height;
 
-        /// <summary>
-        /// Returns the x-coordinate of the left side of the rectangle.
-        /// </summary>
-        public float Left { get { return X; } }
+        /// <summary> Returns the x-coordinate of the left side of the rectangle. </summary>
+        public float Left => X;
 
-        /// <summary>
-        /// Returns the x-coordinate of the right side of the rectangle.
-        /// </summary>
-        public float Right { get { return X + Width; } }
+        /// <summary> Returns the x-coordinate of the right side of the rectangle. </summary>
+        public float Right => X + Width;
 
-        /// <summary>
-        /// Returns the y-coordinate of the top of the rectangle.
-        /// </summary>
-        public float Top { get { return Y; } }
+        /// <summary> Returns the y-coordinate of the top of the rectangle. </summary>
+        public float Top => Y;
 
-        /// <summary>
-        /// Returns the y-coordinate of the bottom of the rectangle.
-        /// </summary>
-        public float Bottom { get { return Y + Height; } }
+        /// <summary> Returns the y-coordinate of the bottom of the rectangle. </summary>
+        public float Bottom => Y + Height;
 
-        /// <summary>
-        /// Returns the center point of the bottom of the rectangle.
-        /// </summary>
-        public Vector2 Center
-        {
-            get { return new Vector2(X + Width * 0.5f, Y + Height * 0.5f); }
-        }
+        /// <summary> Returns the center point of the bottom of the rectangle. </summary>
+        public Vector2 Center => new Vector2(X + Width * 0.5f, Y + Height * 0.5f); 
 
-        /// <summary>
-        /// Returns the top left corner of the rectangle.
-        /// </summary>
-        public Vector2 Location
-        {
-            get { return new Vector2(X, Y); }
-        }
+        /// <summary> Returns the top left corner of the rectangle. </summary>
+        public Vector2 Location => new Vector2(X, Y);
 
-        /// <summary>
-        /// Returns the size of the rectangle.
-        /// </summary>
-        public Vector2 Size
-        {
-            get { return new Vector2(Width, Height); }
-        }
+        /// <summary> Returns the size of the rectangle. </summary>
+        public Vector2 Size => new Vector2(Width, Height); 
 
-        /// <summary>
-        /// Returns a Rectangle with all of its values set to zero.
-        /// </summary>
+        /// <summary> Returns a Rectangle with all of its values set to zero. </summary>
         public static BoundingRectangle Empty { get; private set; }
 
         /// <summary>
@@ -206,39 +181,19 @@
             return result;
         }
 
-        public static bool operator ==(BoundingRectangle value1, BoundingRectangle value2)
-        {
-            return (value1.X == value2.X) && (value1.Y == value2.Y) &&
-                   (value1.Width == value2.Width) && (value1.Height == value2.Height);
-        }
+        public static bool operator ==(BoundingRectangle value1, BoundingRectangle value2) => (value1.X == value2.X) && (value1.Y == value2.Y) && (value1.Width == value2.Width) && (value1.Height == value2.Height);
+        public static bool operator !=(BoundingRectangle value1, BoundingRectangle value2) => (value1.X != value2.X) && (value1.Y != value2.Y) && (value1.Width != value2.Width) && (value1.Height != value2.Height);
 
-        public static bool operator !=(BoundingRectangle value1, BoundingRectangle value2)
-        {
-            return !(value1 == value2);
-        }
+        /// <inheritdoc />
+        public bool Equals(BoundingRectangle other) => (this.X == other.X) && (this.Y == other.Y) && (this.Width == other.Width) && (this.Height == other.Height);
 
-        public bool Equals(BoundingRectangle other)
-        {
-            return X == other.X && Y == other.Y && Width == other.Width && Height == other.Height;
-        }
+        /// <inheritdoc />
+        public override bool Equals(object obj) => (obj is BoundingRectangle) && this.Equals((BoundingRectangle)obj);
 
-        public override bool Equals(object obj)
-        {
-            if (obj is BoundingRectangle)
-                return Equals((BoundingRectangle)obj);
+        /// <inheritdoc />
+        public override int GetHashCode() => X.GetHashCode() ^ Y.GetHashCode() ^ Width.GetHashCode() ^ Height.GetHashCode();
 
-            return false;
-        }
-
-        public override int GetHashCode()
-        {
-            return X.GetHashCode() ^ Y.GetHashCode() ^ Width.GetHashCode() ^ Height.GetHashCode();
-        }
-
-        public override string ToString()
-        {
-            return X.ToString() + ", " + Y.ToString() + ", " +
-                   Width.ToString() + ", " + Height.ToString();
-        }
+        /// <inheritdoc />
+        public override string ToString() => $"<{this.X}, {this.Y}, {this.Width}, {this.Height}>";
     }
 }

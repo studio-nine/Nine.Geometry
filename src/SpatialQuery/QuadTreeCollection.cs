@@ -384,11 +384,9 @@
                 var nodeBounds = new BoundingBox(new Vector3(node.bounds.X, node.bounds.Y, node.value.MinHeight),
                                                  new Vector3(node.bounds.X + node.bounds.Width, node.bounds.Y + node.bounds.Height, node.value.MaxHeight));
 
-                nodeBounds.Intersects(ref ray, out intersection);
+                Intersection.Intersects(ref nodeBounds, ref ray, out intersection);
                 if (intersection.HasValue)
-                {
                     skip = false;
-                }
             }
 
             if (skip)
@@ -400,11 +398,9 @@
                 for (int i = 0; i < count; ++i)
                 {
                     var val = node.value.List[i];
-                    val.BoundingBox.Intersects(ref ray, out intersection);
+                    intersection = val.BoundingBox.Intersects(ray);
                     if (intersection.HasValue)
-                    {
                         result.Add(val);
-                    }
                 }
             }
             return TraverseOptions.Continue;
@@ -427,7 +423,7 @@
             var nodeBounds = new BoundingBox(new Vector3(node.bounds.X, node.bounds.Y, node.value.MinHeight),
                                              new Vector3(node.bounds.X + node.bounds.Width, node.bounds.Y + node.bounds.Height, node.value.MaxHeight));
 
-            boundingBox.Contains(ref nodeBounds, out nodeContainment);
+            Intersection.Contains(ref boundingBox, ref nodeBounds, out nodeContainment);
 
             if (nodeContainment == ContainmentType.Disjoint)
                 return TraverseOptions.Skip;
@@ -444,8 +440,7 @@
                 for (int i = 0; i < count; ++i)
                 {
                     var val = node.value.List[i];
-                    ContainmentType objectContainment;
-                    val.BoundingBox.Contains(ref boundingBox, out objectContainment);
+                    var objectContainment = val.BoundingBox.Contains(boundingBox);
                     if (objectContainment != ContainmentType.Disjoint)
                         result.Add(val);
                 }
@@ -470,7 +465,7 @@
             var nodeBounds = new BoundingBox(new Vector3(node.bounds.X, node.bounds.Y, node.value.MinHeight),
                                              new Vector3(node.bounds.X + node.bounds.Width, node.bounds.Y + node.bounds.Height, node.value.MaxHeight));
 
-            boundingSphere.Contains(ref boundingBox, out nodeContainment);
+            Intersection.Contains(ref boundingSphere, ref boundingBox, out nodeContainment);
 
             if (nodeContainment == ContainmentType.Disjoint)
                 return TraverseOptions.Skip;
@@ -487,8 +482,7 @@
                 for (int i = 0; i < count; ++i)
                 {
                     var val = node.value.List[i];
-                    ContainmentType objectContainment;
-                    val.BoundingBox.Contains(ref boundingSphere, out objectContainment);
+                    var objectContainment = val.BoundingBox.Contains(boundingSphere);
                     if (objectContainment != ContainmentType.Disjoint)
                         result.Add(val);
                 }
@@ -513,7 +507,7 @@
             var nodeBounds = new BoundingBox(new Vector3(node.bounds.X, node.bounds.Y, node.value.MinHeight),
                                              new Vector3(node.bounds.X + node.bounds.Width, node.bounds.Y + node.bounds.Height, node.value.MaxHeight));
 
-            boundingFrustum.Contains(ref boundingBox, out nodeContainment);
+            Intersection.Contains(ref boundingFrustum, ref boundingBox, out nodeContainment);
 
             if (nodeContainment == ContainmentType.Disjoint)
                 return TraverseOptions.Skip;

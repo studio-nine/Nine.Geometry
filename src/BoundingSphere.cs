@@ -42,46 +42,28 @@
             this.Transform(ref transform, out result);
             return result;
         }
-
-        public void Contains(ref BoundingBox boundingBox, out ContainmentType result)
-        {
-            result = this.Contains(boundingBox);
-        }
-
+        
         public ContainmentType Contains(BoundingBox boundingBox)
         {
             ContainmentType result;
-            Intersection.Intersect(ref boundingBox, ref this, out result);
+            Intersection.Contains(ref boundingBox, ref this, out result);
             return result;
         }
-
-        public void Contains(ref BoundingFrustum boundingfrustum, out ContainmentType result)
-        {
-            result = this.Contains(boundingfrustum);
-        }
-
+        
         public ContainmentType Contains(BoundingFrustum boundingfrustum)
         {
-            return Intersection.Intersect(boundingfrustum, this);
+            ContainmentType result;
+            Intersection.Contains(ref boundingfrustum, ref this, out result);
+            return result;
         }
-
-        public void Contains(ref BoundingSphere boundingSphere, out ContainmentType result)
-        {
-            result = this.Contains(boundingSphere);
-        }
-
+        
         public ContainmentType Contains(BoundingSphere boundingSphere)
         {
             ContainmentType result;
-            Intersection.Intersect(ref this, ref boundingSphere, out result);
+            Intersection.Contains(ref this, ref boundingSphere, out result);
             return result;
         }
-
-        public void Contains(ref Vector3 vector, out ContainmentType result)
-        {
-            result = this.Contains(vector);
-        }
-
+        
         public ContainmentType Contains(Vector3 vector)
         {
             var radius2 = Radius * Radius;
@@ -100,72 +82,42 @@
                 return ContainmentType.Intersects;
             }
         }
-
-        public void Intersects(ref BoundingBox boundingBox, out bool result)
-        {
-            result = this.Intersects(boundingBox);
-        }
-
+        
         public bool Intersects(BoundingBox boundingBox)
         {
-            ContainmentType result;
-            Intersection.Intersect(ref boundingBox, ref this, out result);
-            return this.DoesIntersect(result);
+            bool result;
+            Intersection.Intersects(ref this, ref boundingBox, out result);
+            return result;
         }
-
-        public void Intersects(ref BoundingFrustum boundingfrustum, out bool result)
-        {
-            result = this.Intersects(boundingfrustum);
-        }
-
+        
         public bool Intersects(BoundingFrustum boundingfrustum)
         {
-            ContainmentType result = Intersection.Intersect(boundingfrustum, this);
-            return this.DoesIntersect(result);
+            bool result;
+            Intersection.Intersects(ref this, ref boundingfrustum, out result);
+            return result;
         }
-
-        public void Intersects(ref BoundingSphere boundingSphere, out bool result)
-        {
-            result = this.Intersects(boundingSphere);
-        }
-
+        
         public bool Intersects(BoundingSphere boundingSphere)
         {
-            ContainmentType result;
-            Intersection.Intersect(ref boundingSphere, ref this, out result);
-            return this.DoesIntersect(result);
+            bool result;
+            Intersection.Intersects(ref this, ref boundingSphere, out result);
+            return result;
         }
-
-        public void Intersects(ref Plane plane, out bool result)
+        
+        public PlaneIntersectionType Intersects(Plane plane)
         {
-            result = this.Intersects(plane);
+            PlaneIntersectionType result;
+            Intersection.Intersects(ref plane, ref this, out result);
+            return result;
         }
-
-        public bool Intersects(Plane plane)
-        {
-            ContainmentType result;
-            Intersection.Intersect(ref plane, ref this, out result);
-            return this.DoesIntersect(result);
-        }
-
-        public void Intersects(ref Ray ray, out float? result)
-        {
-            result = this.Intersects(ray);
-        }
-
+        
         public float? Intersects(Ray ray)
         {
             float? result;
-            Intersection.Intersect(ref ray, ref this, out result);
+            Intersection.Intersects(ref ray, ref this, out result);
             return result;
         }
-
-        private bool DoesIntersect(ContainmentType containmentType)
-        {
-            // TODO: Optimize
-            return containmentType == ContainmentType.Contains || containmentType == ContainmentType.Intersects;
-        }
-
+        
         /// <summary>
         /// Creates the smallest <see cref="BoundingSphere"/> that can contain a <see cref="BoundingBox"/>.
         /// </summary>
@@ -197,7 +149,6 @@
         /// </summary>
         public static BoundingSphere CreateFromFrustum(BoundingFrustum boundingFrustum)
         {
-            // TODO: Use indices?
             Vector3[] triangles;
             ushort[] indices;
 
@@ -219,54 +170,48 @@
         /// Creates the smallest <see cref="BoundingSphere"/> that contains the two <see cref="BoundingSphere"/>s.
         /// </summary>
         public static void CreateMerged(BoundingSphere original, BoundingSphere additional, out BoundingSphere result)
-        {
-            result = BoundingSphere.CreateMerged(original, additional);
-        }
+            => result = BoundingSphere.CreateMerged(original, additional);
 
         /// <summary>
         /// Creates the smallest <see cref="BoundingSphere"/> that contains the two <see cref="BoundingSphere"/>s.
         /// </summary>
         public static BoundingSphere CreateMerged(BoundingSphere original, BoundingSphere additional)
         {
-            // TODO: BoundingSphere CreateMerged
-            throw new NotImplementedException();
+            var difference = Vector3.Subtract(additional.Center, original.Center);
+            var distance = difference.Length();
+            if (distance <= (original.Radius + additional.Radius))
+            {
+                if (distance <= (original.Radius - additional.Radius))
+                    return original;
+                
+                if (distance <= additional.Radius - original.Radius)
+                    return additional;
+            }
+
+            var radius1 = Math.Max(original.Radius - distance, additional.Radius);
+            var radius2 = Math.Max(original.Radius + distance, additional.Radius);
+
+            difference += (((radius1 - radius2) / (2 * difference.Length())) * difference);
+
+            var result = new BoundingSphere();
+            result.Center = original.Center + difference;
+            result.Radius = (radius1 + radius2) / 2;
+            return result;
         }
 
-        /// <summary>
-        /// Returns a boolean indicating whether the two given <see cref="BoundingSphere"/>s are equal.
-        /// </summary>
-        public static bool operator ==(BoundingSphere left, BoundingSphere right)
-        {
-            return (left.Center == right.Center) && (left.Radius == right.Radius);
-        }
-
-        /// <summary>
-        /// Returns a boolean indicating whether the two given <see cref="BoundingSphere"/>s are not equal.
-        /// </summary>
-        public static bool operator !=(BoundingSphere left, BoundingSphere right)
-        {
-            return (left.Center != right.Center) && (left.Radius != right.Radius);
-        }
-
-        /// <inheritdoc />
-        public bool Equals(BoundingSphere other)
-        {
-            return (this.Center == other.Center) && (this.Radius == other.Radius);
-        }
-
-        /// <inheritdoc />
-        public override bool Equals(object obj)
-        {
-            return (obj is BoundingSphere) && this.Equals((BoundingSphere)obj);
-        }
+        public static bool operator ==(BoundingSphere left, BoundingSphere right) => (left.Center == right.Center) && (left.Radius == right.Radius);
+        public static bool operator !=(BoundingSphere left, BoundingSphere right) => (left.Center != right.Center) && (left.Radius != right.Radius);
 
         /// <inheritdoc />
-        public override int GetHashCode()
-        {
-            return this.Center.GetHashCode() ^ this.Radius.GetHashCode();
-        }
+        public bool Equals(BoundingSphere other) => (this.Center == other.Center) && (this.Radius == other.Radius);
+
+        /// <inheritdoc />
+        public override bool Equals(object obj) => (obj is BoundingSphere) && this.Equals((BoundingSphere)obj);
+
+        /// <inheritdoc />
+        public override int GetHashCode() => this.Center.GetHashCode() ^ this.Radius.GetHashCode();
         
         /// <inheritdoc />
-        public override string ToString() => "Center: " + this.Center + ", Radius: " + this.Radius;
+        public override string ToString() => $"<Center: {this.Center}, Radius: {this.Radius}>";
     }
 }

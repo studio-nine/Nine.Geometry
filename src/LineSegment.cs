@@ -92,7 +92,7 @@
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-        public bool Intersect(LineSegment value)
+        public bool Intersects(LineSegment value)
         {
             return (this.IntersectLine(value) != null);
         }
@@ -125,55 +125,19 @@
             return new Vector2(Start.X + t * x1, Start.Y + t * y1);
         }
 
-        /// <summary>
-        /// Indicates whether the current object is equal to another object of the same type.
-        /// </summary>
-        public bool Equals(LineSegment other)
-        {
-            return Start == other.Start && End == other.End;
-        }
+        public static bool operator ==(LineSegment value1, LineSegment value2) => (value1.Start == value2.Start && value1.End == value2.End);
+        public static bool operator !=(LineSegment value1, LineSegment value2) => (value1.Start != value2.Start && value1.End != value2.End);
 
-        /// <summary>
-        /// Determines whether the specified <see cref="System.Object"/> is equal to this instance.
-        /// </summary>
-        public override bool Equals(object obj)
-        {
-            if (obj is LineSegment)
-                return Equals((LineSegment)obj);
+        /// <inheritdoc />
+        public bool Equals(LineSegment other) => this.Start == other.Start && this.End == other.End;
 
-            return false;
-        }
+        /// <inheritdoc />
+        public override bool Equals(object obj) => (obj is LineSegment) && this.Equals((LineSegment)obj);
 
-        /// <summary>
-        /// Implements the operator ==.
-        /// </summary>
-        public static bool operator ==(LineSegment value1, LineSegment value2)
-        {
-            return ((value1.Start == value2.Start) && (value1.End == value2.End));
-        }
+        /// <inheritdoc />
+        public override int GetHashCode() => this.Start.GetHashCode() ^ this.End.GetHashCode();
 
-        /// <summary>
-        /// Implements the operator !=.
-        /// </summary>
-        public static bool operator !=(LineSegment value1, LineSegment value2)
-        {
-            return !(value1.Start == value2.Start && value1.End == value2.End);
-        }
-
-        /// <summary>
-        /// Returns a hash code for this instance.
-        /// </summary>
-        public override int GetHashCode()
-        {
-            return Start.GetHashCode() ^ End.GetHashCode();
-        }
-
-        /// <summary>
-        /// Returns a <see cref="System.String"/> that represents this instance.
-        /// </summary>
-        public override string ToString()
-        {
-            return Start.ToString() + " - " + End.ToString();
-        }
+        /// <inheritdoc />
+        public override string ToString() => this.Start.ToString() + " - " + this.End.ToString();
     }
 }
