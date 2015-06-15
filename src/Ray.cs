@@ -45,28 +45,28 @@
         public float? Intersects(BoundingBox boundingBox)
         {
             float? result;
-            Intersection.Intersect(ref this, ref boundingBox, out result);
+            Intersection.Intersects(ref this, ref boundingBox, out result);
             return result;
         }
         
         public float? Intersects(BoundingFrustum boundingfrustum)
         {
             float? result;
-            Intersection.Intersect(ref this, ref boundingfrustum, out result);
+            Intersection.Intersects(ref this, ref boundingfrustum, out result);
             return result;
         }
         
         public float? Intersects(BoundingSphere boundingSphere)
         {
             float? result;
-            Intersection.Intersect(ref this, ref boundingSphere, out result);
+            Intersection.Intersects(ref this, ref boundingSphere, out result);
             return result;
         }
         
         public float? Intersects(Plane plane)
         {
             float? result;
-            Intersection.Intersect(ref this, ref plane, out result);
+            Intersection.Intersects(ref this, ref plane, out result);
             return result;
         }
 

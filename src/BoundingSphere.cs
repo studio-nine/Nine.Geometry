@@ -86,35 +86,35 @@
         public bool Intersects(BoundingBox boundingBox)
         {
             bool result;
-            Intersection.Intersect(ref this, ref boundingBox, out result);
+            Intersection.Intersects(ref this, ref boundingBox, out result);
             return result;
         }
         
         public bool Intersects(BoundingFrustum boundingfrustum)
         {
             bool result;
-            Intersection.Intersect(ref this, ref boundingfrustum, out result);
+            Intersection.Intersects(ref this, ref boundingfrustum, out result);
             return result;
         }
         
         public bool Intersects(BoundingSphere boundingSphere)
         {
             bool result;
-            Intersection.Intersect(ref this, ref boundingSphere, out result);
+            Intersection.Intersects(ref this, ref boundingSphere, out result);
             return result;
         }
         
-        public bool Intersects(Plane plane)
+        public PlaneIntersectionType Intersects(Plane plane)
         {
             PlaneIntersectionType result;
-            Intersection.Intersect(ref plane, ref this, out result);
-            return result == PlaneIntersectionType.Intersecting;
+            Intersection.Intersects(ref plane, ref this, out result);
+            return result;
         }
         
         public float? Intersects(Ray ray)
         {
             float? result;
-            Intersection.Intersect(ref ray, ref this, out result);
+            Intersection.Intersects(ref ray, ref this, out result);
             return result;
         }
         

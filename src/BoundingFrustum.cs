@@ -111,11 +111,11 @@
             return result;
         }
 
-        public PlaneIntersectionType Contains(Plane plane)
+        public PlaneIntersectionType Intersects(Plane plane)
         {
             var me = this;
             PlaneIntersectionType result;
-            Intersection.Intersect(ref me, ref plane, out result);
+            Intersection.Intersects(ref me, ref plane, out result);
             return result;
         }
 
@@ -137,7 +137,7 @@
         {
             var me = this;
             bool result;
-            Intersection.Intersect(ref me, ref boundingfrustum, out result);
+            Intersection.Intersects(ref me, ref boundingfrustum, out result);
             return result;
         }
 
@@ -145,7 +145,7 @@
         {
             var me = this;
             bool result;
-            Intersection.Intersect(ref me, ref boundingBox, out result);
+            Intersection.Intersects(ref me, ref boundingBox, out result);
             return result;
         }
 
@@ -153,23 +153,15 @@
         {
             var me = this;
             bool result;
-            Intersection.Intersect(ref me, ref boundingSphere, out result);
+            Intersection.Intersects(ref me, ref boundingSphere, out result);
             return result;
-        }
-
-        public bool Intersects(Plane plane)
-        {
-            var me = this;
-            PlaneIntersectionType result;
-            Intersection.Intersect(ref me, ref plane, out result);
-            return result == PlaneIntersectionType.Intersecting;
         }
 
         public float? Intersects(Ray ray)
         {
             var me = this;
             float? result;
-            Intersection.Intersect(ref ray, ref me, out result);
+            Intersection.Intersects(ref ray, ref me, out result);
             return result;
         }
 

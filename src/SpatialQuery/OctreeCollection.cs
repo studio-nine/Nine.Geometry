@@ -308,7 +308,7 @@
             bool skip = (node != Tree.root);
             if (skip)
             {
-                Intersection.Intersect(ref node.bounds, ref ray, out intersection);
+                Intersection.Intersects(ref node.bounds, ref ray, out intersection);
                 if (intersection.HasValue)
                 {
                     skip = false;

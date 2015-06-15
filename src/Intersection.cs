@@ -42,8 +42,8 @@
     {
         #region Ray
 
-        public static void Intersect(ref BoundingBox boundingBox, ref Ray ray, out float? result) => Intersect(ref ray, ref boundingBox, out result);
-        public static void Intersect(ref Ray ray, ref BoundingBox boundingBox, out float? result)
+        public static void Intersects(ref BoundingBox boundingBox, ref Ray ray, out float? result) => Intersects(ref ray, ref boundingBox, out result);
+        public static void Intersects(ref Ray ray, ref BoundingBox boundingBox, out float? result)
         {
             if (Math.Abs(ray.Direction.X) < Single.Epsilon && 
                 (ray.Position.X < boundingBox.Min.X || ray.Position.X > boundingBox.Max.X))
@@ -130,8 +130,8 @@
             result = min;
         }
 
-        public static void Intersect(ref BoundingSphere boundingSphere, ref Ray ray, out float? result) => Intersect(ref ray, ref boundingSphere, out result);
-        public static void Intersect(ref Ray ray, ref BoundingSphere boundingSphere, out float? result)
+        public static void Intersects(ref BoundingSphere boundingSphere, ref Ray ray, out float? result) => Intersects(ref ray, ref boundingSphere, out result);
+        public static void Intersects(ref Ray ray, ref BoundingSphere boundingSphere, out float? result)
         {
             var difference = boundingSphere.Center - ray.Position;
             var differenceLengthSquared = difference.LengthSquared();
@@ -156,8 +156,8 @@
             }
         }
 
-        public static void Intersect(ref Plane plane, ref Ray ray, out float? result) => Intersect(ref ray, ref plane, out result);
-        public static void Intersect(ref Ray ray, ref Plane plane, out float? result)
+        public static void Intersects(ref Plane plane, ref Ray ray, out float? result) => Intersects(ref ray, ref plane, out result);
+        public static void Intersects(ref Ray ray, ref Plane plane, out float? result)
         {
             var velocity = Vector3.Dot(ray.Direction, plane.Normal);
             if (Math.Abs(velocity) < float.Epsilon)
@@ -172,8 +172,8 @@
             }
         }
 
-        public static void Intersect(ref BoundingFrustum boundingFrustum, ref Ray ray, out float? result) => Intersect(ref ray, ref boundingFrustum, out result);
-        public static void Intersect(ref Ray ray, ref BoundingFrustum boundingFrustum, out float? result)
+        public static void Intersects(ref BoundingFrustum boundingFrustum, ref Ray ray, out float? result) => Intersects(ref ray, ref boundingFrustum, out result);
+        public static void Intersects(ref Ray ray, ref BoundingFrustum boundingFrustum, out float? result)
         {
             var containmentType = boundingFrustum.Contains(ray.Position);
             switch (containmentType)
@@ -199,20 +199,20 @@
 
         #region Plane
 
-        public static void Intersect(ref BoundingBox boundingBox, ref Plane plane, out PlaneIntersectionType result) => Intersect(ref plane, ref boundingBox, out result);
-        public static void Intersect(ref Plane plane, ref BoundingBox boundingBox, out PlaneIntersectionType result)
+        public static void Intersects(ref BoundingBox boundingBox, ref Plane plane, out PlaneIntersectionType result) => Intersects(ref plane, ref boundingBox, out result);
+        public static void Intersects(ref Plane plane, ref BoundingBox boundingBox, out PlaneIntersectionType result)
         {
             throw new NotImplementedException();
         }
 
-        public static void Intersect(ref BoundingSphere boundingSphere, ref Plane plane, out PlaneIntersectionType result) => Intersect(ref plane, ref boundingSphere, out result);
-        public static void Intersect(ref Plane plane, ref BoundingSphere boundingSphere, out PlaneIntersectionType result)
+        public static void Intersects(ref BoundingSphere boundingSphere, ref Plane plane, out PlaneIntersectionType result) => Intersects(ref plane, ref boundingSphere, out result);
+        public static void Intersects(ref Plane plane, ref BoundingSphere boundingSphere, out PlaneIntersectionType result)
         {
             throw new NotImplementedException();
         }
-
-        public static void Intersect(ref BoundingFrustum boundingFrustum, ref Plane plane, out PlaneIntersectionType result) => Intersect(ref boundingFrustum, ref plane, out result);
-        public static void Intersect(ref Plane plane, ref BoundingFrustum boundingFrustum, out PlaneIntersectionType result)
+        
+        public static void Intersects(ref Plane plane, ref BoundingFrustum boundingFrustum, out PlaneIntersectionType result) => Intersects(ref boundingFrustum, ref plane, out result);
+        public static void Intersects(ref BoundingFrustum boundingFrustum, ref Plane plane, out PlaneIntersectionType result)
         {
             var corners = boundingFrustum.GetCorners();
             result = plane.Intersects(corners[0]);
@@ -231,8 +231,8 @@
             throw new NotImplementedException();
         }
 
-        public static void Intersect(ref BoundingSphere boundingSphere, ref BoundingBox boundingBox, out bool result) => Intersect(ref boundingBox, ref boundingSphere, out result);
-        public static void Intersect(ref BoundingBox boundingBox, ref BoundingSphere boundingSphere, out bool result)
+        public static void Intersects(ref BoundingSphere boundingSphere, ref BoundingBox boundingBox, out bool result) => Intersects(ref boundingBox, ref boundingSphere, out result);
+        public static void Intersects(ref BoundingBox boundingBox, ref BoundingSphere boundingSphere, out bool result)
         {
             throw new NotImplementedException();
         }
@@ -265,8 +265,8 @@
             result = intersects ? ContainmentType.Intersects : ContainmentType.Contains;
         }
 
-        public static void Intersect(ref BoundingBox boundingBox, ref BoundingFrustum boundingFrustum, out bool result) => Intersect(ref boundingFrustum, ref boundingBox, out result);
-        public static void Intersect(ref BoundingFrustum boundingFrustum, ref BoundingBox boundingBox, out bool result)
+        public static void Intersects(ref BoundingBox boundingBox, ref BoundingFrustum boundingFrustum, out bool result) => Intersects(ref boundingFrustum, ref boundingBox, out result);
+        public static void Intersects(ref BoundingFrustum boundingFrustum, ref BoundingBox boundingBox, out bool result)
         {
             var containmentType = ContainmentType.Disjoint;
             Contains(ref boundingFrustum, ref boundingBox, out containmentType);
@@ -283,8 +283,8 @@
             throw new NotImplementedException();
         }
 
-        public static void Intersect(ref BoundingSphere boundingSphere, ref BoundingFrustum boundingFrustum, out bool result) => Intersect(ref boundingFrustum, ref boundingSphere, out result);
-        public static void Intersect(ref BoundingFrustum boundingFrustum, ref BoundingSphere boundingSphere, out bool result)
+        public static void Intersects(ref BoundingSphere boundingSphere, ref BoundingFrustum boundingFrustum, out bool result) => Intersects(ref boundingFrustum, ref boundingSphere, out result);
+        public static void Intersects(ref BoundingFrustum boundingFrustum, ref BoundingSphere boundingSphere, out bool result)
         {
             throw new NotImplementedException();
         }
@@ -293,13 +293,13 @@
         
         #region LineSegment & BoundingBox
 
-        public static void Intersect(ref BoundingBox boundingBox, ref LineSegment lineSegment, out float? result)
+        public static void Intersects(ref BoundingBox boundingBox, ref LineSegment lineSegment, out float? result)
         {
             Vector3 v1 = new Vector3(lineSegment.Start, 0), v2 = new Vector3(lineSegment.End, 0);
-            Intersect(ref boundingBox, ref v1, ref v2, out result);
+            Intersects(ref boundingBox, ref v1, ref v2, out result);
         }
 
-        public static void Intersect(ref BoundingBox boundingBox, ref Vector3 v1, ref Vector3 v2, out float? result)
+        public static void Intersects(ref BoundingBox boundingBox, ref Vector3 v1, ref Vector3 v2, out float? result)
         {
             var dir = Vector3.Subtract(v2, v1);
 
@@ -316,7 +316,7 @@
                 dir.Z *= inv;
 
                 var ray = new Ray(v1, dir);
-                Intersect(ref ray, ref boundingBox, out result);
+                Intersects(ref ray, ref boundingBox, out result);
 
                 if (result.HasValue && result.Value > length)
                     result = null;
@@ -348,7 +348,7 @@
             }
         }
 
-        public static void Intersect(ref BoundingBox boundingBox1, ref BoundingBox boundingBox2, out bool result)
+        public static void Intersects(ref BoundingBox boundingBox1, ref BoundingBox boundingBox2, out bool result)
         {
             throw new NotImplementedException();
         }
@@ -362,7 +362,7 @@
             throw new NotImplementedException();
         }
 
-        public static void Intersect(ref BoundingSphere boundingSphere1, ref BoundingSphere boundingSphere2, out bool result)
+        public static void Intersects(ref BoundingSphere boundingSphere1, ref BoundingSphere boundingSphere2, out bool result)
         {
             throw new NotImplementedException();
         }
@@ -376,7 +376,7 @@
             throw new NotImplementedException();
         }
 
-        public static void Intersect(ref BoundingFrustum boundingFrustum1, ref BoundingFrustum boundingFrustum2, out bool result)
+        public static void Intersects(ref BoundingFrustum boundingFrustum1, ref BoundingFrustum boundingFrustum2, out bool result)
         {
             throw new NotImplementedException();
         }
