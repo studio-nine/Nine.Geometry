@@ -14,7 +14,7 @@
         /// <param name="callback">
         /// An optional callback handler that returns the distance to the potential target. Returns float.NaN to stop the raycast.
         /// </param>
-        int Raycast(ref Vector2 origin, ref Vector2 direction, ref RaycastResult<T>[] result, int startIndex, Func<T, float> callback = null);
+        int Raycast(ref Vector2 origin, ref Vector2 direction, ref RaycastHit<T>[] result, int startIndex, Func<T, float> callback = null);
 
         /// <summary>
         /// Put all objects that is potentially inside or intersects with the bounding box
