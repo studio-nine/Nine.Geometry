@@ -3,7 +3,6 @@
     using System;
     using System.Numerics;
 
-    // TODO: All the structures 'Contains(..)' methods should simpler than the methods in Intersection for optimization.
     // TODO: Move Ray intersect Triangle
 
     /// <summary>
@@ -212,8 +211,8 @@
             throw new NotImplementedException();
         }
 
-        public static void Intersect(ref Plane plane, ref BoundingFrustum boundingFrustum, out PlaneIntersectionType result) => Intersect(ref boundingFrustum, ref plane, out result);
-        public static void Intersect(ref BoundingFrustum boundingFrustum, ref Plane plane, out PlaneIntersectionType result)
+        public static void Intersect(ref BoundingFrustum boundingFrustum, ref Plane plane, out PlaneIntersectionType result) => Intersect(ref boundingFrustum, ref plane, out result);
+        public static void Intersect(ref Plane plane, ref BoundingFrustum boundingFrustum, out PlaneIntersectionType result)
         {
             var corners = boundingFrustum.GetCorners();
             result = plane.Intersects(corners[0]);

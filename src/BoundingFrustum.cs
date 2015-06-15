@@ -115,7 +115,7 @@
         {
             var me = this;
             PlaneIntersectionType result;
-            Intersection.Contains(ref me, ref plane, out result);
+            Intersection.Intersect(ref me, ref plane, out result);
             return result;
         }
 
@@ -160,9 +160,9 @@
         public bool Intersects(Plane plane)
         {
             var me = this;
-            bool result;
+            PlaneIntersectionType result;
             Intersection.Intersect(ref me, ref plane, out result);
-            return result;
+            return result == PlaneIntersectionType.Intersecting;
         }
 
         public float? Intersects(Ray ray)

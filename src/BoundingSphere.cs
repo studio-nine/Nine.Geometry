@@ -106,9 +106,9 @@
         
         public bool Intersects(Plane plane)
         {
-            bool result;
+            PlaneIntersectionType result;
             Intersection.Intersect(ref plane, ref this, out result);
-            return result;
+            return result == PlaneIntersectionType.Intersecting;
         }
         
         public float? Intersects(Ray ray)
