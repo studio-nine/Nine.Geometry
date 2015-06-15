@@ -46,10 +46,8 @@
         public BoundingFrustum(Matrix4x4 matrix)
         {
             this.Matrix = matrix;
-            this.planes = null;
-            this.corners = null;
-            this.planes = new Lazy<Plane[]>(CreatePlanes, isThreadSafe: false);
-            this.corners = new Lazy<Vector3[]>(CreateCorners, isThreadSafe:false);
+            this.planes = new Lazy<Plane[]>(CreatePlanes);
+            this.corners = new Lazy<Vector3[]>(CreateCorners);
         }
 
         private Plane[] CreatePlanes()
