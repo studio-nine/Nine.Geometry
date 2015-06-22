@@ -9,7 +9,8 @@
         {
             if (root == NullNode)
             {
-                root = leaf;
+                this.root = leaf;
+                nodes[root].IndexId = leaf;
                 nodes[root].ParentOrNext = NullNode;
                 return;
             }
@@ -81,6 +82,7 @@
             int oldParent = nodes[sibling].ParentOrNext;
             int newParent = Allocate();
 
+            nodes[newParent].IndexId = newParent;
             nodes[newParent].ParentOrNext = oldParent;
             nodes[newParent].Value = default(T);
             nodes[newParent].Bounds = BoundingRectangle.CreateMerged(nodes[sibling].Bounds, leafBounds);
@@ -131,19 +133,19 @@
                 index = nodes[index].ParentOrNext;
             }
 
-            //Validate();
+            Validate();
         }
 
-        private void RemoveLeaf(int leaf)
+        private bool RemoveLeaf(int leaf)
         {
             if (leaf == root)
             {
                 root = NullNode;
-                return;
+                return true;
             }
 
-            int parent = nodes[leaf].ParentOrNext;
-            int grandParent = nodes[parent].ParentOrNext;
+            var parent = nodes[leaf].ParentOrNext;
+            var grandParent = nodes[parent].ParentOrNext;
             var sibling = (nodes[parent].Child1 == leaf) ? nodes[parent].Child2 : nodes[parent].Child1;
 
             if (grandParent != NullNode)
@@ -162,7 +164,7 @@
                 FreeNode(parent);
 
                 // Adjust ancestor bounds.
-                int index = grandParent;
+                var index = grandParent;
                 while (index != NullNode)
                 {
                     index = Balance(index);
@@ -183,7 +185,10 @@
                 FreeNode(parent);
             }
 
-            //Validate();
+            Validate();
+
+            // TODO:
+            return false;
         }
 
         private int Balance(int iA)
