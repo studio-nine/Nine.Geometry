@@ -2,7 +2,6 @@
 {
     using System.Diagnostics;
     using Xunit;
-    using Xunit.Abstractions;
 
     public struct Actor
     {
@@ -39,15 +38,10 @@
             for (int i = 0; i < actors.Length - 1; i++)
             {
                 var actor = actors[i];
-                var result = tree.Add(ref actor.Bounds, actor);
+                tree.Add(ref actor.Bounds, actor);
             }
 
             PrintChildren(0, tree, tree.GetNodeAt(tree.RootId));
-            tree.Traverse(e =>
-            {
-                Debug.WriteLine(e);
-                return TraverseOptions.Continue;
-            });
             
             // Remove actors
             tree.Clear();
@@ -57,7 +51,7 @@
 
         void PrintChildren(int depth, DynamicTree<Actor> tree, DynamicTreeNode<Actor> node)
         {
-            Debug.WriteLine($"{new string('\t', depth)} -> {node.Index} [ {node.Child1Id} . {node.Child2Id} ]");
+            Debug.WriteLine($"{new string('\t', depth)} -> [ {node.Child1Id} . {node.Child2Id} ] {new string('\t', 8 - depth)} {node.Bounds}");
 
             var newDepth = depth + 1;
             if (node.Child1Id != -1) PrintChildren(newDepth, tree, tree.GetNodeAt(node.Child1Id));

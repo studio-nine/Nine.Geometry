@@ -23,7 +23,7 @@
         Stop,
     }
 
-    public partial class DynamicTree<T>
+    public partial class DynamicTree<T> : ISpatialQuery2D<T>
     {
         internal const int NullNode = -1;
 
@@ -36,7 +36,9 @@
         public int MaxBalance => GetMaxBalance();
 
         public int NodeCount => nodeCount;
+
         public int RootId => root;
+        public DynamicTreeNode<T> Root => nodes[root];
 
         private readonly Stack<int> raycastStack;
         private readonly Stack<int> queryStack;
@@ -58,26 +60,21 @@
         
         public DynamicTreeNode<T> GetNodeAt(int index) => nodes[index];
 
-        public DynamicTreeNode<T> Add(ref BoundingRectangle bounds, T value)
+        public int Add(ref BoundingRectangle bounds, T value)
         {
             var newIndex = Allocate();
             
-            var r = new Vector2(0.1f);
+            var r = new Vector2();
 
             nodes[newIndex].Bounds.Lower = bounds.Lower - r;
             nodes[newIndex].Bounds.Upper = bounds.Upper + r;
             nodes[newIndex].Value = value;
             nodes[newIndex].Height = 0;
-            nodes[newIndex].IndexId = newIndex;
+            //nodes[newIndex].IndexId = newIndex;
 
             InsertLeaf(newIndex);
 
-            return nodes[newIndex];
-        }
-        
-        public bool Remove(DynamicTreeNode<T> node)
-        {
-            return RemoveAt(node.IndexId);
+            return newIndex;
         }
         
         public bool RemoveAt(int index)
@@ -91,21 +88,21 @@
             return true;
         }
 
-        public bool Move(DynamicTreeNode<T> node, BoundingRectangle bounds)
+        public bool Move(int index, BoundingRectangle bounds)
         {
-            var proxyId = node.IndexId;
+            Debug.Assert(0 <= index && index < nodeCapacity);
+            Debug.Assert(nodes[index].IsLeaf());
+
+            var node = nodes[index];
             var displacement = node.Bounds.Center - bounds.Center;
 
-            Debug.Assert(0 <= proxyId && proxyId < nodeCapacity);
-            Debug.Assert(nodes[proxyId].IsLeaf());
-
-            if (nodes[proxyId].Bounds.Contains(bounds) == ContainmentType.Contains)
+            if (nodes[index].Bounds.Contains(bounds) == ContainmentType.Contains)
                 return false;
 
-            RemoveLeaf(proxyId);
+            RemoveLeaf(index);
 
             // Extend AABB.
-            var r = new Vector2(0.1f);
+            var r = new Vector2();
 
             var b = bounds;
             b.Lower = b.Lower - r;
@@ -132,8 +129,8 @@
                 b.Y += d.Y;
             }
 
-            nodes[proxyId].Bounds = b;
-            InsertLeaf(proxyId);
+            nodes[index].Bounds = b;
+            InsertLeaf(index);
 
             return true;
         }
@@ -242,18 +239,59 @@
                 }
             }
         }
+
+        #region ISpatialQuery2D
+
+        public int Raycast(ref Vector2 origin, ref Vector2 direction, ref RaycastHit<T>[] result, int startIndex, Func<T, float> callback = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public int FindAll(ref BoundingRectangle bounds, ref T[] result, int startIndex)
+        {
+            throw new NotImplementedException();
+
+            //if (this.RootId == NullNode)
+            //{
+            //    result = new T[0];
+            //    startIndex = 0;
+            //    return 0;
+            //}
+
+            //this.Traverse(e =>
+            //{
+            //    var root = this.Root;
+
+            //    var containsResult = ContainmentType.Disjoint;
+            //    Intersection.Contains(ref root.Bounds, ref bounds, out containsResult);
+
+            //    switch (containsResult)
+            //    {
+            //        case ContainmentType.Contains:
+            //            // TODO: Add all children
+            //            return TraverseOptions.Skip;
+
+            //        case ContainmentType.Intersects: return TraverseOptions.Continue;
+            //        case ContainmentType.Disjoint: return TraverseOptions.Stop;
+            //    }
+
+            //    throw new ArgumentException();
+            //});
+
+            //return 0;
+        }
+        
+        #endregion
     }
 
     public struct DynamicTreeNode<T>
     {
-        internal int IndexId;
         internal int Child1;
         internal int Child2;
 
         internal int Height;
         internal int ParentOrNext;
 
-        public int Index => IndexId;
         public int Child1Id => Child1;
         public int Child2Id => Child2;
 
@@ -264,7 +302,7 @@
 
         public override string ToString()
         {
-            return $"Index: {IndexId}, Child1: {Child1}, Child2: {Child2}, Value: {Value}";
+            return $"Child1: {Child1}, Child2: {Child2}, Value: {Value}";
         }
     }
 }

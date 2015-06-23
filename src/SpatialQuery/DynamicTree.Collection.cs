@@ -10,7 +10,7 @@
             if (root == NullNode)
             {
                 this.root = leaf;
-                nodes[root].IndexId = leaf;
+                //nodes[root].IndexId = leaf;
                 nodes[root].ParentOrNext = NullNode;
                 return;
             }
@@ -82,7 +82,7 @@
             int oldParent = nodes[sibling].ParentOrNext;
             int newParent = Allocate();
 
-            nodes[newParent].IndexId = newParent;
+            //nodes[newParent].IndexId = newParent;
             nodes[newParent].ParentOrNext = oldParent;
             nodes[newParent].Value = default(T);
             nodes[newParent].Bounds = BoundingRectangle.CreateMerged(nodes[sibling].Bounds, leafBounds);
