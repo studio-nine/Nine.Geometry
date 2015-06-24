@@ -5,24 +5,6 @@
     using System.Diagnostics;
     using System.Numerics;
 
-    public enum TraverseOptions
-    {
-        /// <summary>
-        /// The traverse operation should continue to visit the next node.
-        /// </summary>
-        Continue,
-
-        /// <summary>
-        /// The traverse operation should skip the current node and its child nodes.
-        /// </summary>
-        Skip,
-
-        /// <summary>
-        /// The traverse operation should stop visiting nodes.
-        /// </summary>
-        Stop,
-    }
-
     public partial class DynamicTree<T> : ISpatialQuery2D<T>
     {
         internal const int NullNode = -1;
@@ -197,57 +179,15 @@
 
             return maxBalance;
         }
-
-        public int Find(BoundingRectangle rectangle, T[] output, int startIndex)
-        {
-            throw new NotImplementedException();
-        }
-
-
-        static DynamicTreeNode<T>[] Stack = new DynamicTreeNode<T>[64];
-        static int StackCount = 0;
-
-        public void Traverse(Func<DynamicTreeNode<T>, TraverseOptions> result)
-        {
-            if (root == NullNode)
-                throw new ArgumentNullException();
-
-            this.Traverse(nodes[root], result);
-        }
-
-        public void Traverse(DynamicTreeNode<T> target, Func<DynamicTreeNode<T>, TraverseOptions> result)
-        {
-            StackCount = 0;
-            Stack[StackCount++] = target;
-
-            while (StackCount > 0)
-            {
-                DynamicTreeNode<T> node = Stack[--StackCount];
-                var traverseOptions = result(node);
-                if (traverseOptions == TraverseOptions.Stop)
-                    break;
-
-                if (traverseOptions == TraverseOptions.Continue && node.Height > 0)
-                {
-                    var count = node.Height;
-                    var requiredCpacity = count + StackCount;
-                    if (requiredCpacity > Stack.Length)
-                        Array.Resize(ref Stack, Math.Max(Stack.Length * 2, requiredCpacity));
-                    
-                    if (count >= 1) Stack[StackCount++] = nodes[node.Child1];
-                    if (count >= 2) Stack[StackCount++] = nodes[node.Child2];
-                }
-            }
-        }
-
+        
         #region ISpatialQuery2D
 
-        public int Raycast(ref Vector2 origin, ref Vector2 direction, ref RaycastHit<T>[] result, int startIndex, Func<T, float> callback = null)
+        public int Raycast(ref Vector2 origin, ref Vector2 direction, ref RaycastHit<T>[] result, int startIndex, Func<T, float> callback = null, Stack<int> traverseStack = null)
         {
             throw new NotImplementedException();
         }
 
-        public int FindAll(ref BoundingRectangle bounds, ref T[] result, int startIndex)
+        public int FindAll(ref BoundingRectangle bounds, ref T[] result, int startIndex, Stack<int> traverseStack = null)
         {
             throw new NotImplementedException();
 

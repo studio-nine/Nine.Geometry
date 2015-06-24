@@ -115,10 +115,13 @@
                 root = newParent;
             }
 
+            // TODO: [1] Sometimes it creates an endless loop that goes from root to root child and repeat
+
             // Walk back up the tree fixing heights and AABBs
             index = nodes[leaf].ParentOrNext;
             while (index != NullNode)
             {
+                // TODO: [1] Balance returns child in this issue and repeats
                 index = Balance(index);
 
                 int child1 = nodes[index].Child1;

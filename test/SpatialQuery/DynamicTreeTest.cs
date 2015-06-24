@@ -22,11 +22,11 @@
     {
         public static readonly Actor[] actors =
         {
-            new Actor(new BoundingRectangle(100, 100)),
-            new Actor(new BoundingRectangle(10, 0, 40, 80)),
-            new Actor(new BoundingRectangle(60, 0, 40, 80)),
-            new Actor(new BoundingRectangle(20, 10, 20, 20)),
-            new Actor(new BoundingRectangle(20, 10, 20, 20)),
+            new Actor(new BoundingRectangle(10, 20, 100, 100)),
+            new Actor(new BoundingRectangle(10, 20, 40, 80)),
+            new Actor(new BoundingRectangle(60, 20, 40, 80)),
+            //new Actor(new BoundingRectangle(20, 50, 20, 20)), // If I uncomment, the issue occurs.
+            //new Actor(new BoundingRectangle(20, 50, 20, 20)),
         };
 
         private DynamicTree<Actor> tree = new DynamicTree<Actor>();
@@ -35,7 +35,7 @@
         public void test_all()
         {
             // Add actors
-            for (int i = 0; i < actors.Length - 1; i++)
+            for (int i = 0; i < actors.Length; i++)
             {
                 var actor = actors[i];
                 tree.Add(ref actor.Bounds, actor);
