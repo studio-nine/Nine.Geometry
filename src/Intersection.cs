@@ -3,7 +3,6 @@
     using System;
     using System.Numerics;
 
-    // TODO: All the structures 'Contains(..)' methods should simpler than the methods in Intersection for optimization.
     // TODO: Move Ray intersect Triangle
 
     /// <summary>
@@ -211,7 +210,7 @@
         {
             throw new NotImplementedException();
         }
-
+        
         public static void Intersects(ref Plane plane, ref BoundingFrustum boundingFrustum, out PlaneIntersectionType result) => Intersects(ref boundingFrustum, ref plane, out result);
         public static void Intersects(ref BoundingFrustum boundingFrustum, ref Plane plane, out PlaneIntersectionType result)
         {
@@ -380,6 +379,48 @@
         public static void Intersects(ref BoundingFrustum boundingFrustum1, ref BoundingFrustum boundingFrustum2, out bool result)
         {
             throw new NotImplementedException();
+        }
+
+        #endregion
+
+        #region BoundingRectangle
+
+        public static void Contains(ref BoundingRectangle boundingRectangle1, ref BoundingRectangle boundingRectangle2, out ContainmentType result)
+        {
+            if (boundingRectangle1.X > boundingRectangle2.Right ||
+                boundingRectangle1.Y > boundingRectangle2.Bottom ||
+                boundingRectangle1.Right < boundingRectangle2.X ||
+                boundingRectangle1.Bottom < boundingRectangle2.Y)
+            {
+                result = ContainmentType.Disjoint;
+            }
+            else if (
+                boundingRectangle1.X <= boundingRectangle2.X &&
+                boundingRectangle1.Y <= boundingRectangle2.Y &&
+                boundingRectangle1.Right >= boundingRectangle2.Right &&
+                boundingRectangle1.Bottom >= boundingRectangle2.Bottom)
+            {
+                result = ContainmentType.Contains;
+            }
+            else
+            {
+                result = ContainmentType.Intersects;
+            }
+        }
+
+        public static void Intersects(ref BoundingRectangle boundingRectangle1, ref BoundingRectangle boundingRectangle2, out bool result)
+        {
+            if (boundingRectangle1.X > boundingRectangle2.Right ||
+                boundingRectangle1.Y > boundingRectangle2.Bottom ||
+                boundingRectangle1.Right < boundingRectangle2.X ||
+                boundingRectangle1.Bottom < boundingRectangle2.Y)
+            {
+                result = false;
+            }
+            else
+            {
+                result = true;
+            }
         }
 
         #endregion

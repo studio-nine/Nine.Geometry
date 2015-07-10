@@ -42,6 +42,29 @@
         /// <summary> Returns the size of the rectangle. </summary>
         public Vector2 Size => new Vector2(Width, Height); 
 
+        public Vector2 Upper
+        {
+            get { return new Vector2(Top, Left); }
+            set
+            {
+                this.X = value.X;
+                this.Y = value.Y;
+            }
+        }
+
+        public Vector2 Lower
+        {
+            get { return new Vector2(Bottom, Right); }
+            set
+            {
+                this.X = value.X;
+                this.Y = value.Y;
+            }
+        }
+
+        /// <summary> Get the perimeter length. </summary>
+        public float Perimeter => 2.0f * ((this.Upper.X - this.Lower.X) + (this.Upper.Y - this.Lower.Y));
+
         /// <summary> Returns a Rectangle with all of its values set to zero. </summary>
         public static BoundingRectangle Empty { get; private set; }
 

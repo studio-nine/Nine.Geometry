@@ -15,76 +15,69 @@
         public const int CornerCount = 8;
 
         /// <summary> Gets the near plane. </summary>
-        public Plane Near => this.planes[0];
+        public Plane Near => planes.Value[0];
 
         /// <summary> Gets the far plane. </summary>
-        public Plane Far => this.planes[1];
+        public Plane Far => planes.Value[1];
 
         /// <summary> Gets the left plane. </summary>
-        public Plane Left => this.planes[2];
+        public Plane Left => planes.Value[2];
 
         /// <summary> Gets the right plane. </summary>
-        public Plane Right => this.planes[3];
+        public Plane Right => planes.Value[3];
 
         /// <summary> Gets the top plane. </summary>
-        public Plane Top => this.planes[4];
+        public Plane Top => planes.Value[4];
 
         /// <summary> Gets the bottom plane. </summary>
-        public Plane Bottom => this.planes[5];
+        public Plane Bottom => planes.Value[5];
 
         /// <summary>
         /// Gets or sets the <see cref="Matrix4x4"/> that describes this <see cref="BoundingFrustum"/>.
         /// </summary>
-        public Matrix4x4 Matrix
-        {
-            get { return matrix; }
-            set
-            {
-                this.matrix = value;
-                this.OnMatrixChanged();
-            }
-        }
-        private Matrix4x4 matrix;
+        public readonly Matrix4x4 Matrix;
 
-        private readonly Plane[] planes;
-        private readonly Vector3[] corners;
+        private readonly Lazy<Plane[]> planes;
+        private readonly Lazy<Vector3[]> corners;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BoundingFrustum"/> class.
         /// </summary>
         public BoundingFrustum(Matrix4x4 matrix)
         {
-            this.matrix = matrix;
-
-            this.planes = new Plane[PlaneCount];
-            this.corners = new Vector3[CornerCount];
+            this.Matrix = matrix;
+            this.planes = new Lazy<Plane[]>(CreatePlanes);
+            this.corners = new Lazy<Vector3[]>(CreateCorners);
         }
 
-        private void OnMatrixChanged()
+        private Plane[] CreatePlanes()
         {
-            // TODO: Redesign this
+            return new[]
+            {
+                Plane.Normalize(new Plane(-Matrix.M13, -Matrix.M23, -Matrix.M33, -Matrix.M43)),
+                Plane.Normalize(new Plane(Matrix.M13 - Matrix.M14, Matrix.M23 - Matrix.M24, Matrix.M33 - Matrix.M34, Matrix.M43 - Matrix.M44)),
+                Plane.Normalize(new Plane(-Matrix.M14 - Matrix.M11, -Matrix.M24 - Matrix.M21, -Matrix.M34 - Matrix.M31, -Matrix.M44 - Matrix.M41)),
+                Plane.Normalize(new Plane(Matrix.M11 - Matrix.M14, Matrix.M21 - Matrix.M24, Matrix.M31 - Matrix.M34, Matrix.M41 - Matrix.M44)),
+                Plane.Normalize(new Plane(Matrix.M12 - Matrix.M14, Matrix.M22 - Matrix.M24, Matrix.M32 - Matrix.M34, Matrix.M42 - Matrix.M44)),
+                Plane.Normalize(new Plane(-Matrix.M14 - Matrix.M12, -Matrix.M24 - Matrix.M22, -Matrix.M34 - Matrix.M32, -Matrix.M44 - Matrix.M42)),
+            };
+        }
 
-            // Create the planes
-            this.planes[0] = new Plane(-this.matrix.M13, -this.matrix.M23, -this.matrix.M33, -this.matrix.M43);
-            this.planes[1] = new Plane(this.matrix.M13 - this.matrix.M14, this.matrix.M23 - this.matrix.M24, this.matrix.M33 - this.matrix.M34, this.matrix.M43 - this.matrix.M44);
-            this.planes[2] = new Plane(-this.matrix.M14 - this.matrix.M11, -this.matrix.M24 - this.matrix.M21, -this.matrix.M34 - this.matrix.M31, -this.matrix.M44 - this.matrix.M41);
-            this.planes[3] = new Plane(this.matrix.M11 - this.matrix.M14, this.matrix.M21 - this.matrix.M24, this.matrix.M31 - this.matrix.M34, this.matrix.M41 - this.matrix.M44);
-            this.planes[4] = new Plane(this.matrix.M12 - this.matrix.M14, this.matrix.M22 - this.matrix.M24, this.matrix.M32 - this.matrix.M34, this.matrix.M42 - this.matrix.M44);
-            this.planes[5] = new Plane(-this.matrix.M14 - this.matrix.M12, -this.matrix.M24 - this.matrix.M22, -this.matrix.M34 - this.matrix.M32, -this.matrix.M44 - this.matrix.M42);
+        private Vector3[] CreateCorners()
+        {
+            var planes = this.planes.Value;
 
-            // Normalize all the planes
-            for (int i = 0; i < this.planes.Length; i++)
-                this.planes[i] = Plane.Normalize(this.planes[i]);
-
-            // Create the corners
-            IntersectionPoint(ref this.planes[0], ref this.planes[2], ref this.planes[4], out this.corners[0]);
-            IntersectionPoint(ref this.planes[0], ref this.planes[3], ref this.planes[4], out this.corners[1]);
-            IntersectionPoint(ref this.planes[0], ref this.planes[3], ref this.planes[5], out this.corners[2]);
-            IntersectionPoint(ref this.planes[0], ref this.planes[2], ref this.planes[5], out this.corners[3]);
-            IntersectionPoint(ref this.planes[1], ref this.planes[2], ref this.planes[4], out this.corners[4]);
-            IntersectionPoint(ref this.planes[1], ref this.planes[3], ref this.planes[4], out this.corners[5]);
-            IntersectionPoint(ref this.planes[1], ref this.planes[3], ref this.planes[5], out this.corners[6]);
-            IntersectionPoint(ref this.planes[1], ref this.planes[2], ref this.planes[5], out this.corners[7]);
+            return new[]
+            {
+                IntersectionPoint(ref planes[0], ref planes[2], ref planes[4]),
+                IntersectionPoint(ref planes[0], ref planes[3], ref planes[4]),
+                IntersectionPoint(ref planes[0], ref planes[3], ref planes[5]),
+                IntersectionPoint(ref planes[0], ref planes[2], ref planes[5]),
+                IntersectionPoint(ref planes[1], ref planes[2], ref planes[4]),
+                IntersectionPoint(ref planes[1], ref planes[3], ref planes[4]),
+                IntersectionPoint(ref planes[1], ref planes[3], ref planes[5]),
+                IntersectionPoint(ref planes[1], ref planes[2], ref planes[5]),
+            };
         }
 
         public ContainmentType Contains(BoundingFrustum boundingfrustum)
@@ -121,6 +114,7 @@
 
         public ContainmentType Contains(Vector3 vector)
         {
+            var planes = this.planes.Value;
             for (var i = 0; i < PlaneCount; ++i)
             {
                 var value = vector * planes[i].Normal;
@@ -156,7 +150,7 @@
             Intersection.Intersects(ref me, ref boundingSphere, out result);
             return result;
         }
-        
+
         public float? Intersects(Ray ray)
         {
             var me = this;
@@ -165,11 +159,11 @@
             return result;
         }
 
-        public void GetPlanes(ref Plane[] result) => result = this.GetPlanes();
-        public Plane[] GetPlanes() => this.planes;
+        public void GetPlanes(ref Plane[] result) => result = GetPlanes();
+        public Plane[] GetPlanes() => planes.Value;
 
-        public void GetCorners(ref Vector3[] result) => result = this.GetCorners();
-        public Vector3[] GetCorners() => corners;
+        public void GetCorners(ref Vector3[] result) => result = GetCorners();
+        public Vector3[] GetCorners() => corners.Value;
 
         public static bool operator ==(BoundingFrustum left, BoundingFrustum right) => (left.Matrix == right.Matrix);
         public static bool operator !=(BoundingFrustum left, BoundingFrustum right) => (left.Matrix != right.Matrix);
@@ -181,15 +175,18 @@
         public override bool Equals(object obj) => (obj is BoundingFrustum) && this.Equals((BoundingFrustum)obj);
 
         /// <inheritdoc />
-        public override int GetHashCode() => this.matrix.GetHashCode();
-        
-        /// <inheritdoc />
-        public override string ToString() => 
-            string.Format("<Near: {0}, Far: {1}, Left: {2}, Right: {3}, Top: {4}, Bottom: {5}>",
-                this.planes[0], this.planes[1], this.planes[2],
-                this.planes[3], this.planes[4], this.planes[5]);
+        public override int GetHashCode() => this.Matrix.GetHashCode();
 
-        private static void IntersectionPoint(ref Plane a, ref Plane b, ref Plane c, out Vector3 result)
+        /// <inheritdoc />
+        public override string ToString()
+        {
+            var planes = this.planes.Value;
+            return string.Format("<Near: {0}, Far: {1}, Left: {2}, Right: {3}, Top: {4}, Bottom: {5}>",
+                planes[0], planes[1], planes[2],
+                planes[3], planes[4], planes[5]);
+        }
+
+        private static Vector3 IntersectionPoint(ref Plane a, ref Plane b, ref Plane c)
         {
             // Formula used
             //                d1 ( N2 * N3 ) + d2 ( N3 * N1 ) + d3 ( N1 * N2 )
@@ -216,9 +213,10 @@
             v3 = Vector3.Multiply(cross, c.D);
             //v3 = (c.D * (Vector3.Cross(a.Normal, b.Normal)));
 
-            result.X = (v1.X + v2.X + v3.X) / f;
-            result.Y = (v1.Y + v2.Y + v3.Y) / f;
-            result.Z = (v1.Z + v2.Z + v3.Z) / f;
+            return new Vector3(
+                (v1.X + v2.X + v3.X) / f,
+                (v1.Y + v2.Y + v3.Y) / f,
+                (v1.Z + v2.Z + v3.Z) / f);
         }
     }
 }
