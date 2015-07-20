@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.22823.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Nine.Geometry", "src\Nine.Geometry.xproj", "{0E06199E-10CE-4FB6-976D-8A0616C7ACF9}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Nine.Geometry", "src\Nine.Geometry\Nine.Geometry.xproj", "{0E06199E-10CE-4FB6-976D-8A0616C7ACF9}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{C5B0A994-3C97-463D-960C-5D1E5FF78FB6}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{57034D93-482B-4783-A5DF-9D3220DEB4D2}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Nine.Geometry.Test", "test\Nine.Geometry.Test.xproj", "{E301CD89-80DA-4755-B7FA-F36012E00667}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Nine.Geometry.Test", "test\Nine.Geometry.Test\Nine.Geometry.Test.xproj", "{E301CD89-80DA-4755-B7FA-F36012E00667}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

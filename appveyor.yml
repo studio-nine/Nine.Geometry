@@ -7,4 +7,4 @@ install:
   - dnvm install 1.0.0-beta4
   - dnu restore
 test_script:
-  - cmd: dnx test test
+  - cmd: dnx test/Nine.Geometry.Test test
