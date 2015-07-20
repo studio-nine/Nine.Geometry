@@ -1,6 +1,6 @@
 ﻿{
   "version": "1.0.0-alpha-*",
-  "description": "",
+  "description": "A lightweight library with geometry and spatial query.",
   "authors": [ "" ],
   "tags": [ "" ],
   "projectUrl": "https://github.com/studio-nine/Nine.Geometry",
