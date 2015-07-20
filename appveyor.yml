@@ -6,7 +6,7 @@ install:
   - dnvm install 1.0.0-beta5
   - dnu restore
   - dnu pack src --configuration Release --out artifacts
-  - dnx test/Nine.Geometry.Test test
+  - dnx test\Nine.Geometry.Test test
 build: off
 artifacts:
   - path: artifacts\**\*.nupkg

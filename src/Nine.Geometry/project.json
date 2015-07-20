@@ -1,5 +1,5 @@
 ﻿{
-  "version": "1.0.0-alpha*",
+  "version": "1.0.0-alpha-*",
   "description": "",
   "authors": [ "" ],
   "tags": [ "" ],
@@ -18,11 +18,11 @@
     },
     "dnxcore50": {
       "dependencies": {
+        "Microsoft.CSharp": "4.0.0-*",
         "System.Collections": "4.0.10-*",
         "System.Diagnostics.Debug": "4.0.10-*",
         "System.Runtime": "4.0.20-*",
-        "System.Runtime.Extensions": "4.0.10-*",
-        "Microsoft.CSharp": "4.0.0-*"
+        "System.Runtime.Extensions": "4.0.10-*"
       }
     }
   }
