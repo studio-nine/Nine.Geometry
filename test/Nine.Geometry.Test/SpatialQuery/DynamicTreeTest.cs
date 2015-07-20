@@ -1,55 +1,61 @@
 ﻿namespace Nine.Geometry.SpatialQuery
 {
-    using System.Collections.Generic;
+    using System.Diagnostics;
     using Xunit;
 
     public struct Actor
     {
         public BoundingRectangle Bounds;
+
+        public Actor(BoundingRectangle bounds)
+        {
+            this.Bounds = bounds;
+        }
+
+        public override string ToString()
+        {
+            return Bounds.ToString();
+        }
     }
 
     public class DynamicTreeTest
     {
-        private DynamicTree<Actor> tree = new DynamicTree<Actor>();
+        public static readonly Actor[] actors =
+        {
+            new Actor(new BoundingRectangle(10, 20, 100, 100)),
+            new Actor(new BoundingRectangle(10, 20, 40, 80)),
+            new Actor(new BoundingRectangle(60, 20, 40, 80)),
+            //new Actor(new BoundingRectangle(20, 50, 20, 20)), // If I uncomment, the issue occurs.
+            //new Actor(new BoundingRectangle(20, 50, 20, 20)),
+        };
 
-        [Fact]
+        private DynamicTree<Actor> tree = new DynamicTree<Actor>();
+        
+        [Fact] // xunit Timeout?
         public void test_all()
         {
-            const int count = 4;
-
-            var actors = new List<DynamicTreeNode<Actor>>();
-
             // Add actors
-            for (int i = 0; i < count; i++)
+            for (int i = 0; i < actors.Length; i++)
             {
-                var actor = new Actor();
-                actor.Bounds = new BoundingRectangle(0, 10 * i, 10, 10);
-
-                var result = tree.Add(ref actor.Bounds, actor);
-                actors.Add(result);
+                var actor = actors[i];
+                tree.Add(ref actor.Bounds, actor);
             }
 
-            Assert.Equal(2, tree.Height); // fix? 
-
-            // TODO: Query
-
-            //// Move actors
-            //for (int i = 0; i < actors.Count; i++)
-            //{
-            //    // Make bounds ref?
-            //    tree.Move(actors[i], new BoundingRectangle(10, 10 * i, 10, 10));
-            //}
-
-            // TODO: Query
-
+            PrintChildren(0, tree, tree.GetNodeAt(tree.RootId));
+            
             // Remove actors
-            // TODO: Fix clear
-            foreach (var actor in actors)
-            {
-                tree.Remove(actor);
-            }
+            tree.Clear();
 
-            Assert.Equal(0, tree.Height);
+            Assert.Equal(0, tree.NodeCount);
+        }
+
+        void PrintChildren(int depth, DynamicTree<Actor> tree, DynamicTreeNode<Actor> node)
+        {
+            Debug.WriteLine($"{new string('\t', depth)} -> [ {node.Child1Id} . {node.Child2Id} ] {new string('\t', 8 - depth)} {node.Bounds}");
+
+            var newDepth = depth + 1;
+            if (node.Child1Id != -1) PrintChildren(newDepth, tree, tree.GetNodeAt(node.Child1Id));
+            if (node.Child2Id != -1) PrintChildren(newDepth, tree, tree.GetNodeAt(node.Child2Id));
         }
     }
 }

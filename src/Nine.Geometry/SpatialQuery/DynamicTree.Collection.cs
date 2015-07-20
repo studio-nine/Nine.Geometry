@@ -9,7 +9,8 @@
         {
             if (root == NullNode)
             {
-                root = leaf;
+                this.root = leaf;
+                //nodes[root].IndexId = leaf;
                 nodes[root].ParentOrNext = NullNode;
                 return;
             }
@@ -81,6 +82,7 @@
             int oldParent = nodes[sibling].ParentOrNext;
             int newParent = Allocate();
 
+            //nodes[newParent].IndexId = newParent;
             nodes[newParent].ParentOrNext = oldParent;
             nodes[newParent].Value = default(T);
             nodes[newParent].Bounds = BoundingRectangle.CreateMerged(nodes[sibling].Bounds, leafBounds);
@@ -113,10 +115,13 @@
                 root = newParent;
             }
 
+            // TODO: [1] Sometimes it creates an endless loop that goes from root to root child and repeat
+
             // Walk back up the tree fixing heights and AABBs
             index = nodes[leaf].ParentOrNext;
             while (index != NullNode)
             {
+                // TODO: [1] Balance returns child in this issue and repeats
                 index = Balance(index);
 
                 int child1 = nodes[index].Child1;
@@ -131,19 +136,19 @@
                 index = nodes[index].ParentOrNext;
             }
 
-            //Validate();
+            Validate();
         }
 
-        private void RemoveLeaf(int leaf)
+        private bool RemoveLeaf(int leaf)
         {
             if (leaf == root)
             {
                 root = NullNode;
-                return;
+                return true;
             }
 
-            int parent = nodes[leaf].ParentOrNext;
-            int grandParent = nodes[parent].ParentOrNext;
+            var parent = nodes[leaf].ParentOrNext;
+            var grandParent = nodes[parent].ParentOrNext;
             var sibling = (nodes[parent].Child1 == leaf) ? nodes[parent].Child2 : nodes[parent].Child1;
 
             if (grandParent != NullNode)
@@ -162,7 +167,7 @@
                 FreeNode(parent);
 
                 // Adjust ancestor bounds.
-                int index = grandParent;
+                var index = grandParent;
                 while (index != NullNode)
                 {
                     index = Balance(index);
@@ -183,7 +188,10 @@
                 FreeNode(parent);
             }
 
-            //Validate();
+            Validate();
+
+            // TODO:
+            return false;
         }
 
         private int Balance(int iA)
