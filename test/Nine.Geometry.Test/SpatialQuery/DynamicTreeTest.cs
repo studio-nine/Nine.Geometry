@@ -51,7 +51,7 @@
 
         void PrintChildren(int depth, DynamicTree<Actor> tree, DynamicTreeNode<Actor> node)
         {
-            Debug.WriteLine($"{new string('\t', depth)} -> [ {node.Child1Id} . {node.Child2Id} ] {new string('\t', 8 - depth)} {node.Bounds}");
+            System.Console.WriteLine($"{new string('\t', depth)} -> [ {node.Child1Id} . {node.Child2Id} ] {new string('\t', 8 - depth)} {node.Bounds}");
 
             var newDepth = depth + 1;
             if (node.Child1Id != -1) PrintChildren(newDepth, tree, tree.GetNodeAt(node.Child1Id));

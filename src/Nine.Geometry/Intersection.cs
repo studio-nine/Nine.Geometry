@@ -202,12 +202,14 @@
         public static void Intersects(ref BoundingBox boundingBox, ref Plane plane, out PlaneIntersectionType result) => Intersects(ref plane, ref boundingBox, out result);
         public static void Intersects(ref Plane plane, ref BoundingBox boundingBox, out PlaneIntersectionType result)
         {
+            // TODO: Intersects, Plane - BoundingBox.
             throw new NotImplementedException();
         }
 
         public static void Intersects(ref BoundingSphere boundingSphere, ref Plane plane, out PlaneIntersectionType result) => Intersects(ref plane, ref boundingSphere, out result);
         public static void Intersects(ref Plane plane, ref BoundingSphere boundingSphere, out PlaneIntersectionType result)
         {
+            // TODO: Intersects, Plane - BoundingSphere.
             throw new NotImplementedException();
         }
         
@@ -234,6 +236,7 @@
         public static void Intersects(ref BoundingSphere boundingSphere, ref BoundingBox boundingBox, out bool result) => Intersects(ref boundingBox, ref boundingSphere, out result);
         public static void Intersects(ref BoundingBox boundingBox, ref BoundingSphere boundingSphere, out bool result)
         {
+            // TODO: Intersects, BoundingBox - BoundingSphere.
             throw new NotImplementedException();
         }
 
@@ -286,6 +289,7 @@
         public static void Intersects(ref BoundingSphere boundingSphere, ref BoundingFrustum boundingFrustum, out bool result) => Intersects(ref boundingFrustum, ref boundingSphere, out result);
         public static void Intersects(ref BoundingFrustum boundingFrustum, ref BoundingSphere boundingSphere, out bool result)
         {
+            // TODO: Intersects, BoundingFrustum - BoundingSphere.
             throw new NotImplementedException();
         }
 
@@ -364,6 +368,7 @@
 
         public static void Intersects(ref BoundingSphere boundingSphere1, ref BoundingSphere boundingSphere2, out bool result)
         {
+            // TODO: Intersects, BoundingSphere.
             throw new NotImplementedException();
         }
 
@@ -378,6 +383,7 @@
 
         public static void Intersects(ref BoundingFrustum boundingFrustum1, ref BoundingFrustum boundingFrustum2, out bool result)
         {
+            // TODO: Intersects, BoundingFrustum.
             throw new NotImplementedException();
         }
 

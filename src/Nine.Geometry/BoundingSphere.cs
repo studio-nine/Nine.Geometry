@@ -1,6 +1,7 @@
 ﻿namespace Nine.Geometry
 {
     using System;
+    using System.Linq;
     using System.Collections.Generic;
     using System.Numerics;
 
@@ -162,8 +163,48 @@
         /// </summary>
         public static BoundingSphere CreateFromPoints(IEnumerable<Vector3> points)
         {
-            // TODO: BoundingSphere CreateFromPoints
-            throw new NotImplementedException();
+            if (points == null) throw new ArgumentNullException(nameof(points));
+            if (points.Count() == 0) throw new ArgumentException("You must have at least one point in points.");
+            
+            var minx =  new Vector3(float.MaxValue, float.MaxValue, float.MaxValue);
+            var maxx = -new Vector3(float.MaxValue, float.MaxValue, float.MaxValue);
+
+            var miny =  new Vector3(float.MaxValue, float.MaxValue, float.MaxValue);
+            var maxy = -new Vector3(float.MaxValue, float.MaxValue, float.MaxValue);
+
+            var minz =  new Vector3(float.MaxValue, float.MaxValue, float.MaxValue);
+            var maxz = -new Vector3(float.MaxValue, float.MaxValue, float.MaxValue);
+
+            foreach (var point in points)
+            {
+                if (point.X < minx.X) minx = point;
+                if (point.X > maxx.X) maxx = point;
+                if (point.Y < miny.Y) miny = point;
+                if (point.Y > maxy.Y) maxy = point;
+                if (point.Z < minz.Z) minz = point;
+                if (point.Z > maxz.Z) maxz = point;
+            }
+            
+            var distX = Vector3.DistanceSquared(maxx, minx);
+            var distY = Vector3.DistanceSquared(maxy, miny);
+            var distZ = Vector3.DistanceSquared(maxz, minz);
+
+            if (distY > distX && distY > distZ)
+            {
+                maxx = maxy;
+                minx = miny;
+            }
+
+            if (distZ > distX && distZ > distY)
+            {
+                maxx = maxz;
+                minx = minz;
+            }
+
+            var center = (minx + maxx) * 0.5f;
+            var radius = Vector3.Distance(maxx, center);
+
+            return new BoundingSphere(center, radius);
         }
 
         /// <summary>
