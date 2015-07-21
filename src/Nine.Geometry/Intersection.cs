@@ -2,9 +2,7 @@
 {
     using System;
     using System.Numerics;
-
-    // TODO: Move Ray intersect Triangle
-
+    
     /// <summary>
     /// Indicates the extent to which bounding volumes intersect or contain one another.
     /// </summary>
@@ -193,7 +191,94 @@
                     break;
             }
         }
+        
+        public static void Intersects(ref Ray ray, ref Triangle triangle, out float? result)
+            => Intersection.Intersects(ref ray, ref triangle.V1, ref triangle.V2, ref triangle.V3, out result);
 
+        public static void Intersects(ref Ray ray, ref Vector3[] positions, ref ushort[] indices, ref Matrix4x4 world, out float? result)
+        {
+            result = null;
+
+            float? point = null;
+            Ray tray;
+
+            Matrix4x4.Invert(world, out world);
+            ray.Transform(ref world, out tray);
+
+            // Test each triangle
+            for (int i = 0; i < indices.Length; i += 3)
+            {
+                Intersects(ref ray, ref positions[indices[i]], ref positions[indices[i + 1]], ref positions[indices[i + 2]], out point);
+
+                if (point.HasValue)
+                {
+                    if (!result.HasValue || point.Value < result.Value)
+                        result = point.Value;
+                }
+            }
+        }
+
+        public static void Intersects(ref Ray ray, ref Vector3 vertex1, ref Vector3 vertex2, ref Vector3 vertex3, out float? result)
+        {
+            const float Epsilon = 1E-10F;
+
+            // Compute vectors along two edges of the triangle.
+            var edge1 = Vector3.Subtract(vertex2, vertex1);
+            var edge2 = Vector3.Subtract(vertex3, vertex1);
+
+            // Compute the determinant.
+            var directionCrossEdge2 = Vector3.Cross(ray.Direction, edge2);
+            var determinant = Vector3.Dot(edge1, directionCrossEdge2);
+
+            // If the ray is parallel to the triangle plane, there is no collision.
+            if (determinant > -Epsilon && determinant < Epsilon)
+            {
+                result = null;
+                return;
+            }
+
+            var inverseDeterminant = 1.0f / determinant;
+
+            // Calculate the U parameter of the intersection point.
+            var distanceVector = Vector3.Subtract(ray.Position, vertex1);
+
+            var triangleU = Vector3.Dot(distanceVector, directionCrossEdge2);
+            triangleU *= inverseDeterminant;
+
+            // Make sure it is inside the triangle.
+            if (triangleU < 0 || triangleU > 1)
+            {
+                result = null;
+                return;
+            }
+
+            // Calculate the V parameter of the intersection point.
+            var distanceCrossEdge1 = Vector3.Cross(distanceVector, edge1);
+
+            var triangleV = Vector3.Dot(ray.Direction, distanceCrossEdge1);
+            triangleV *= inverseDeterminant;
+
+            // Make sure it is inside the triangle.
+            if (triangleV < 0 || triangleU + triangleV > 1)
+            {
+                result = null;
+                return;
+            }
+
+            // Compute the distance along the ray to the triangle.
+            var rayDistance = Vector3.Dot(edge2, distanceCrossEdge1);
+            rayDistance *= inverseDeterminant;
+
+            // Is the triangle behind the ray origin?
+            if (rayDistance < 0)
+            {
+                result = null;
+                return;
+            }
+
+            result = rayDistance;
+        }
+        
         #endregion
 
         #region Plane

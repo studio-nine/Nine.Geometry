@@ -3,6 +3,8 @@
     using System;
     using System.Numerics;
 
+    // TODO: Move intersects methods to Intersection
+
     /// <summary>
     /// Defines a 3D triangle made up of three vertices.
     /// </summary>
@@ -33,18 +35,10 @@
         public float? Intersects(Ray ray)
         {
             float? result;
-            ray.Intersects(ref V1, ref V2, ref V3, out result);
+            Intersection.Intersects(ref ray, ref V1, ref V2, ref V3, out result);
             return result;
         }
-
-        /// <summary>
-        /// Checks whether the current triangle intersects with a ray.
-        /// </summary>
-        public void Intersects(ref Ray ray, out float? result)
-        {
-            ray.Intersects(ref V1, ref V2, ref V3, out result);
-        }
-
+        
         /// <summary>
         /// Checks whether the current triangle intersects with a line segment.
         /// </summary>
@@ -82,7 +76,8 @@
             dir.Y *= inv;
             dir.Z *= inv;
 
-            new Ray(v1, dir).Intersects(ref V1, ref V2, ref V3, out result);
+            var ray = new Ray(v1, dir);
+            Intersection.Intersects(ref ray, ref V1, ref V2, ref V3, out result);
             if (result.HasValue && result.Value > length)
                 result = null;
         }
