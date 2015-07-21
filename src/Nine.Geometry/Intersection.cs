@@ -178,20 +178,19 @@
             var containmentType = boundingFrustum.Contains(ray.Position);
             switch (containmentType)
             {
+                default:
                 case ContainmentType.Disjoint:
                     result = null;
-                    return;
+                    break;
 
                 case ContainmentType.Contains:
                     result = 0.0f;
-                    return;
+                    break;
 
                 case ContainmentType.Intersects:
-                    // TODO: 
-                    throw new NotImplementedException();
-
-                default:
-                    throw new ArgumentOutOfRangeException();
+                    // TODO: Ray - BoundingFrustum. We did hit the target, but distance is unknown.
+                    result = 1.0f;
+                    break;
             }
         }
 
@@ -202,15 +201,75 @@
         public static void Intersects(ref BoundingBox boundingBox, ref Plane plane, out PlaneIntersectionType result) => Intersects(ref plane, ref boundingBox, out result);
         public static void Intersects(ref Plane plane, ref BoundingBox boundingBox, out PlaneIntersectionType result)
         {
-            // TODO: Intersects, Plane - BoundingBox.
-            throw new NotImplementedException();
+            Vector3 positiveVertex;
+            Vector3 negativeVertex;
+
+            // X
+            if (plane.Normal.X >= 0)
+            {
+                positiveVertex.X = boundingBox.Max.X;
+                negativeVertex.X = boundingBox.Min.X;
+            }
+            else
+            {
+                positiveVertex.X = boundingBox.Min.X;
+                negativeVertex.X = boundingBox.Max.X;
+            }
+
+            // Y
+            if (plane.Normal.Y >= 0)
+            {
+                positiveVertex.Y = boundingBox.Max.Y;
+                negativeVertex.Y = boundingBox.Min.Y;
+            }
+            else
+            {
+                positiveVertex.Y = boundingBox.Min.Y;
+                negativeVertex.Y = boundingBox.Max.Y;
+            }
+
+            // Z
+            if (plane.Normal.Z >= 0)
+            {
+                positiveVertex.Z = boundingBox.Max.Z;
+                negativeVertex.Z = boundingBox.Min.Z;
+            }
+            else
+            {
+                positiveVertex.Z = boundingBox.Min.Z;
+                negativeVertex.Z = boundingBox.Max.Z;
+            }
+
+            var distance = Vector3.Dot(plane.Normal, negativeVertex) + plane.D;
+            if (distance > 0)
+            {
+                result = PlaneIntersectionType.Front;
+            }
+            else
+            {
+                distance = Vector3.Dot(plane.Normal, positiveVertex) + plane.D;
+                result = (distance < 0) ? PlaneIntersectionType.Back : PlaneIntersectionType.Intersecting;
+            }
         }
 
         public static void Intersects(ref BoundingSphere boundingSphere, ref Plane plane, out PlaneIntersectionType result) => Intersects(ref plane, ref boundingSphere, out result);
         public static void Intersects(ref Plane plane, ref BoundingSphere boundingSphere, out PlaneIntersectionType result)
         {
-            // TODO: Intersects, Plane - BoundingSphere.
-            throw new NotImplementedException();
+            var distance = Vector3.Dot(plane.Normal, boundingSphere.Center);
+            distance += plane.D;
+
+            if (distance > boundingSphere.Radius)
+            {
+                result = PlaneIntersectionType.Front;
+            }
+            else if (distance < boundingSphere.Radius)
+            {
+                result = PlaneIntersectionType.Back;
+            }
+            else
+            {
+                result = PlaneIntersectionType.Intersecting;
+            }
         }
         
         public static void Intersects(ref Plane plane, ref BoundingFrustum boundingFrustum, out PlaneIntersectionType result) => Intersects(ref boundingFrustum, ref plane, out result);
@@ -230,14 +289,161 @@
         public static void Contains(ref BoundingSphere boundingSphere, ref BoundingBox boundingBox, out ContainmentType result) => Contains(ref boundingBox, ref boundingSphere, out result);
         public static void Contains(ref BoundingBox boundingBox, ref BoundingSphere boundingSphere, out ContainmentType result)
         {
-            throw new NotImplementedException();
+            var min = boundingBox.Min;
+            var max = boundingBox.Max;
+
+            if ((boundingSphere.Center.X - min.X) >= boundingSphere.Radius &&
+                (boundingSphere.Center.Y - min.Y) >= boundingSphere.Radius &&
+                (boundingSphere.Center.Z - min.Z) >= boundingSphere.Radius &&
+                (max.X - boundingSphere.Center.X) >= boundingSphere.Radius &&
+                (max.Y - boundingSphere.Center.Y) >= boundingSphere.Radius &&
+                (max.Z - boundingSphere.Center.Z) >= boundingSphere.Radius)
+            {
+                result = ContainmentType.Contains;
+            }
+            else
+            {
+                double dmin = 0.0;
+                double e = boundingSphere.Center.X - min.X;
+
+                if (e < 0)
+                {
+                    if (e < -boundingSphere.Radius)
+                    {
+                        result = ContainmentType.Disjoint;
+                        return;
+                    }
+
+                    dmin += e * e;
+                }
+                else
+                {
+                    e = boundingSphere.Center.X - max.X;
+                    if (e > 0)
+                    {
+                        if (e > boundingSphere.Radius)
+                        {
+                            result = ContainmentType.Disjoint;
+                            return;
+                        }
+
+                        dmin += e * e;
+                    }
+                }
+
+                e = boundingSphere.Center.Y - min.Y;
+                if (e < 0)
+                {
+                    if (e < -boundingSphere.Radius)
+                    {
+                        result = ContainmentType.Disjoint;
+                        return;
+                    }
+
+                    dmin += e * e;
+                }
+                else
+                {
+                    e = boundingSphere.Center.Y - max.Y;
+                    if (e > 0)
+                    {
+                        if (e > boundingSphere.Radius)
+                        {
+                            result = ContainmentType.Disjoint;
+                            return;
+                        }
+
+                        dmin += e * e;
+                    }
+                }
+
+                e = boundingSphere.Center.Z - min.Z;
+                if (e < 0)
+                {
+                    if (e < -boundingSphere.Radius)
+                    {
+                        result = ContainmentType.Disjoint;
+                        return;
+                    }
+
+                    dmin += e * e;
+                }
+                else
+                {
+                    e = boundingSphere.Center.Z - max.Z;
+                    if (e > 0)
+                    {
+                        if (e > boundingSphere.Radius)
+                        {
+                            result = ContainmentType.Disjoint;
+                            return;
+                        }
+
+                        dmin += e * e;
+                    }
+                }
+
+                result = (dmin <= boundingSphere.Radius * boundingSphere.Radius) ? 
+                    ContainmentType.Intersects : ContainmentType.Disjoint;
+            }
         }
 
         public static void Intersects(ref BoundingSphere boundingSphere, ref BoundingBox boundingBox, out bool result) => Intersects(ref boundingBox, ref boundingSphere, out result);
         public static void Intersects(ref BoundingBox boundingBox, ref BoundingSphere boundingSphere, out bool result)
         {
-            // TODO: Intersects, BoundingBox - BoundingSphere.
-            throw new NotImplementedException();
+            result = false;
+
+            var min = boundingBox.Min;
+            var max = boundingBox.Max;
+
+            if ((boundingSphere.Center.X - min.X > boundingSphere.Radius) && 
+                (boundingSphere.Center.Y - min.Y > boundingSphere.Radius) && 
+                (boundingSphere.Center.Z - min.Z > boundingSphere.Radius) && 
+                (max.X - boundingSphere.Center.X > boundingSphere.Radius) && 
+                (max.Y - boundingSphere.Center.Y > boundingSphere.Radius) &&
+                (max.Z - boundingSphere.Center.Z > boundingSphere.Radius))
+            {
+                result = true;
+            }
+            else
+            {
+                var dmin = 0.0;
+
+                // X
+                if (boundingSphere.Center.X - min.X <= boundingSphere.Radius)
+                {
+                    dmin += (boundingSphere.Center.X - min.X) * (boundingSphere.Center.X - min.X);
+                }
+                else if (max.X - boundingSphere.Center.X <= boundingSphere.Radius)
+                {
+                    dmin += (boundingSphere.Center.X - max.X) * (boundingSphere.Center.X - max.X);
+                }
+
+                // Y
+                if (boundingSphere.Center.Y - min.Y <= boundingSphere.Radius)
+                {
+                    dmin += (boundingSphere.Center.Y - min.Y) * (boundingSphere.Center.Y - min.Y);
+                }
+                else if (max.Y - boundingSphere.Center.Y <= boundingSphere.Radius)
+                {
+                    dmin += (boundingSphere.Center.Y - max.Y) * (boundingSphere.Center.Y - max.Y);
+                }
+
+                // Z
+                if (boundingSphere.Center.Z - min.Z <= boundingSphere.Radius)
+                {
+                    dmin += (boundingSphere.Center.Z - min.Z) * (boundingSphere.Center.Z - min.Z);
+                }
+                else if (max.Z - boundingSphere.Center.Z <= boundingSphere.Radius)
+                {
+                    dmin += (boundingSphere.Center.Z - max.Z) * (boundingSphere.Center.Z - max.Z);
+                }
+
+                if (dmin <= (boundingSphere.Radius * boundingSphere.Radius))
+                {
+                    result = true;
+                }
+            }
         }
 
         #endregion
@@ -283,14 +489,33 @@
         public static void Contains(ref BoundingSphere boundingSphere, ref BoundingFrustum boundingFrustum, out ContainmentType result) => Contains(ref boundingFrustum, ref boundingSphere, out result);
         public static void Contains(ref BoundingFrustum boundingFrustum, ref BoundingSphere boundingSphere, out ContainmentType result)
         {
-            throw new NotImplementedException();
+            result = ContainmentType.Contains;
+
+            var planes = boundingFrustum.GetPlanes();
+            for (var i = 0; i < BoundingFrustum.PlaneCount; ++i)
+            {
+                var planeIntersectionType = default(PlaneIntersectionType);
+                Intersects(ref boundingSphere, ref planes[i], out planeIntersectionType);
+
+                if (planeIntersectionType == PlaneIntersectionType.Front)
+                {
+                    result = ContainmentType.Disjoint;
+                    break;
+                }
+                else if (planeIntersectionType == PlaneIntersectionType.Intersecting)
+                {
+                    result = ContainmentType.Intersects;
+                    break;
+                }
+            }
         }
 
         public static void Intersects(ref BoundingSphere boundingSphere, ref BoundingFrustum boundingFrustum, out bool result) => Intersects(ref boundingFrustum, ref boundingSphere, out result);
         public static void Intersects(ref BoundingFrustum boundingFrustum, ref BoundingSphere boundingSphere, out bool result)
         {
-            // TODO: Intersects, BoundingFrustum - BoundingSphere.
-            throw new NotImplementedException();
+            ContainmentType contains;
+            Contains(ref boundingFrustum, ref boundingSphere, out contains);
+            result = (contains == ContainmentType.Contains) | (contains == ContainmentType.Intersects);
         }
 
         #endregion
@@ -354,7 +579,9 @@
 
         public static void Intersects(ref BoundingBox boundingBox1, ref BoundingBox boundingBox2, out bool result)
         {
-            throw new NotImplementedException();
+            ContainmentType contains;
+            Contains(ref boundingBox1, ref boundingBox2, out contains);
+            result = (contains == ContainmentType.Contains) | (contains == ContainmentType.Intersects);
         }
 
         #endregion
@@ -363,13 +590,21 @@
 
         public static void Contains(ref BoundingSphere boundingSphere1, ref BoundingSphere boundingSphere2, out ContainmentType result)
         {
-            throw new NotImplementedException();
+            var distance = Vector3.Distance(boundingSphere1.Center, boundingSphere2.Center);
+            if (distance > boundingSphere1.Radius + boundingSphere2.Radius)
+            {
+                result = ContainmentType.Disjoint;
+            }
+            else
+            {
+                result = (distance <= boundingSphere1.Radius - boundingSphere2.Radius) ? ContainmentType.Contains : ContainmentType.Intersects;
+            }
         }
 
         public static void Intersects(ref BoundingSphere boundingSphere1, ref BoundingSphere boundingSphere2, out bool result)
         {
-            // TODO: Intersects, BoundingSphere.
-            throw new NotImplementedException();
+            var distance = Vector3.Distance(boundingSphere1.Center, boundingSphere2.Center);
+            result = (distance < (boundingSphere1.Radius + boundingSphere2.Radius));
         }
 
         #endregion
@@ -378,6 +613,7 @@
 
         public static void Contains(ref BoundingFrustum boundingFrustum1, ref BoundingFrustum boundingFrustum2, out ContainmentType result)
         {
+            // TODO: Contains, BoundingFrustum.
             throw new NotImplementedException();
         }
 
