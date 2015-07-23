@@ -173,22 +173,28 @@
         public static void Intersects(ref BoundingFrustum boundingFrustum, ref Ray ray, out float? result) => Intersects(ref ray, ref boundingFrustum, out result);
         public static void Intersects(ref Ray ray, ref BoundingFrustum boundingFrustum, out float? result)
         {
-            var containmentType = boundingFrustum.Contains(ray.Position);
-            switch (containmentType)
+            // TODO: Make test case of this
+            if (boundingFrustum.Contains(ray.Position) == ContainmentType.Contains)
             {
-                default:
-                case ContainmentType.Disjoint:
-                    result = null;
-                    break;
+                // the ray is inside the frustum
+                result = 0.0f;
+            }
+            else
+            {
+                result = null;
 
-                case ContainmentType.Contains:
-                    result = 0.0f;
-                    break;
+                var corners = boundingFrustum.GetCorners();
+                for (int i = 0; i < (BoundingFrustum.PlaneCount * 2); i++)
+                {
+                    var v1 = corners[Geometry.TriangleIndices[i + 0]];
+                    var v2 = corners[Geometry.TriangleIndices[i + 1]];
+                    var v3 = corners[Geometry.TriangleIndices[i + 2]];
 
-                case ContainmentType.Intersects:
-                    // TODO: Ray - BoundingFrustum. We did hit the target, but distance is unknown.
-                    result = 1.0f;
-                    break;
+                    Intersects(ref ray, ref v1, ref v2, ref v3, out result);
+
+                    if (result.HasValue)
+                        break;
+                }
             }
         }
         

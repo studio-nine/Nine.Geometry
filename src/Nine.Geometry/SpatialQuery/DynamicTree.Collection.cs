@@ -10,7 +10,6 @@
             if (root == NullNode)
             {
                 this.root = leaf;
-                //nodes[root].IndexId = leaf;
                 nodes[root].ParentOrNext = NullNode;
                 return;
             }
@@ -18,21 +17,16 @@
             // Find the best sibling for this node
             var leafBounds = nodes[leaf].Bounds;
             var index = root;
-            while (nodes[index].IsLeaf() == false)
+            while (!nodes[index].IsLeaf())
             {
-                var child1 = nodes[index].Child1;
-                var child2 = nodes[index].Child2;
-
-                var area = nodes[index].Bounds.Perimeter;
-
                 var newBounds = BoundingRectangle.CreateMerged(nodes[index].Bounds, leafBounds);
                 var combinedArea = newBounds.Perimeter;
 
-                // Cost of creating a new parent for this node and the new leaf
-                var cost = 2.0f * combinedArea;
+                var child1 = nodes[index].Child1;
+                var child2 = nodes[index].Child2;
 
                 // Minimum cost of pushing the leaf further down the tree
-                var inheritanceCost = 2.0f * (combinedArea - area);
+                var inheritanceCost = 2.0f * (combinedArea - nodes[index].Bounds.Perimeter);
 
                 // Cost of descending into child1
                 float cost1;
@@ -68,7 +62,10 @@
                     cost2 = newArea - oldArea + inheritanceCost;
                 }
 
+
+                // Cost of creating a new parent for this node and the new leaf
                 // Descend according to the minimum cost.
+                var cost = 2.0f * combinedArea;
                 if (cost < cost1 && cost1 < cost2)
                     break;
 
@@ -82,7 +79,6 @@
             int oldParent = nodes[sibling].ParentOrNext;
             int newParent = Allocate();
 
-            //nodes[newParent].IndexId = newParent;
             nodes[newParent].ParentOrNext = oldParent;
             nodes[newParent].Value = default(T);
             nodes[newParent].Bounds = BoundingRectangle.CreateMerged(nodes[sibling].Bounds, leafBounds);
@@ -112,16 +108,13 @@
                 nodes[newParent].Child2 = leaf;
                 nodes[sibling].ParentOrNext = newParent;
                 nodes[leaf].ParentOrNext = newParent;
-                root = newParent;
+                this.root = newParent;
             }
-
-            // TODO: [1] Sometimes it creates an endless loop that goes from root to root child and repeat
 
             // Walk back up the tree fixing heights and AABBs
             index = nodes[leaf].ParentOrNext;
             while (index != NullNode)
             {
-                // TODO: [1] Balance returns child in this issue and repeats
                 index = Balance(index);
 
                 int child1 = nodes[index].Child1;
@@ -213,7 +206,9 @@
 
             int balance = C.Height - B.Height;
 
-            // Rotate C up
+            // TODO: The inf loop issue is here, where it swaps ParentOrNext.
+
+            #region Rotate C up
             if (balance > 1)
             {
                 int iF = C.Child1;
@@ -274,8 +269,9 @@
 
                 return iC;
             }
+            #endregion
 
-            // Rotate B up
+            #region Rotate B up
             if (balance < -1)
             {
                 int iD = B.Child1;
@@ -336,6 +332,7 @@
 
                 return iB;
             }
+            #endregion
 
             return iA;
         }

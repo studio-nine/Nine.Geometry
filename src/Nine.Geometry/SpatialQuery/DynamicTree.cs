@@ -189,36 +189,37 @@
 
         public int FindAll(ref BoundingRectangle bounds, ref T[] result, int startIndex, Stack<int> traverseStack = null)
         {
-            throw new NotImplementedException();
+            if (this.root == NullNode)
+            {
+                result = new T[0];
+                return 0;
+            }
 
-            //if (this.RootId == NullNode)
-            //{
-            //    result = new T[0];
-            //    startIndex = 0;
-            //    return 0;
-            //}
+            var resultIds = new List<int>();
 
-            //this.Traverse(e =>
-            //{
-            //    var root = this.Root;
+            var nodeStack = new Queue<int>();
+            nodeStack.Enqueue(this.root);
 
-            //    var containsResult = ContainmentType.Disjoint;
-            //    Intersection.Contains(ref root.Bounds, ref bounds, out containsResult);
+            while (nodeStack.Count > 0)
+            {
+                var nodeId = nodeStack.Dequeue();
+                if (nodeId == NullNode) continue;
 
-            //    switch (containsResult)
-            //    {
-            //        case ContainmentType.Contains:
-            //            // TODO: Add all children
-            //            return TraverseOptions.Skip;
+                var node = nodes[nodeId];
 
-            //        case ContainmentType.Intersects: return TraverseOptions.Continue;
-            //        case ContainmentType.Disjoint: return TraverseOptions.Stop;
-            //    }
+                resultIds.Add(nodeId);
 
-            //    throw new ArgumentException();
-            //});
+                nodeStack.Enqueue(node.Child1);
+                nodeStack.Enqueue(node.Child2);
+            }
 
-            //return 0;
+            result = new T[resultIds.Count];
+            for (int i = 0; i < resultIds.Count; i++)
+            {
+                result[i] = nodes[resultIds[i]].Value;
+            }
+
+            return resultIds.Count;
         }
         
         #endregion
