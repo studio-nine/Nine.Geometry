@@ -173,7 +173,7 @@
         public static void Intersects(ref BoundingFrustum boundingFrustum, ref Ray ray, out float? result) => Intersects(ref ray, ref boundingFrustum, out result);
         public static void Intersects(ref Ray ray, ref BoundingFrustum boundingFrustum, out float? result)
         {
-            // TODO: Make test case of this
+            // TODO: Make test case for this
             if (boundingFrustum.Contains(ray.Position) == ContainmentType.Contains)
             {
                 // the ray is inside the frustum

@@ -3,7 +3,7 @@
     using System;
     using System.Diagnostics;
 
-    partial class DynamicTree<T>
+    partial class DynamicTree2D<T>
     {
         public int ComputeHeight() => this.ComputeHeight(this.root);
         public int ComputeHeight(int nodeId)
@@ -20,7 +20,7 @@
         }
 
         [Conditional("DEBUG")]
-        public void Validate()
+        protected void Validate()
         {
             ValidateStructure(root);
             ValidateMetrics(root);

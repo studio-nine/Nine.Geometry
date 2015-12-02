@@ -9,6 +9,7 @@
     {
         public static PlaneIntersectionType Intersects(this Plane plane, Vector3 vector)
         {
+            // TODO: Implement
             throw new NotImplementedException();
         }
         

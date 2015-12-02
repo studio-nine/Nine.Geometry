@@ -2,9 +2,7 @@
 {
     using System;
     using System.Numerics;
-
-    // TODO: Move intersects methods to Intersection
-
+    
     /// <summary>
     /// Defines a 3D triangle made up of three vertices.
     /// </summary>

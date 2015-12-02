@@ -34,7 +34,7 @@
         public float Bottom => Y + Height;
 
         /// <summary> Returns the center point of the bottom of the rectangle. </summary>
-        public Vector2 Center => new Vector2(X + Width * 0.5f, Y + Height * 0.5f); 
+        public Vector2 Center => new Vector2(X + Width * 0.5f, Y + Height * 0.5f);
 
         /// <summary> Returns the top left corner of the rectangle. </summary>
         public Vector2 Location => new Vector2(X, Y);
@@ -47,8 +47,8 @@
             get { return new Vector2(Top, Left); }
             set
             {
-                this.X = value.X;
-                this.Y = value.Y;
+                this.Width = (value.X - Width);
+                this.Height = (value.Y - Height);
             }
         }
 
@@ -89,7 +89,18 @@
             this.Width = width;
             this.Height = height;
         }
-        
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BoundingRectangle"/> class.
+        /// </summary>
+        public BoundingRectangle(Vector2 upper, Vector2 lower)
+        {
+            this.X = upper.X - lower.X;
+            this.Y = upper.Y - lower.Y;
+            this.Width = lower.X;
+            this.Height = lower.Y;
+        }
+
         /// <summary>
         /// Tests whether the BoundingRectangle contains a point.
         /// </summary>
