@@ -21,27 +21,28 @@
         /// <summary> Gets or sets the height. </summary>
         public float Height;
 
-        /// <summary> Returns the x-coordinate of the left side of the rectangle. </summary>
+        /// <summary> Gets the x-coordinate of the left side of the rectangle. </summary>
         public float Left => X;
 
-        /// <summary> Returns the x-coordinate of the right side of the rectangle. </summary>
+        /// <summary> Gets the x-coordinate of the right side of the rectangle. </summary>
         public float Right => X + Width;
 
-        /// <summary> Returns the y-coordinate of the top of the rectangle. </summary>
+        /// <summary> Gets the y-coordinate of the top of the rectangle. </summary>
         public float Top => Y;
 
-        /// <summary> Returns the y-coordinate of the bottom of the rectangle. </summary>
+        /// <summary> Gets the y-coordinate of the bottom of the rectangle. </summary>
         public float Bottom => Y + Height;
 
-        /// <summary> Returns the center point of the bottom of the rectangle. </summary>
+        /// <summary> Gets the center point of the bottom of the rectangle. </summary>
         public Vector2 Center => new Vector2(X + Width * 0.5f, Y + Height * 0.5f);
 
-        /// <summary> Returns the top left corner of the rectangle. </summary>
+        /// <summary> Gets the top left corner of the rectangle. </summary>
         public Vector2 Location => new Vector2(X, Y);
 
-        /// <summary> Returns the size of the rectangle. </summary>
+        /// <summary> Gets the size of the rectangle. </summary>
         public Vector2 Size => new Vector2(Width, Height); 
 
+        /// <summary> Gets or sets the upper vector. </summary>
         public Vector2 Upper
         {
             get { return new Vector2(Top, Left); }
@@ -52,6 +53,7 @@
             }
         }
 
+        /// <summary> Gets or sets the lower vector. </summary>
         public Vector2 Lower
         {
             get { return new Vector2(Bottom, Right); }
@@ -62,10 +64,10 @@
             }
         }
 
-        /// <summary> Get the perimeter length. </summary>
+        /// <summary> Gets the perimeter length. </summary>
         public float Perimeter => 2.0f * ((this.Upper.X - this.Lower.X) + (this.Upper.Y - this.Lower.Y));
 
-        /// <summary> Returns a Rectangle with all of its values set to zero. </summary>
+        /// <summary> Gets a <see cref="BoundingRectangle"/> with all of its values set to zero. </summary>
         public static BoundingRectangle Empty { get; private set; }
 
         /// <summary>

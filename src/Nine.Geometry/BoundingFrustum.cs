@@ -50,36 +50,6 @@
             this.corners = new Lazy<Vector3[]>(CreateCorners);
         }
 
-        private Plane[] CreatePlanes()
-        {
-            return new[]
-            {
-                Plane.Normalize(new Plane(-Matrix.M13, -Matrix.M23, -Matrix.M33, -Matrix.M43)),
-                Plane.Normalize(new Plane(Matrix.M13 - Matrix.M14, Matrix.M23 - Matrix.M24, Matrix.M33 - Matrix.M34, Matrix.M43 - Matrix.M44)),
-                Plane.Normalize(new Plane(-Matrix.M14 - Matrix.M11, -Matrix.M24 - Matrix.M21, -Matrix.M34 - Matrix.M31, -Matrix.M44 - Matrix.M41)),
-                Plane.Normalize(new Plane(Matrix.M11 - Matrix.M14, Matrix.M21 - Matrix.M24, Matrix.M31 - Matrix.M34, Matrix.M41 - Matrix.M44)),
-                Plane.Normalize(new Plane(Matrix.M12 - Matrix.M14, Matrix.M22 - Matrix.M24, Matrix.M32 - Matrix.M34, Matrix.M42 - Matrix.M44)),
-                Plane.Normalize(new Plane(-Matrix.M14 - Matrix.M12, -Matrix.M24 - Matrix.M22, -Matrix.M34 - Matrix.M32, -Matrix.M44 - Matrix.M42)),
-            };
-        }
-
-        private Vector3[] CreateCorners()
-        {
-            var planes = this.planes.Value;
-
-            return new[]
-            {
-                IntersectionPoint(ref planes[0], ref planes[2], ref planes[4]),
-                IntersectionPoint(ref planes[0], ref planes[3], ref planes[4]),
-                IntersectionPoint(ref planes[0], ref planes[3], ref planes[5]),
-                IntersectionPoint(ref planes[0], ref planes[2], ref planes[5]),
-                IntersectionPoint(ref planes[1], ref planes[2], ref planes[4]),
-                IntersectionPoint(ref planes[1], ref planes[3], ref planes[4]),
-                IntersectionPoint(ref planes[1], ref planes[3], ref planes[5]),
-                IntersectionPoint(ref planes[1], ref planes[2], ref planes[5]),
-            };
-        }
-
         public ContainmentType Contains(BoundingFrustum boundingfrustum)
         {
             var me = this;
@@ -123,7 +93,6 @@
                     return ContainmentType.Disjoint;
                 }
             }
-
             return ContainmentType.Contains;
         }
 
@@ -184,6 +153,36 @@
             return string.Format("<Near: {0}, Far: {1}, Left: {2}, Right: {3}, Top: {4}, Bottom: {5}>",
                 planes[0], planes[1], planes[2],
                 planes[3], planes[4], planes[5]);
+        }
+
+        private Plane[] CreatePlanes()
+        {
+            return new[]
+            {
+                Plane.Normalize(new Plane(-Matrix.M13, -Matrix.M23, -Matrix.M33, -Matrix.M43)),
+                Plane.Normalize(new Plane(Matrix.M13 - Matrix.M14, Matrix.M23 - Matrix.M24, Matrix.M33 - Matrix.M34, Matrix.M43 - Matrix.M44)),
+                Plane.Normalize(new Plane(-Matrix.M14 - Matrix.M11, -Matrix.M24 - Matrix.M21, -Matrix.M34 - Matrix.M31, -Matrix.M44 - Matrix.M41)),
+                Plane.Normalize(new Plane(Matrix.M11 - Matrix.M14, Matrix.M21 - Matrix.M24, Matrix.M31 - Matrix.M34, Matrix.M41 - Matrix.M44)),
+                Plane.Normalize(new Plane(Matrix.M12 - Matrix.M14, Matrix.M22 - Matrix.M24, Matrix.M32 - Matrix.M34, Matrix.M42 - Matrix.M44)),
+                Plane.Normalize(new Plane(-Matrix.M14 - Matrix.M12, -Matrix.M24 - Matrix.M22, -Matrix.M34 - Matrix.M32, -Matrix.M44 - Matrix.M42)),
+            };
+        }
+
+        private Vector3[] CreateCorners()
+        {
+            var planes = this.planes.Value;
+
+            return new[]
+            {
+                IntersectionPoint(ref planes[0], ref planes[2], ref planes[4]),
+                IntersectionPoint(ref planes[0], ref planes[3], ref planes[4]),
+                IntersectionPoint(ref planes[0], ref planes[3], ref planes[5]),
+                IntersectionPoint(ref planes[0], ref planes[2], ref planes[5]),
+                IntersectionPoint(ref planes[1], ref planes[2], ref planes[4]),
+                IntersectionPoint(ref planes[1], ref planes[3], ref planes[4]),
+                IntersectionPoint(ref planes[1], ref planes[3], ref planes[5]),
+                IntersectionPoint(ref planes[1], ref planes[2], ref planes[5]),
+            };
         }
 
         private static Vector3 IntersectionPoint(ref Plane a, ref Plane b, ref Plane c)
