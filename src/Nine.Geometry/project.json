@@ -1,8 +1,8 @@
 ﻿{
-  "version": "1.0.0-alpha-*",
+  "version": "1.0.1-alpha-*",
   "description": "A lightweight library with geometry and spatial query.",
   "authors": [ "Eric Tuvesson", "Yufei Huang" ],
-  "tags": [ "" ],
+  "tags": [ "geometry, spetial query, 2d, 3d" ],
   "projectUrl": "https://github.com/studio-nine/Nine.Geometry",
   "licenseUrl": "https://github.com/studio-nine/Nine.Geometry/blob/master/LICENSE",
 
