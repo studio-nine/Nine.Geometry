@@ -5,7 +5,7 @@ environment:
 install:
   - dnvm install 1.0.0-rc1-update1
   - dnu restore
-  - dnu pack src --configuration Release --out artifacts
+  - dnu pack src\Nine.Geometry --configuration Release --out artifacts
   - dnx test\Nine.Geometry.Test test
 build: off
 artifacts:
