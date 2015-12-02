@@ -613,7 +613,7 @@
         
         #region LineSegment & BoundingBox
 
-        public static void Intersects(ref BoundingBox boundingBox, ref LineSegment lineSegment, out float? result)
+        public static void Intersects(ref BoundingBox boundingBox, ref LineSegment2D lineSegment, out float? result)
         {
             Vector3 v1 = new Vector3(lineSegment.Start, 0), v2 = new Vector3(lineSegment.End, 0);
             Intersects(ref boundingBox, ref v1, ref v2, out result);

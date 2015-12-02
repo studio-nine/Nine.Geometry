@@ -6,21 +6,15 @@
     /// <summary>
     /// Defines a line segment in 2D space.
     /// </summary>
-    public struct LineSegment : IEquatable<LineSegment>
+    public struct LineSegment2D : IEquatable<LineSegment2D>
     {
-        /// <summary>
-        /// Gets or sets the start point of this <see cref="LineSegment"/>.
-        /// </summary>
+        /// <summary> Gets or sets the start point of this <see cref="LineSegment2D"/>. </summary>
         public Vector2 Start;
 
-        /// <summary>
-        /// Gets or sets the end point of this <see cref="LineSegment"/>.
-        /// </summary>
+        /// <summary> Gets or sets the end point of this <see cref="LineSegment2D"/>. </summary>
         public Vector2 End;
 
-        /// <summary>
-        /// Gets the normal of this <see cref="LineSegment"/>.
-        /// </summary>
+        /// <summary> Gets the normal of this <see cref="LineSegment2D"/>. </summary>
         public Vector2 Normal
         {
             get
@@ -33,9 +27,7 @@
             }
         }
 
-        /// <summary>
-        /// Gets the center of this <see cref="LineSegment"/>.
-        /// </summary>
+        /// <summary> Gets the center of this <see cref="LineSegment2D"/>. </summary>
         public Vector2 Center
         {
             get
@@ -48,16 +40,34 @@
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="LineSegment"/> struct.
+        /// Initializes a new instance of the <see cref="LineSegment2D"/> struct.
         /// </summary>
-        public LineSegment(Vector2 start, Vector2 end)
+        public LineSegment2D(Vector2 start, Vector2 end)
         {
             this.Start = start;
             this.End = end;
         }
 
         /// <summary>
-        /// Gets the length of this <see cref="LineSegment"/>.
+        /// Find the closest point between <see cref="Start"/> and <see cref="End"/>.
+        /// </summary>
+        public Vector2 ClosestPointOnLine(Vector2 point)
+        {
+            var lineLength = Vector2.Distance(Start, End);
+            var lineDir = (End - Start) / lineLength;
+            var distance = Vector2.Dot(point - Start, lineDir);
+
+            if (distance <= 0)
+                return Start;
+
+            if (distance >= lineLength)
+                return End;
+
+            return Start + lineDir * distance;
+        }
+
+        /// <summary>
+        /// Gets the length of this <see cref="LineSegment2D"/>.
         /// </summary>
         public float Length()
         {
@@ -67,7 +77,7 @@
         }
 
         /// <summary>
-        /// Gets the squared length of this <see cref="LineSegment"/>.
+        /// Gets the squared length of this <see cref="LineSegment2D"/>.
         /// </summary>
         public float LengthSquared()
         {
@@ -77,7 +87,7 @@
         }
 
         /// <summary>
-        /// Moves this <see cref="LineSegment"/> along its normal for the specified length.
+        /// Moves this <see cref="LineSegment2D"/> along its normal for the specified length.
         /// </summary>
         public void Offset(float length)
         {
@@ -86,23 +96,13 @@
             Start += normal * length;
             End += normal * length;
         }
-
-        /// <summary>
-        /// Determines whether a specified <see cref="LineSegment"/> intersects with this <see cref="LineSegment"/>.
-        /// </summary>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        public bool Intersects(LineSegment value)
+        
+        public bool Intersects(LineSegment2D value)
         {
-            return (this.IntersectLine(value) != null);
+            return this.Intersect(value).HasValue;
         }
-
-        /// <summary>
-        /// Determines whether a specified <see cref="LineSegment"/> intersects with this <see cref="LineSegment"/>.
-        /// </summary>
-        /// <param name="value"></param>
-        /// <returns>Collision Point</returns>
-        public Vector2? IntersectLine(LineSegment value)
+        
+        public Vector2? Intersect(LineSegment2D value)
         {
             float x1 = End.X - Start.X;
             float y1 = End.Y - Start.Y;
@@ -125,14 +125,14 @@
             return new Vector2(Start.X + t * x1, Start.Y + t * y1);
         }
 
-        public static bool operator ==(LineSegment value1, LineSegment value2) => (value1.Start == value2.Start && value1.End == value2.End);
-        public static bool operator !=(LineSegment value1, LineSegment value2) => (value1.Start != value2.Start && value1.End != value2.End);
+        public static bool operator ==(LineSegment2D value1, LineSegment2D value2) => (value1.Start == value2.Start && value1.End == value2.End);
+        public static bool operator !=(LineSegment2D value1, LineSegment2D value2) => (value1.Start != value2.Start && value1.End != value2.End);
 
         /// <inheritdoc />
-        public bool Equals(LineSegment other) => this.Start == other.Start && this.End == other.End;
+        public bool Equals(LineSegment2D other) => this.Start == other.Start && this.End == other.End;
 
         /// <inheritdoc />
-        public override bool Equals(object obj) => (obj is LineSegment) && this.Equals((LineSegment)obj);
+        public override bool Equals(object obj) => (obj is LineSegment2D) && this.Equals((LineSegment2D)obj);
 
         /// <inheritdoc />
         public override int GetHashCode() => this.Start.GetHashCode() ^ this.End.GetHashCode();
