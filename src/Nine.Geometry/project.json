@@ -1,8 +1,8 @@
 ﻿{
-  "version": "1.0.1-alpha-*",
+  "version": "1.0.2-alpha-*",
   "description": "A lightweight library with geometry and spatial query.",
   "authors": [ "Eric Tuvesson", "Yufei Huang" ],
-  "tags": [ "geometry, spetial query, 2d, 3d" ],
+  "tags": [ "geometry", "spatial query", "2d", "3d" ],
   "iconUrl": "https://avatars3.githubusercontent.com/u/9212229?s=64",
   "projectUrl": "https://github.com/studio-nine/Nine.Geometry",
   "licenseUrl": "https://github.com/studio-nine/Nine.Geometry/blob/master/LICENSE",
@@ -24,6 +24,11 @@
         "System.Diagnostics.Debug": "4.0.10-*",
         "System.Runtime": "4.0.20-*",
         "System.Runtime.Extensions": "4.0.10-*"
+      }
+    },
+    "dotnet5.4": {
+      "dependencies": {
+        "Microsoft.CSharp": "4.0.1-*"
       }
     }
   }
