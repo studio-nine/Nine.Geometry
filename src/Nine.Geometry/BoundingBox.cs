@@ -29,6 +29,18 @@
             }
         }
 
+        /// <summary> Gets the size of the <see cref="BoundingBox"/>. </summary>
+        public Vector3 Size
+        {
+            get
+            {
+                return new Vector3(
+                    (this.Max.X - this.Min.X),
+                    (this.Max.Y - this.Min.Y),
+                    (this.Max.Z - this.Min.Z));
+            }
+        }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="BoundingBox"/> class.
         /// </summary>

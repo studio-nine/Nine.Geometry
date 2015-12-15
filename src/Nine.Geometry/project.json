@@ -1,5 +1,5 @@
 ﻿{
-  "version": "1.0.2-alpha-*",
+  "version": "1.0.2-beta-*",
   "description": "A lightweight library with geometry and spatial query.",
   "authors": [ "Eric Tuvesson", "Yufei Huang" ],
   "tags": [ "geometry", "spatial query", "2d", "3d" ],
@@ -12,6 +12,24 @@
   },
 
   "frameworks": {
+    "dotnet": {
+      "dependencies": {
+        "Microsoft.CSharp": "4.0.0",
+        "System.Collections": "4.0.0",
+        "System.Diagnostics.Debug": "4.0.0",
+        "System.Runtime": "4.0.0",
+        "System.Runtime.Extensions": "4.0.0"
+      }
+    },
+    "dotnet5.4": {
+      "dependencies": {
+        "Microsoft.CSharp": "4.0.0",
+        "System.Collections": "4.0.0",
+        "System.Diagnostics.Debug": "4.0.0",
+        "System.Runtime": "4.0.0",
+        "System.Runtime.Extensions": "4.0.0"
+      }
+    },
     "dnx451": {
       "frameworkAssemblies": {
         "System.Runtime": "4.0.10.0"
@@ -19,16 +37,11 @@
     },
     "dnxcore50": {
       "dependencies": {
-        "Microsoft.CSharp": "4.0.0-*",
-        "System.Collections": "4.0.10-*",
-        "System.Diagnostics.Debug": "4.0.10-*",
-        "System.Runtime": "4.0.20-*",
-        "System.Runtime.Extensions": "4.0.10-*"
-      }
-    },
-    "dotnet5.4": {
-      "dependencies": {
-        "Microsoft.CSharp": "4.0.1-*"
+        "Microsoft.CSharp": "4.0.0",
+        "System.Collections": "4.0.0",
+        "System.Diagnostics.Debug": "4.0.0",
+        "System.Runtime": "4.0.0",
+        "System.Runtime.Extensions": "4.0.0"
       }
     }
   }

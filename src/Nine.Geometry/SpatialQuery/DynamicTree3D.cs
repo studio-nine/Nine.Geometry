@@ -5,7 +5,7 @@
     using System.Diagnostics;
     using System.Numerics;
 
-    public partial class DynamicTree2D<T> : ISpatialQuery2D<T>
+    public partial class DynamicTree3D<T> : ISpatialQuery3D<T>
     {
         internal const int NullNode = -1;
 
@@ -42,7 +42,7 @@
         /// <summary>
         /// 
         /// </summary>
-        public DynamicTree2D(float margin = 1)
+        public DynamicTree3D(float margin = 1)
         {
             if (margin <= 0) throw new ArgumentOutOfRangeException(nameof(margin));
 
@@ -61,13 +61,13 @@
         /// <summary>
         /// 
         /// </summary>
-        public int Add(ref BoundingRectangle bounds, T value)
+        public int Add(ref BoundingBox bounds, T value)
         {
             var newIndex = AllocateNode();
 
-            var r = new Vector2(Margin);
+            var r = new Vector3(Margin);
 
-            nodes[newIndex].Bounds = new BoundingRectangle(bounds.Upper - r, bounds.Lower + r);
+            nodes[newIndex].Bounds = new BoundingBox(bounds.Min - r, bounds.Max + r);
             nodes[newIndex].Value = value;
             nodes[newIndex].Height = 0;
 
@@ -93,7 +93,7 @@
         /// <summary>
         /// 
         /// </summary>
-        public bool Move(int index, BoundingRectangle bounds)
+        public bool Move(int index, BoundingBox bounds)
         {
             Debug.Assert(0 <= index && index < nodeCapacity);
             Debug.Assert(nodes[index].IsLeaf());
@@ -107,28 +107,37 @@
             RemoveLeaf(index);
 
             // Extend AABB.
-            var r = new Vector2(Margin);
-            var b = new BoundingRectangle(bounds.Lower - r, bounds.Upper + r);
+            var r = new Vector3(Margin);
+            var b = new BoundingBox(bounds.Min - r, bounds.Max + r);
 
             // Predict AABB displacement.
             var d = displacement * 2;
 
             if (d.X < 0.0f)
             {
-                b.Width += d.X;
+                b.Max.X += d.X;
             }
             else
             {
-                b.X += d.X;
+                b.Min.X += d.X;
             }
 
             if (d.Y < 0.0f)
             {
-                b.Height += d.Y;
+                b.Max.Y += d.Y;
             }
             else
             {
-                b.Y += d.Y;
+                b.Min.Y += d.Y;
+            }
+
+            if (d.Z < 0.0f)
+            {
+                b.Max.Z += d.Z;
+            }
+            else
+            {
+                b.Min.Z += d.Z;
             }
 
             nodes[index].Bounds = b;
@@ -168,7 +177,7 @@
                 return 0.0f;
 
             var root = this.nodes[this.root];
-            var rootArea = root.Bounds.Perimeter;
+            var rootArea = Helper.GetPerimeter(root.Bounds);
 
             float totalArea = 0.0f;
             for (int i = 0; i < nodeCapacity; ++i)
@@ -177,7 +186,7 @@
                 if (node.Height < 0)
                     continue; // Free node in pool
 
-                totalArea += node.Bounds.Perimeter;
+                totalArea += Helper.GetPerimeter(root.Bounds);
             }
 
             return totalArea / rootArea;
@@ -204,14 +213,14 @@
         }
 
         #region ISpatialQuery2D
-        public int Raycast(ref Vector2 origin, ref Vector2 direction, ref RaycastHit<T>[] result, int startIndex, Func<T, float> callback = null, Stack<int> traverseStack = null)
+        public int Raycast(ref Ray ray, ref RaycastHit<T>[] result, int startIndex, Func<T, float> callback = null)
         {
-            var p1 = origin;
-            var p2 = origin + direction;
-            return RaycastBetween(ref p1, ref p2, ref result, startIndex, callback, traverseStack);
+            var p1 = ray.Position;
+            var p2 = ray.Position + ray.Direction;
+            return RaycastBetween(ref p1, ref p2, ref result, startIndex, callback);
         }
 
-        public int RaycastBetween(ref Vector2 p1, ref Vector2 p2, ref RaycastHit<T>[] result, int startIndex, Func<T, float> callback = null, Stack<int> traverseStack = null)
+        public int RaycastBetween(ref Vector3 p1, ref Vector3 p2, ref RaycastHit<T>[] result, int startIndex, Func<T, float> callback = null)
         {
             result = new RaycastHit<T>[8];
 
@@ -221,15 +230,15 @@
 
             var r = p2 - p1;
             Debug.Assert(r.LengthSquared() > 0.0f);
-            r = Vector2.Normalize(r);
+            r = Vector3.Normalize(r);
 
             // v is perpendicular to the segment.
-            var v = new Vector2(-r.Y, r.X);
-            var absV = new Vector2(Math.Abs(v.Y), Math.Abs(v.X));
+            var v = new Vector3(-r.Y, r.X, r.Z);
+            var absV = new Vector3(Math.Abs(v.Y), Math.Abs(v.X), Math.Abs(v.Z));
 
             // Build a bounding box for the segment.
             var aabbt = p1 + maxFraction * (p2 - p1);
-            var segmentAABB = new BoundingRectangle(Vector2.Min(p1, aabbt), Vector2.Max(p1, aabbt));
+            var segmentAABB = new BoundingBox(Vector3.Min(p1, aabbt), Vector3.Max(p1, aabbt));
 
             var nodeStack = new Stack<int>();
             nodeStack.Push(startIndex);
@@ -248,7 +257,7 @@
                 // |dot(v, p1 - c)| > dot(|v|, h)
                 var c = node.Bounds.Center;
                 var h = node.Bounds.Size;
-                var separation = Math.Abs(Vector2.Dot(v, p1 - c)) - Vector2.Dot(absV, h);
+                var separation = Math.Abs(Vector3.Dot(v, p1 - c)) - Vector3.Dot(absV, h);
                 if (separation > 0.0f)
                 {
                     continue;
@@ -280,7 +289,7 @@
                             // Update segment bounding box.
                             maxFraction = value;
                             var t = p1 + maxFraction * (p2 - p1);
-                            segmentAABB = new BoundingRectangle(Vector2.Min(p1, t), Vector2.Max(p1, t));
+                            segmentAABB = new BoundingBox(Vector3.Min(p1, t), Vector3.Max(p1, t));
                         }
                     }
                 }
@@ -297,10 +306,8 @@
             return resultCount;
         }
 
-        public int FindAll(ref BoundingRectangle bounds, ref T[] result, int startIndex, Stack<int> traverseStack = null)
+        public int FindAll(ref BoundingBox bounds, ref T[] result, int startIndex)
         {
-            // TODO: traverseStack
-
             if (startIndex == NullNode)
             {
                 result = new T[0];
@@ -358,12 +365,12 @@
                 int child2 = nodes[sibling].Child2;
 
                 // Expand the node's AABB.
-                nodes[sibling].Bounds = BoundingRectangle.CreateMerged(nodes[sibling].Bounds, leafAABB);
+                nodes[sibling].Bounds = BoundingBox.CreateMerged(nodes[sibling].Bounds, leafAABB);
                 nodes[sibling].Height += 1;
 
-                float siblingArea = nodes[sibling].Bounds.Perimeter;
-                var parentAABB = BoundingRectangle.CreateMerged(nodes[sibling].Bounds, leafAABB);
-                float parentArea = parentAABB.Perimeter;
+                float siblingArea = Helper.GetPerimeter(nodes[sibling].Bounds);
+                var parentAABB = BoundingBox.CreateMerged(nodes[sibling].Bounds, leafAABB);
+                float parentArea = Helper.GetPerimeter(parentAABB);
                 float cost1 = 2.0f * parentArea;
 
                 float inheritanceCost = 2.0f * (parentArea - siblingArea);
@@ -371,28 +378,28 @@
                 float cost2;
                 if (nodes[child1].IsLeaf())
                 {
-                    var aabb = BoundingRectangle.CreateMerged(leafAABB, nodes[child1].Bounds);
-                    cost2 = aabb.Perimeter + inheritanceCost;
+                    var aabb = BoundingBox.CreateMerged(leafAABB, nodes[child1].Bounds);
+                    cost2 = Helper.GetPerimeter(aabb) + inheritanceCost;
                 }
                 else
                 {
-                    var aabb = BoundingRectangle.CreateMerged(leafAABB, nodes[child1].Bounds);
-                    float oldArea = nodes[child1].Bounds.Perimeter;
-                    float newArea = aabb.Perimeter;
+                    var aabb = BoundingBox.CreateMerged(leafAABB, nodes[child1].Bounds);
+                    float oldArea = Helper.GetPerimeter(nodes[child1].Bounds);
+                    float newArea = Helper.GetPerimeter(aabb);
                     cost2 = (newArea - oldArea) + inheritanceCost;
                 }
 
                 float cost3;
                 if (nodes[child2].IsLeaf())
                 {
-                    var aabb = BoundingRectangle.CreateMerged(leafAABB, nodes[child2].Bounds);
-                    cost3 = aabb.Perimeter + inheritanceCost;
+                    var aabb = BoundingBox.CreateMerged(leafAABB, nodes[child2].Bounds);
+                    cost3 = Helper.GetPerimeter(aabb) + inheritanceCost;
                 }
                 else
                 {
-                    var aabb = BoundingRectangle.CreateMerged(leafAABB, nodes[child2].Bounds);
-                    float oldArea = nodes[child2].Bounds.Perimeter;
-                    float newArea = aabb.Perimeter;
+                    var aabb = BoundingBox.CreateMerged(leafAABB, nodes[child2].Bounds);
+                    float oldArea = Helper.GetPerimeter(nodes[child2].Bounds);
+                    float newArea = Helper.GetPerimeter(aabb);
                     cost3 = newArea - oldArea + inheritanceCost;
                 }
 
@@ -403,7 +410,7 @@
                 }
 
                 // Expand the node's AABB to account for the new leaf.
-                nodes[sibling].Bounds = BoundingRectangle.CreateMerged(nodes[sibling].Bounds, leafAABB);
+                nodes[sibling].Bounds = BoundingBox.CreateMerged(nodes[sibling].Bounds, leafAABB);
 
                 // Descend
                 if (cost2 < cost3)
@@ -421,7 +428,7 @@
             int newParent = AllocateNode();
             nodes[newParent].ParentOrNext = oldParent;
             nodes[newParent].Value = default(T);
-            nodes[newParent].Bounds = BoundingRectangle.CreateMerged(leafAABB, nodes[sibling].Bounds);
+            nodes[newParent].Bounds = BoundingBox.CreateMerged(leafAABB, nodes[sibling].Bounds);
             nodes[newParent].Height = nodes[sibling].Height + 1;
 
             if (oldParent != NullNode)
@@ -491,7 +498,7 @@
                     int child1 = nodes[index].Child1;
                     int child2 = nodes[index].Child2;
 
-                    nodes[index].Bounds = BoundingRectangle.CreateMerged(nodes[child1].Bounds, nodes[child2].Bounds);
+                    nodes[index].Bounds = BoundingBox.CreateMerged(nodes[child1].Bounds, nodes[child2].Bounds);
                     nodes[index].Height = 1 + Math.Max(nodes[child1].Height, nodes[child2].Height);
 
                     index = nodes[index].ParentOrNext;
@@ -570,8 +577,8 @@
                     C.Child2 = iF;
                     A.Child2 = iG;
                     G.ParentOrNext = iA;
-                    A.Bounds = BoundingRectangle.CreateMerged(B.Bounds, G.Bounds);
-                    C.Bounds = BoundingRectangle.CreateMerged(A.Bounds, F.Bounds);
+                    A.Bounds = BoundingBox.CreateMerged(B.Bounds, G.Bounds);
+                    C.Bounds = BoundingBox.CreateMerged(A.Bounds, F.Bounds);
 
                     A.Height = 1 + Math.Max(B.Height, G.Height);
                     C.Height = 1 + Math.Max(A.Height, F.Height);
@@ -581,8 +588,8 @@
                     C.Child2 = iG;
                     A.Child2 = iF;
                     F.ParentOrNext = iA;
-                    A.Bounds = BoundingRectangle.CreateMerged(B.Bounds, F.Bounds);
-                    C.Bounds = BoundingRectangle.CreateMerged(A.Bounds, G.Bounds);
+                    A.Bounds = BoundingBox.CreateMerged(B.Bounds, F.Bounds);
+                    C.Bounds = BoundingBox.CreateMerged(A.Bounds, G.Bounds);
 
                     A.Height = 1 + Math.Max(B.Height, F.Height);
                     C.Height = 1 + Math.Max(A.Height, G.Height);
@@ -633,8 +640,8 @@
                     B.Child2 = iD;
                     A.Child1 = iE;
                     E.ParentOrNext = iA;
-                    A.Bounds = BoundingRectangle.CreateMerged(C.Bounds, E.Bounds);
-                    B.Bounds = BoundingRectangle.CreateMerged(A.Bounds, D.Bounds);
+                    A.Bounds = BoundingBox.CreateMerged(C.Bounds, E.Bounds);
+                    B.Bounds = BoundingBox.CreateMerged(A.Bounds, D.Bounds);
 
                     A.Height = 1 + Math.Max(C.Height, E.Height);
                     B.Height = 1 + Math.Max(A.Height, D.Height);
@@ -644,8 +651,8 @@
                     B.Child2 = iE;
                     A.Child1 = iD;
                     D.ParentOrNext = iA;
-                    A.Bounds = BoundingRectangle.CreateMerged(C.Bounds, D.Bounds);
-                    B.Bounds = BoundingRectangle.CreateMerged(A.Bounds, E.Bounds);
+                    A.Bounds = BoundingBox.CreateMerged(C.Bounds, D.Bounds);
+                    B.Bounds = BoundingBox.CreateMerged(A.Bounds, E.Bounds);
 
                     A.Height = 1 + Math.Max(C.Height, D.Height);
                     B.Height = 1 + Math.Max(A.Height, E.Height);
@@ -710,6 +717,7 @@
 
             return nodeId;
         }
+
         #endregion
 
         public struct DynamicTreeNode
@@ -724,7 +732,7 @@
             public int Child2Id => Child2;
 
             public T Value;
-            public BoundingRectangle Bounds;
+            public BoundingBox Bounds;
 
             public bool IsLeaf() => this.Child1 == NullNode;
 
