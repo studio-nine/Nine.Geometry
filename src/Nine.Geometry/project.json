@@ -1,5 +1,5 @@
 ﻿{
-  "version": "1.0.2-beta-*",
+  "version": "1.0.3-beta-*",
   "description": "A lightweight library with geometry and spatial query.",
   "authors": [ "Eric Tuvesson", "Yufei Huang" ],
   "tags": [ "geometry", "spatial query", "2d", "3d" ],
@@ -12,6 +12,15 @@
   },
 
   "frameworks": {
+    "dnxcore50": {
+      "dependencies": {
+        "Microsoft.CSharp": "4.0.0",
+        "System.Collections": "4.0.0",
+        "System.Diagnostics.Debug": "4.0.0",
+        "System.Runtime": "4.0.0",
+        "System.Runtime.Extensions": "4.0.0"
+      }
+    },
     "dotnet": {
       "dependencies": {
         "Microsoft.CSharp": "4.0.0",
@@ -21,22 +30,8 @@
         "System.Runtime.Extensions": "4.0.0"
       }
     },
-    "dotnet5.4": {
-      "dependencies": {
-        "Microsoft.CSharp": "4.0.0",
-        "System.Collections": "4.0.0",
-        "System.Diagnostics.Debug": "4.0.0",
-        "System.Runtime": "4.0.0",
-        "System.Runtime.Extensions": "4.0.0"
-      }
-    },
-    "dnx451": {
+    "net45": {
       "frameworkAssemblies": {
-        "System.Runtime": "4.0.10.0"
-      }
-    },
-    "dnxcore50": {
-      "dependencies": {
         "Microsoft.CSharp": "4.0.0",
         "System.Collections": "4.0.0",
         "System.Diagnostics.Debug": "4.0.0",
