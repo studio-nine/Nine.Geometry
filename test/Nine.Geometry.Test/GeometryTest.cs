@@ -2,7 +2,6 @@
 {
     using System.Numerics;
     using Xunit;
-    using Nine.Geometry;
 
     /// <remarks>
     /// This is just call test to see so there are no exeptions thrown.
