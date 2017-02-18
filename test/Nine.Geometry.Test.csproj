@@ -28,6 +28,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Nine.Geometry\Nine.Geometry.csproj" />
+    <ProjectReference Include="..\src\Nine.Geometry.csproj" />
   </ItemGroup>
 
 </Project>
