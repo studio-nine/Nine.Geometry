@@ -1,12 +1,5 @@
-os: Visual Studio 2015 RC
+os: Visual Studio 2017 RC
 environment:
-  VisualStudioVersion: 14.0
-  DNX_FEED: https://www.nuget.org/api/v2
-install:
-  - dnvm install 1.0.0-rc1-update1
-  - dnu restore
-  - dnu pack src\Nine.Geometry --configuration Release --out artifacts
-  - dnx -p test\Nine.Geometry.Test test
-build: off
+  VisualStudioVersion: 15.0
 artifacts:
   - path: artifacts\**\*.nupkg
