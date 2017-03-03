@@ -42,10 +42,12 @@
         /// <summary> Gets the size of the rectangle. </summary>
         public Vector2 Size => new Vector2(Width, Height); 
 
-        /// <summary> Gets or sets the upper vector. </summary>
+        /// <summary> 
+        /// Gets or sets the upper vector. 
+        /// </summary>
         public Vector2 Upper
         {
-            get { return new Vector2(Top, Left); }
+            get { return new Vector2(Left, Top); }
             set
             {
                 this.Width = (value.X - Width);
@@ -53,10 +55,12 @@
             }
         }
 
-        /// <summary> Gets or sets the lower vector. </summary>
+        /// <summary> 
+        /// Gets or sets the lower vector. 
+        /// </summary>
         public Vector2 Lower
         {
-            get { return new Vector2(Bottom, Right); }
+            get { return new Vector2(Right, Bottom); }
             set
             {
                 this.X = value.X;
@@ -230,6 +234,6 @@
         public override int GetHashCode() => X.GetHashCode() ^ Y.GetHashCode() ^ Width.GetHashCode() ^ Height.GetHashCode();
 
         /// <inheritdoc />
-        public override string ToString() => $"<{this.X}, {this.Y}, {this.Width}, {this.Height}>";
+        public override string ToString() => $"<{ X }, { Y }, { Width }, { Height }>";
     }
 }

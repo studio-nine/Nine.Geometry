@@ -10,10 +10,14 @@
     [Obsolete("Not Implemented")]
     public struct BoundingCircle : IEquatable<BoundingCircle>
     {
-        /// <summary> Gets or sets the center point. </summary>
+        /// <summary> 
+        /// Gets or sets the center point. 
+        /// </summary>
         public Vector2 Center;
 
-        /// <summary> Gets or sets the radius. </summary>
+        /// <summary> 
+        /// Gets or sets the radius. 
+        /// </summary>
         public float Radius;
 
         /// <summary>
@@ -86,6 +90,6 @@
         public override int GetHashCode() => this.Center.GetHashCode() ^ this.Radius.GetHashCode();
         
         /// <inheritdoc />
-        public override string ToString() => "<Center: {this.Center}, Radius: {this.Radius}>";
+        public override string ToString() => $"<Center: { Center }, Radius: { Radius }>";
     }
 }

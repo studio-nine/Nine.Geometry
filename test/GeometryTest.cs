@@ -15,8 +15,6 @@
             Vector3[] points;
             ushort[] indices;
 
-            // TODO: I should probably vary the arguments
-
             Geometry.CreateBox(new BoundingBox(new Vector3(0, 0, 0), new Vector3(100, 100, 100)), out points, out indices);
             Geometry.CreateCone(new Vector3(0, 0, 0), 8, 8, 16, out points, out indices);
             Geometry.CreateCylinder(new Vector3(0, 0, 0), 8, 8, 16, out points, out indices);

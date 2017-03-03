@@ -8,13 +8,19 @@
     /// </summary>
     public struct LineSegment2D : IEquatable<LineSegment2D>
     {
-        /// <summary> Gets or sets the start point of this <see cref="LineSegment2D"/>. </summary>
+        /// <summary> 
+        /// Gets or sets the start point of this <see cref="LineSegment2D"/>. 
+        /// </summary>
         public Vector2 Start;
 
-        /// <summary> Gets or sets the end point of this <see cref="LineSegment2D"/>. </summary>
+        /// <summary> 
+        /// Gets or sets the end point of this <see cref="LineSegment2D"/>. 
+        /// </summary>
         public Vector2 End;
 
-        /// <summary> Gets the normal of this <see cref="LineSegment2D"/>. </summary>
+        /// <summary> 
+        /// Gets the normal of this <see cref="LineSegment2D"/>. 
+        /// </summary>
         public Vector2 Normal
         {
             get
@@ -27,7 +33,9 @@
             }
         }
 
-        /// <summary> Gets the center of this <see cref="LineSegment2D"/>. </summary>
+        /// <summary> 
+        /// Gets the center of this <see cref="LineSegment2D"/>. 
+        /// </summary>
         public Vector2 Center
         {
             get
@@ -138,6 +146,6 @@
         public override int GetHashCode() => this.Start.GetHashCode() ^ this.End.GetHashCode();
 
         /// <inheritdoc />
-        public override string ToString() => this.Start.ToString() + " - " + this.End.ToString();
+        public override string ToString() => $"<{ Start } - { End }>";
     }
 }

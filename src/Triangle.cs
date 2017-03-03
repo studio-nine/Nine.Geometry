@@ -8,13 +8,19 @@
     /// </summary>
     public struct Triangle : IEquatable<Triangle>
     {
-        /// <summary> Gets or sets the first vertex. </summary>
+        /// <summary> 
+        /// Gets or sets the first vertex. 
+        /// </summary>
         public Vector3 V1;
 
-        /// <summary> Gets or sets the second vertex. </summary>
+        /// <summary> 
+        /// Gets or sets the second vertex. 
+        /// </summary>
         public Vector3 V2;
 
-        /// <summary> Gets or sets the third vertex. </summary>
+        /// <summary> 
+        /// Gets or sets the third vertex. 
+        /// </summary>
         public Vector3 V3;
 
         /// <summary>
@@ -366,6 +372,6 @@
         public override int GetHashCode() => this.V1.GetHashCode() ^ this.V2.GetHashCode() ^ this.V3.GetHashCode();
 
         /// <inheritdoc />
-        public override string ToString() => $"<{this.V1}, {this.V2}, {this.V3}>";
+        public override string ToString() => $"<{ V1 }, { V2 }, { V3 }>";
     }
 }

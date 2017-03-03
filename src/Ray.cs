@@ -8,15 +8,21 @@
     /// </summary>
     public struct Ray : IEquatable<Ray>
     {
-        /// <summary> Gets or sets the position. </summary>
+        /// <summary> 
+        /// Gets or sets the position. 
+        /// </summary>
         public Vector3 Position;
 
-        /// <summary> Gets or sets the direction. </summary>
+        /// <summary> 
+        /// Gets or sets the direction. 
+        /// </summary>
         public Vector3 Direction;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Ray"/> class.
         /// </summary>
+        /// <param name="position">Ray start position.</param>
+        /// <param name="direction">Ray direction.</param>
         public Ray(Vector3 position, Vector3 direction)
         {
             this.Position = position;
@@ -97,6 +103,6 @@
         public override int GetHashCode() => this.Direction.GetHashCode() ^ this.Position.GetHashCode();
         
         /// <inheritdoc />
-        public override string ToString() => $"<Position: {this.Position}, Direction: {this.Direction}>";
+        public override string ToString() => $"<Position: { Position }, Direction: { Direction }>";
     }
 }

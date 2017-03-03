@@ -10,15 +10,21 @@
     /// </summary>
     public struct BoundingSphere : IEquatable<BoundingSphere>
     {
-        /// <summary> Gets or sets the center point. </summary>
+        /// <summary> 
+        /// Gets or sets the center point. 
+        /// </summary>
         public Vector3 Center;
 
-        /// <summary> Gets or sets the radius. </summary>
+        /// <summary>
+        /// Gets or sets the radius. 
+        /// </summary>
         public float Radius;
-
+        
         /// <summary>
         /// Initializes a new instance of the <see cref="BoundingSphere"/> class.
         /// </summary>
+        /// <param name="center">sphere center position.</param>
+        /// <param name="radius">sphere radius.</param>
         public BoundingSphere(Vector3 center, float radius)
         {
             this.Center = center;
@@ -253,6 +259,6 @@
         public override int GetHashCode() => this.Center.GetHashCode() ^ this.Radius.GetHashCode();
         
         /// <inheritdoc />
-        public override string ToString() => $"<Center: {this.Center}, Radius: {this.Radius}>";
+        public override string ToString() => $"<Center: { Center }, Radius: { Radius }>";
     }
 }

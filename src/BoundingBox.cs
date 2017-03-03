@@ -11,13 +11,19 @@
     {
         public const int Corners = 8;
 
-        /// <summary> Gets or sets the minimum position. </summary>
+        /// <summary> 
+        /// Gets or sets the minimum position. 
+        /// </summary>
         public Vector3 Min;
 
-        /// <summary> Gets or sets the maximum position. </summary>
+        /// <summary> 
+        /// Gets or sets the maximum position. 
+        /// </summary>
         public Vector3 Max;
 
-        /// <summary> Gets the center of the <see cref="BoundingBox"/>. </summary>
+        /// <summary> 
+        /// Gets the center of the <see cref="BoundingBox"/>. 
+        /// </summary>
         public Vector3 Center
         {
             get
@@ -29,7 +35,9 @@
             }
         }
 
-        /// <summary> Gets the size of the <see cref="BoundingBox"/>. </summary>
+        /// <summary> 
+        /// Gets the size of the <see cref="BoundingBox"/>. 
+        /// </summary>
         public Vector3 Size
         {
             get
@@ -44,6 +52,8 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="BoundingBox"/> class.
         /// </summary>
+        /// <param name="min"></param>
+        /// <param name="max"></param>
         public BoundingBox(Vector3 min, Vector3 max)
         {
             this.Min = min;
@@ -332,6 +342,6 @@
         public override int GetHashCode() => this.Min.GetHashCode() ^ this.Max.GetHashCode();
         
         /// <inheritdoc />
-        public override string ToString() => $"<Min: {this.Min}, Max: {this.Max}>";
+        public override string ToString() => $"<Min: { Min }, Max: { Max }>";
     }
 }

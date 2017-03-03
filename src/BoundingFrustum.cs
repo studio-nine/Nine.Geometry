@@ -147,7 +147,7 @@
         public override int GetHashCode() => this.Matrix.GetHashCode();
 
         /// <inheritdoc />
-        public override string ToString()
+        public override string ToString() 
         {
             var planes = this.planes.Value;
             return string.Format("<Near: {0}, Far: {1}, Left: {2}, Right: {3}, Top: {4}, Bottom: {5}>",

@@ -5,7 +5,7 @@
     using System.Diagnostics;
     using System.Numerics;
 
-    public partial class DynamicTree2D<T> : ISpatialQuery2D<T>
+    public class DynamicTree2D<T> : ISpatialQuery2D<T>
     {
         internal const int NullNode = -1;
 
@@ -24,8 +24,17 @@
         /// <summary> Gets the root id. </summary>
         public int RootId => root;
 
-        /// <summary> Gets the root node. </summary>
-        public DynamicTreeNode Root => nodes[root];
+        /// <summary> 
+        /// Gets the root node. 
+        /// </summary>
+        public DynamicTreeNode Root
+        {
+            get
+            {
+                if (root == NullNode) throw new ArgumentException("There is no root node.");
+                return nodes[root];
+            }
+        }
 
         public readonly float Margin;
 
@@ -194,9 +203,9 @@
 
                 Debug.Assert(node.IsLeaf() == false);
 
-                int child1 = node.Child1;
-                int child2 = node.Child2;
-                int balance = Math.Abs(nodes[child2].Height - nodes[child1].Height);
+                int Child1Id = node.Child1Id;
+                int Child2Id = node.Child2Id;
+                int balance = Math.Abs(nodes[Child2Id].Height - nodes[Child1Id].Height);
                 maxBalance = Math.Max(maxBalance, balance);
             }
 
@@ -286,8 +295,8 @@
                 }
                 else
                 {
-                    nodeStack.Push(node.Child1);
-                    nodeStack.Push(node.Child2);
+                    nodeStack.Push(node.Child1Id);
+                    nodeStack.Push(node.Child2Id);
                 }
             }
 
@@ -297,7 +306,7 @@
             return resultCount;
         }
 
-        public int FindAll(ref BoundingRectangle bounds, ref T[] result, int startIndex, Stack<int> traverseStack = null)
+        public int FindAll(ref BoundingRectangle bounds, ref T[] result, int? startIndex = null, Stack<int> traverseStack = null)
         {
             // TODO: traverseStack
 
@@ -310,7 +319,7 @@
             var results = new List<int>();
 
             var nodeStack = new Stack<int>();
-            nodeStack.Push(startIndex);
+            nodeStack.Push(startIndex ?? RootId);
 
             while (nodeStack.Count > 0)
             {
@@ -325,8 +334,8 @@
                 if (node.IsLeaf())
                     results.Add(nodeId);
 
-                nodeStack.Push(node.Child1);
-                nodeStack.Push(node.Child2);
+                nodeStack.Push(node.Child1Id);
+                nodeStack.Push(node.Child2Id);
             }
 
             result = new T[results.Count];
@@ -354,50 +363,34 @@
             int sibling = root;
             while (nodes[sibling].IsLeaf() == false)
             {
-                int child1 = nodes[sibling].Child1;
-                int child2 = nodes[sibling].Child2;
+                int Child1Id = nodes[sibling].Child1Id;
+                int Child2Id = nodes[sibling].Child2Id;
 
                 // Expand the node's AABB.
-                nodes[sibling].Bounds = BoundingRectangle.CreateMerged(nodes[sibling].Bounds, leafAABB);
+                //nodes[sibling].Bounds = BoundingRectangle.CreateMerged(nodes[sibling].Bounds, leafAABB);
                 nodes[sibling].Height += 1;
 
-                float siblingArea = nodes[sibling].Bounds.Perimeter;
+                var siblingArea = nodes[sibling].Bounds.Perimeter;
+
                 var parentAABB = BoundingRectangle.CreateMerged(nodes[sibling].Bounds, leafAABB);
-                float parentArea = parentAABB.Perimeter;
-                float cost1 = 2.0f * parentArea;
+                var parentArea = parentAABB.Perimeter;
 
-                float inheritanceCost = 2.0f * (parentArea - siblingArea);
+                // Cost of creating a new parent for this node and the new leaf
+                var cost = 2.0f * parentArea;
 
-                float cost2;
-                if (nodes[child1].IsLeaf())
-                {
-                    var aabb = BoundingRectangle.CreateMerged(leafAABB, nodes[child1].Bounds);
-                    cost2 = aabb.Perimeter + inheritanceCost;
-                }
-                else
-                {
-                    var aabb = BoundingRectangle.CreateMerged(leafAABB, nodes[child1].Bounds);
-                    float oldArea = nodes[child1].Bounds.Perimeter;
-                    float newArea = aabb.Perimeter;
-                    cost2 = (newArea - oldArea) + inheritanceCost;
-                }
+                // Minimum cost of pushing the leaf further down the tree
+                var inheritanceCost = 2.0f * (parentArea - siblingArea);
 
-                float cost3;
-                if (nodes[child2].IsLeaf())
-                {
-                    var aabb = BoundingRectangle.CreateMerged(leafAABB, nodes[child2].Bounds);
-                    cost3 = aabb.Perimeter + inheritanceCost;
-                }
-                else
-                {
-                    var aabb = BoundingRectangle.CreateMerged(leafAABB, nodes[child2].Bounds);
-                    float oldArea = nodes[child2].Bounds.Perimeter;
-                    float newArea = aabb.Perimeter;
-                    cost3 = newArea - oldArea + inheritanceCost;
-                }
+                // Cost of descending into Child1Id
+                var leafAABBChild1 = BoundingRectangle.CreateMerged(leafAABB, nodes[Child1Id].Bounds);
+                var cost1 = (nodes[Child1Id].IsLeaf() ? leafAABBChild1.Perimeter : (leafAABBChild1.Perimeter - nodes[Child1Id].Bounds.Perimeter)) + inheritanceCost;
 
+                // Cost of descending into Child2Id
+                var leafAABBChild2 = BoundingRectangle.CreateMerged(leafAABB, nodes[Child2Id].Bounds);
+                var cost2 = (nodes[Child2Id].IsLeaf() ? leafAABBChild2.Perimeter : (leafAABBChild2.Perimeter - nodes[Child2Id].Bounds.Perimeter)) + inheritanceCost;
+                
                 // Descend according to the minimum cost.
-                if (cost1 < cost2 && cost1 < cost3)
+                if (cost < cost1 && cost < cost2)
                 {
                     break;
                 }
@@ -406,13 +399,13 @@
                 nodes[sibling].Bounds = BoundingRectangle.CreateMerged(nodes[sibling].Bounds, leafAABB);
 
                 // Descend
-                if (cost2 < cost3)
+                if (cost1 < cost2)
                 {
-                    sibling = child1;
+                    sibling = Child1Id;
                 }
                 else
                 {
-                    sibling = child2;
+                    sibling = Child2Id;
                 }
             }
 
@@ -427,31 +420,49 @@
             if (oldParent != NullNode)
             {
                 // The sibling was not the root.
-                if (nodes[oldParent].Child1 == sibling)
+                if (nodes[oldParent].Child1Id == sibling)
                 {
-                    nodes[oldParent].Child1 = newParent;
+                    nodes[oldParent].Child1Id = newParent;
                 }
                 else
                 {
-                    nodes[oldParent].Child2 = newParent;
+                    nodes[oldParent].Child2Id = newParent;
                 }
 
-                nodes[newParent].Child1 = sibling;
-                nodes[newParent].Child2 = leaf;
+                nodes[newParent].Child1Id = sibling;
+                nodes[newParent].Child2Id = leaf;
                 nodes[sibling].ParentOrNext = newParent;
                 nodes[leaf].ParentOrNext = newParent;
             }
             else
             {
                 // The sibling was the root.
-                nodes[newParent].Child1 = sibling;
-                nodes[newParent].Child2 = leaf;
+                nodes[newParent].Child1Id = sibling;
+                nodes[newParent].Child2Id = leaf;
                 nodes[sibling].ParentOrNext = newParent;
                 nodes[leaf].ParentOrNext = newParent;
                 root = newParent;
             }
 
-            // TODO: Validating here breaks the code
+            // Walk back up the tree fixing heights and AABBs
+            int index = sibling;
+            index = nodes[leaf].ParentOrNext;
+            while (index != NullNode)
+            {
+                index = Balance(index);
+
+                int Child1Id = nodes[index].Child1Id;
+                int Child2Id = nodes[index].Child2Id;
+
+                Debug.Assert(Child1Id != NullNode);
+                Debug.Assert(Child2Id != NullNode);
+
+                nodes[index].Height = 1 + Math.Max(nodes[Child1Id].Height, nodes[Child2Id].Height);
+                nodes[index].Bounds = BoundingRectangle.CreateMerged(nodes[Child1Id].Bounds, nodes[Child2Id].Bounds);
+
+                index = nodes[index].ParentOrNext;
+            }
+
             //Validate();
         }
 
@@ -465,18 +476,18 @@
 
             var parent = nodes[leaf].ParentOrNext;
             var grandParent = nodes[parent].ParentOrNext;
-            var sibling = (nodes[parent].Child1 == leaf) ? nodes[parent].Child2 : nodes[parent].Child1;
+            var sibling = (nodes[parent].Child1Id == leaf) ? nodes[parent].Child2Id : nodes[parent].Child1Id;
 
             if (grandParent != NullNode)
             {
                 // Destroy parent and connect sibling to grandParent.
-                if (nodes[grandParent].Child1 == parent)
+                if (nodes[grandParent].Child1Id == parent)
                 {
-                    nodes[grandParent].Child1 = sibling;
+                    nodes[grandParent].Child1Id = sibling;
                 }
                 else
                 {
-                    nodes[grandParent].Child2 = sibling;
+                    nodes[grandParent].Child2Id = sibling;
                 }
 
                 nodes[sibling].ParentOrNext = grandParent;
@@ -488,11 +499,11 @@
                 {
                     index = Balance(index);
 
-                    int child1 = nodes[index].Child1;
-                    int child2 = nodes[index].Child2;
+                    int Child1Id = nodes[index].Child1Id;
+                    int Child2Id = nodes[index].Child2Id;
 
-                    nodes[index].Bounds = BoundingRectangle.CreateMerged(nodes[child1].Bounds, nodes[child2].Bounds);
-                    nodes[index].Height = 1 + Math.Max(nodes[child1].Height, nodes[child2].Height);
+                    nodes[index].Bounds = BoundingRectangle.CreateMerged(nodes[Child1Id].Bounds, nodes[Child2Id].Bounds);
+                    nodes[index].Height = 1 + Math.Max(nodes[Child1Id].Height, nodes[Child2Id].Height);
 
                     index = nodes[index].ParentOrNext;
                 }
@@ -518,8 +529,8 @@
             if (A.IsLeaf() || A.Height < 2)
                 return iA;
 
-            int iB = A.Child1;
-            int iC = A.Child2;
+            int iB = A.Child1Id;
+            int iC = A.Child2Id;
 
             Debug.Assert(0 <= iB && iB < nodeCapacity);
             Debug.Assert(0 <= iC && iC < nodeCapacity);
@@ -529,34 +540,31 @@
 
             int balance = C.Height - B.Height;
 
-            #region Rotate C up
             if (balance > 1)
             {
-                int iF = C.Child1;
-                int iG = C.Child2;
-
+                int iF = C.Child1Id;
+                int iG = C.Child2Id;
                 var F = nodes[iF];
                 var G = nodes[iG];
-
                 Debug.Assert(0 <= iF && iF < nodeCapacity);
                 Debug.Assert(0 <= iG && iG < nodeCapacity);
 
                 // Swap A and C
-                C.Child1 = iA;
+                C.Child1Id = iA;
                 C.ParentOrNext = A.ParentOrNext;
                 A.ParentOrNext = iC;
 
                 // A's old parent should point to C
                 if (C.ParentOrNext != NullNode)
                 {
-                    if (nodes[C.ParentOrNext].Child1 == iA)
+                    if (nodes[C.ParentOrNext].Child1Id == iA)
                     {
-                        nodes[C.ParentOrNext].Child1 = iC;
+                        nodes[C.ParentOrNext].Child1Id = iC;
                     }
                     else
                     {
-                        Debug.Assert(nodes[C.ParentOrNext].Child2 == iA);
-                        nodes[C.ParentOrNext].Child2 = iC;
+                        Debug.Assert(nodes[C.ParentOrNext].Child2Id == iA);
+                        nodes[C.ParentOrNext].Child2Id = iC;
                     }
                 }
                 else
@@ -567,8 +575,8 @@
                 // Rotate
                 if (F.Height > G.Height)
                 {
-                    C.Child2 = iF;
-                    A.Child2 = iG;
+                    C.Child2Id = iF;
+                    A.Child2Id = iG;
                     G.ParentOrNext = iA;
                     A.Bounds = BoundingRectangle.CreateMerged(B.Bounds, G.Bounds);
                     C.Bounds = BoundingRectangle.CreateMerged(A.Bounds, F.Bounds);
@@ -578,8 +586,8 @@
                 }
                 else
                 {
-                    C.Child2 = iG;
-                    A.Child2 = iF;
+                    C.Child2Id = iG;
+                    A.Child2Id = iF;
                     F.ParentOrNext = iA;
                     A.Bounds = BoundingRectangle.CreateMerged(B.Bounds, F.Bounds);
                     C.Bounds = BoundingRectangle.CreateMerged(A.Bounds, G.Bounds);
@@ -590,13 +598,10 @@
 
                 return iC;
             }
-            #endregion
-
-            #region Rotate B up
-            if (balance < -1)
+            else if (balance < -1)
             {
-                int iD = B.Child1;
-                int iE = B.Child2;
+                int iD = B.Child1Id;
+                int iE = B.Child2Id;
 
                 var D = nodes[iD];
                 var E = nodes[iE];
@@ -605,21 +610,21 @@
                 Debug.Assert(0 <= iE && iE < nodeCapacity);
 
                 // Swap A and B
-                B.Child1 = iA;
+                B.Child1Id = iA;
                 B.ParentOrNext = A.ParentOrNext;
                 A.ParentOrNext = iB;
 
                 // A's old parent should point to B
                 if (B.ParentOrNext != NullNode)
                 {
-                    if (nodes[B.ParentOrNext].Child1 == iA)
+                    if (nodes[B.ParentOrNext].Child1Id == iA)
                     {
-                        nodes[B.ParentOrNext].Child1 = iB;
+                        nodes[B.ParentOrNext].Child1Id = iB;
                     }
                     else
                     {
-                        Debug.Assert(nodes[B.ParentOrNext].Child2 == iA);
-                        nodes[B.ParentOrNext].Child2 = iB;
+                        Debug.Assert(nodes[B.ParentOrNext].Child2Id == iA);
+                        nodes[B.ParentOrNext].Child2Id = iB;
                     }
                 }
                 else
@@ -630,8 +635,8 @@
                 // Rotate
                 if (D.Height > E.Height)
                 {
-                    B.Child2 = iD;
-                    A.Child1 = iE;
+                    B.Child2Id = iD;
+                    A.Child1Id = iE;
                     E.ParentOrNext = iA;
                     A.Bounds = BoundingRectangle.CreateMerged(C.Bounds, E.Bounds);
                     B.Bounds = BoundingRectangle.CreateMerged(A.Bounds, D.Bounds);
@@ -641,8 +646,8 @@
                 }
                 else
                 {
-                    B.Child2 = iE;
-                    A.Child1 = iD;
+                    B.Child2Id = iE;
+                    A.Child1Id = iD;
                     D.ParentOrNext = iA;
                     A.Bounds = BoundingRectangle.CreateMerged(C.Bounds, D.Bounds);
                     B.Bounds = BoundingRectangle.CreateMerged(A.Bounds, E.Bounds);
@@ -653,7 +658,6 @@
 
                 return iB;
             }
-            #endregion
 
             return iA;
         }
@@ -701,8 +705,8 @@
             var nodeId = freeList;
             freeList = nodes[nodeId].ParentOrNext;
             nodes[nodeId].ParentOrNext = NullNode;
-            nodes[nodeId].Child1 = NullNode;
-            nodes[nodeId].Child2 = NullNode;
+            nodes[nodeId].Child1Id = NullNode;
+            nodes[nodeId].Child2Id = NullNode;
             nodes[nodeId].Height = 0;
             nodes[nodeId].Value = default(T);
 
@@ -712,25 +716,123 @@
         }
         #endregion
 
+        #region Validation
+        public int ComputeHeight() => this.ComputeHeight(this.root);
+        public int ComputeHeight(int nodeId)
+        {
+            Debug.Assert(0 <= nodeId && nodeId < nodeCapacity);
+
+            var node = nodes[nodeId];
+            if (node.IsLeaf())
+                return 0;
+
+            var height1 = ComputeHeight(node.Child1Id);
+            var height2 = ComputeHeight(node.Child2Id);
+            return 1 + Math.Max(height1, height2);
+        }
+
+        [Conditional("DEBUG")]
+        protected void Validate()
+        {
+            ValidateStructure(root);
+            ValidateMetrics(root);
+
+            int freeCount = 0;
+            int freeIndex = freeList;
+            while (freeIndex != NullNode)
+            {
+                Debug.Assert(0 <= freeIndex && freeIndex < nodeCapacity);
+                freeIndex = nodes[freeIndex].ParentOrNext;
+                ++freeCount;
+            }
+
+            Debug.Assert(Height == ComputeHeight());
+            Debug.Assert((nodeCount + freeCount) == nodeCapacity);
+        }
+
+        protected void ValidateStructure(int index)
+        {
+            if (index == NullNode)
+                return;
+
+            if (index == root)
+                Debug.Assert(nodes[index].ParentOrNext == NullNode);
+
+            var node = nodes[index];
+
+            var Child1Id = node.Child1Id;
+            var Child2Id = node.Child2Id;
+
+            if (node.IsLeaf())
+            {
+                Debug.Assert(Child1Id == NullNode);
+                Debug.Assert(Child2Id == NullNode);
+                Debug.Assert(node.Height == 0);
+                return;
+            }
+
+            Debug.Assert(0 <= Child1Id && Child1Id < nodeCapacity);
+            Debug.Assert(0 <= Child2Id && Child2Id < nodeCapacity);
+
+            Debug.Assert(nodes[Child1Id].ParentOrNext == index);
+            Debug.Assert(nodes[Child2Id].ParentOrNext == index);
+
+            ValidateStructure(Child1Id);
+            ValidateStructure(Child2Id);
+        }
+
+        protected void ValidateMetrics(int index)
+        {
+            if (index == NullNode)
+                return;
+
+            var node = nodes[index];
+
+            var Child1Id = node.Child1Id;
+            var Child2Id = node.Child2Id;
+
+            if (node.IsLeaf())
+            {
+                Debug.Assert(Child1Id == NullNode);
+                Debug.Assert(Child2Id == NullNode);
+                Debug.Assert(node.Height == 0);
+                return;
+            }
+
+            Debug.Assert(0 <= Child1Id && Child1Id < nodeCapacity);
+            Debug.Assert(0 <= Child2Id && Child2Id < nodeCapacity);
+
+            var height1 = nodes[Child1Id].Height;
+            var height2 = nodes[Child2Id].Height;
+            var height = 1 + Math.Max(height1, height2);
+            Debug.Assert(node.Height == height);
+
+            var bounds = BoundingRectangle.CreateMerged(nodes[Child1Id].Bounds, nodes[Child2Id].Bounds);
+
+            Debug.Assert(bounds.Lower == node.Bounds.Lower);
+            Debug.Assert(bounds.Upper == node.Bounds.Upper);
+
+            ValidateMetrics(Child1Id);
+            ValidateMetrics(Child2Id);
+        }
+        #endregion
+
         public struct DynamicTreeNode
         {
-            internal int Child1;
-            internal int Child2;
-
             internal int Height;
             internal int ParentOrNext;
 
-            public int Child1Id => Child1;
-            public int Child2Id => Child2;
+            public int Child1Id { get; internal set; }
+            public int Child2Id { get; internal set; }
 
             public T Value;
             public BoundingRectangle Bounds;
 
-            public bool IsLeaf() => this.Child1 == NullNode;
+            public bool IsLeaf() => this.Child1Id == NullNode;
 
             public override string ToString()
             {
-                return $"Child1: {Child1}, Child2: {Child2}, Value: {Value}";
+                return $"Child1Id: { Child1Id }, Child2Id: { Child2Id }, Value: { Value }";
             }
         }
     }
