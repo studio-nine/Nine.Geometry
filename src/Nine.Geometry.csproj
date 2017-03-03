@@ -10,6 +10,8 @@
     <RepositoryUrl>https://github.com/studio-nine/Nine.Geometry</RepositoryUrl>
     <PackageLicenseUrl>https://github.com/studio-nine/Nine.Geometry/blob/master/LICENSE</PackageLicenseUrl>
     <PackageTags>geometry spatial query 2d 3d</PackageTags>
+    <PackageProjectUrl>https://github.com/studio-nine/Nine.Geometry</PackageProjectUrl>
+    <PackageIconUrl>https://avatars3.githubusercontent.com/u/9212229?s=64</PackageIconUrl>
   </PropertyGroup>
 
   <ItemGroup>
