@@ -1,0 +1,37 @@
+﻿name: test
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  tests:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        dotnet: ['5.0.x']
+        configuration: ['Release']
+
+    steps:
+      - name: Checkout 🛎
+        uses: actions/checkout@v2.3.4
+          
+      - name: Setup dotnet env 🏗
+        uses: actions/setup-dotnet@v1.8.0
+        with:
+          dotnet-version: ${{ matrix.dotnet }}
+
+      - name: Install dependencies 👨🏻‍💻
+        run: dotnet restore
+
+      - name: Run build 🛠
+        run: dotnet build --nologo --configuration ${{ matrix.configuration }}
+
+      - name: Run tests 🧪
+        run: dotnet test --nologo --configuration ${{ matrix.configuration }}
