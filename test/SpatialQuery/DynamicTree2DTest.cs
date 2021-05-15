@@ -29,7 +29,7 @@
             var queryRect = new BoundingRectangle(-200, -200, 200 * 10 + 200, 200 * 10 + 200);
 
             BoundingRectangle[] queryResult = null;
-            Assert.Equal(tree.FindAll(ref queryRect, ref queryResult, tree.RootId), 100);
+            Assert.Equal(100, tree.FindAll(ref queryRect, ref queryResult, tree.RootId));
 
             // Remove actors
             tree.Clear();

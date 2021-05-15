@@ -37,7 +37,7 @@
                 new Vector3(200 * 10 + 200, 200 * 10 + 200, 200 * 10 + 200));
 
             BoundingBox[] queryResult = null;
-            Assert.Equal(tree.FindAll(ref queryRect, ref queryResult, tree.RootId), 1000);
+            Assert.Equal(1000, tree.FindAll(ref queryRect, ref queryResult, tree.RootId));
 
             // Remove actors
             tree.Clear();
