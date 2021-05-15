@@ -7,6 +7,22 @@
     [EditorBrowsable(EditorBrowsableState.Never)]
     public static class RandomHelper
     {
+        /// <summary>
+        /// Returns a random floating-point number that is within a specified range.
+        /// </summary>
+        /// <param name="rd">
+        /// <see cref="Random"/> instance.
+        /// </param>
+        /// <param name="min">
+        /// The inclusive lower bound of the random number returned.
+        /// </param>
+        /// <param name="max">
+        /// The exclusive upper bound of the random number returned.
+        /// <paramref name="max"/> must be greater than or equal to <paramref name="min"/>.
+        /// </param>
+        /// <returns>
+        /// Returns a random floating-point number that is within a specified range.
+        /// </returns>
         public static double NextDouble(this Random rd, double min, double max)
         {
             return rd.NextDouble() * (max - min) + min;
