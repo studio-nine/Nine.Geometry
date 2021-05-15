@@ -2,15 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard1.0</TargetFrameworks>
-    <Description>A lightweight library with geometry and spatial query.</Description>
-    <Company>Nine</Company>
-    <Authors>Eric Tuvesson, Yufei Huang</Authors>
-    <Version>1.1.0</Version>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <RepositoryUrl>https://github.com/studio-nine/Nine.Geometry</RepositoryUrl>
-    <PackageLicenseUrl>https://github.com/studio-nine/Nine.Geometry/blob/master/LICENSE</PackageLicenseUrl>
-    <PackageTags>geometry spatial query 2d 3d</PackageTags>
-    <PackageProjectUrl>https://github.com/studio-nine/Nine.Geometry</PackageProjectUrl>
   </PropertyGroup>
 
   <ItemGroup>

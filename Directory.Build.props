@@ -1,0 +1,43 @@
+<Project>
+
+  <PropertyGroup>
+    <Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
+    <RepositoryRootDirectory>$(MSBuildThisFileDirectory)</RepositoryRootDirectory>
+    <BinDir>$(RepositoryRootDirectory)bin</BinDir>
+    <PackageOutputPath>$(BinDir)\Packages\$(Configuration)</PackageOutputPath>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Description>A lightweight library with geometry and spatial query.</Description>
+    <Company>Nine</Company>
+    <Authors>Eric Tuvesson, Yufei Huang</Authors>
+    <RepositoryUrl>https://github.com/studio-nine/Nine.Geometry</RepositoryUrl>
+    <PackageLicenseUrl>https://github.com/studio-nine/Nine.Geometry/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageTags>geometry spatial query 2d 3d</PackageTags>
+    <PackageProjectUrl>https://github.com/studio-nine/Nine.Geometry</PackageProjectUrl>
+    <NeutralLanguage>en-US</NeutralLanguage>
+  </PropertyGroup>
+  
+  <PropertyGroup>
+    <RepositoryType>git</RepositoryType>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <IncludeSymbols>true</IncludeSymbols>
+    <IncludeSource>true</IncludeSource>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All"/>
+  </ItemGroup>
+  
+  <PropertyGroup>
+    <NerdbankGitVersioningVersion>3.4.194</NerdbankGitVersioningVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Nerdbank.GitVersioning" Version="$(NerdbankGitVersioningVersion)" PrivateAssets="all" />
+  </ItemGroup>
+
+</Project>
