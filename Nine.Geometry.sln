@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26206.0
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31205.134
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{C5B0A994-3C97-463D-960C-5D1E5FF78FB6}"
 EndProject
@@ -10,6 +10,13 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nine.Geometry", "src\Nine.Geometry.csproj", "{2E83A161-9566-436E-A452-9E1E3C6CB0CC}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nine.Geometry.Test", "test\Nine.Geometry.Test.csproj", "{C45B81E5-BF9A-415E-94CE-DB84A7C8F169}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C548C98A-1124-4ED1-B317-840FFC4D8538}"
+	ProjectSection(SolutionItems) = preProject
+		Directory.Build.props = Directory.Build.props
+		README.md = README.md
+		version.json = version.json
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -52,5 +59,8 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{2E83A161-9566-436E-A452-9E1E3C6CB0CC} = {C5B0A994-3C97-463D-960C-5D1E5FF78FB6}
 		{C45B81E5-BF9A-415E-94CE-DB84A7C8F169} = {57034D93-482B-4783-A5DF-9D3220DEB4D2}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {ACDDA511-BFA7-45BE-AA7D-8609B63537BD}
 	EndGlobalSection
 EndGlobal
