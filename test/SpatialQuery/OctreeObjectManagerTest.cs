@@ -8,40 +8,6 @@
     using System.Numerics;
     using Xunit;
 
-    class TestBoundable : ISpatialQueryable
-    {
-        public bool NoEventHandlerAttached { get { return BoundingBoxChanged == null; } }
-
-        public BoundingBox BoundingBox
-        {
-            get { return boundingBox; }
-            set { boundingBox = value; if (BoundingBoxChanged != null) BoundingBoxChanged(this, EventArgs.Empty); }
-        }
-
-        public BoundingBox boundingBox;
-
-        public event EventHandler<EventArgs> BoundingBoxChanged;
-
-        static Random random = new Random();
-        public static TestBoundable CreateRandom(BoundingBox bounds, float size)
-        {
-            BoundingBox box;
-            do
-            {
-                var point = new Vector3(MathHelper.Lerp(bounds.Min.X, bounds.Max.X, (float)random.NextDouble()),
-                                        MathHelper.Lerp(bounds.Min.Y, bounds.Max.Y, (float)random.NextDouble()),
-                                        MathHelper.Lerp(bounds.Min.Z, bounds.Max.Z, (float)random.NextDouble()));
-
-                box = BoundingBox.CreateFromPoints(new Vector3[] { point, point + Vector3.One * size });
-
-            } while (bounds.Contains(box) != ContainmentType.Contains);
-
-            return new TestBoundable() { BoundingBox = box };
-        }
-
-        public object SpatialData { get; set; }
-    }
-
     public class OctreeObjectManagerTest
     {
         [Fact]
@@ -49,7 +15,7 @@
         {
             OctreeSceneManager scene = new OctreeSceneManager();
             Assert.Single(scene.Tree);
-            var boundable = new TestBoundable() { BoundingBox = new BoundingBox(Vector3.One * 0.1f, Vector3.One) };
+            var boundable = new SpatialQueryableTest(new BoundingBox(Vector3.One * 0.1f, Vector3.One));
             scene.Add(boundable);
 
             //dynamic data1 = boundable.SpatialData;
@@ -76,7 +42,7 @@
         {
             OctreeSceneManager scene = new OctreeSceneManager();
 
-            var boundable = new TestBoundable() { BoundingBox = new BoundingBox(Vector3.One * 0.1f, Vector3.One) };
+            var boundable = new SpatialQueryableTest(new BoundingBox(Vector3.One * 0.1f, Vector3.One));
             scene.Add(boundable);
 
             Assert.Single(scene);
@@ -96,9 +62,9 @@
             // 1000 x 1000 x 1000
             var scene = new OctreeSceneManager();
             var bounds = new BoundingBox(Vector3.One * -500, Vector3.One * 1000);
-            var objects = Enumerable.Range(0, 1000).Select(i => TestBoundable.CreateRandom(bounds, 50f)).ToArray();
-            var updatedObjects = Enumerable.Range(0, 1000).Select(i => TestBoundable.CreateRandom(bounds, 50f)).ToArray();
-            var queries = Enumerable.Range(0, 1000).Select(i => TestBoundable.CreateRandom(bounds, 200)).ToArray();
+            var objects = Enumerable.Range(0, 1000).Select(i => SpatialQueryableTest.CreateRandom(bounds, 50f)).ToArray();
+            var updatedObjects = Enumerable.Range(0, 1000).Select(i => SpatialQueryableTest.CreateRandom(bounds, 50f)).ToArray();
+            var queries = Enumerable.Range(0, 1000).Select(i => SpatialQueryableTest.CreateRandom(bounds, 200)).ToArray();
 
             // Add
             GC.Collect();
@@ -124,7 +90,8 @@
 
             foreach (var q in queries)
             {
-                scene.FindAll(ref q.boundingBox, queryResult);
+                var box = q.BoundingBox;
+                scene.FindAll(ref box, queryResult);
             }
 
             watch.Stop();
@@ -170,7 +137,7 @@
 
             Assert.Empty(scene);
             Assert.True(objects[0].NoEventHandlerAttached);
-            Assert.Equal(1, scene.Tree.Count());
+            Assert.Single(scene.Tree);
         }
     }
 }
