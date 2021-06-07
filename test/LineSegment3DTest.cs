@@ -105,6 +105,28 @@
         }
 
         [Fact]
+        public void Contains()
+        {
+            var segment = new LineSegment3D(new Vector3(0, 1, 1), new Vector3(2, 1, 1));
+            var point = new Vector3(1, 1, 1);
+
+            var hit = segment.Contains(point);
+
+            Assert.True(hit);
+        }
+
+        [Fact]
+        public void Contains_Invalid()
+        {
+            var segment = new LineSegment3D(new Vector3(0, 1, 1), new Vector3(2, 1, 1));
+            var point = new Vector3(0, 0, 0);
+
+            var hit = segment.Contains(point);
+
+            Assert.False(hit);
+        }
+
+        [Fact]
         public void Intersects_XY()
         {
             var segment1 = new LineSegment3D(new Vector3(0, 1, 0), new Vector3(0, -1, 0));

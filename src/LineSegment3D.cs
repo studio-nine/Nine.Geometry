@@ -81,6 +81,22 @@
             var zz = Start.Z - End.Z;
             return xx * xx + yy * yy + zz * zz;
         }
+        
+        /// <summary>
+        /// Returns whether this <see cref="LineSegment3D"/> contains the point.
+        /// </summary>
+        /// <param name="point"></param>
+        /// <returns></returns>
+        public bool Contains(Vector3 point)
+        {
+            float m = (this.End.Y - this.Start.Y) / (this.End.X - this.Start.X);
+            float b = this.Start.Y - m * this.Start.X;
+
+            if (Math.Abs(point.Y - (m * point.X + b)) < float.Epsilon)
+                return true;
+            
+            return false;
+        }
 
         /// <summary>
         /// Returns whether the <see cref="LineSegment3D"/> intersects each others.
