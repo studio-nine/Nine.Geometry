@@ -99,30 +99,55 @@
         /// </summary>
         public void Offset(float length)
         {
-            var normal = Normal;
+            var offset = Normal * length;
 
-            Start += normal * length;
-            End += normal * length;
+            Start += offset;
+            End += offset;
         }
-        
+
+        /// <summary>
+        /// Returns whether the <see cref="LineSegment2D"/> intersects each others.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
         public bool Intersects(LineSegment2D value)
-        {
-            return this.Intersect(value).HasValue;
-        }
-        
+            => this.Intersect(value).HasValue;
+
+        /// <summary>
+        /// Returns the intersection point between two <see cref="LineSegment2D"/>.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
         public Vector2? Intersect(LineSegment2D value)
+            => Intersect(value.Start, value.End);
+
+        /// <summary>
+        /// Returns whether the <see cref="LineSegment2D"/> intersects each others.
+        /// </summary>
+        /// <param name="start"></param>
+        /// <param name="end"></param>
+        /// <returns></returns>
+        public bool Intersects(Vector2 start, Vector2 end)
+            => this.Intersect(start, end).HasValue;
+
+        /// <summary>
+        /// Returns the intersection point between two <see cref="LineSegment2D"/>.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public Vector2? Intersect(Vector2 start, Vector2 end)
         {
             float x1 = End.X - Start.X;
             float y1 = End.Y - Start.Y;
-            float x2 = value.End.X - value.Start.X;
-            float y2 = value.End.Y - value.Start.Y;
+            float x2 = end.X - start.X;
+            float y2 = end.Y - start.Y;
             float d = x1 * y2 - y1 * x2;
 
             if (d == 0)
                 return null;
 
-            float x3 = value.Start.X - Start.X;
-            float y3 = value.Start.Y - Start.Y;
+            float x3 = start.X - Start.X;
+            float y3 = start.Y - Start.Y;
             float t = (x3 * y2 - y3 * x2) / d;
             float u = (x3 * y1 - y3 * x1) / d;
 
@@ -133,19 +158,26 @@
             return new Vector2(Start.X + t * x1, Start.Y + t * y1);
         }
 
-        public static bool operator ==(LineSegment2D value1, LineSegment2D value2) => (value1.Start == value2.Start && value1.End == value2.End);
-        public static bool operator !=(LineSegment2D value1, LineSegment2D value2) => (value1.Start != value2.Start && value1.End != value2.End);
+        public static bool operator ==(LineSegment2D value1, LineSegment2D value2)
+            => (value1.Start == value2.Start && value1.End == value2.End);
+        
+        public static bool operator !=(LineSegment2D value1, LineSegment2D value2)
+            => (value1.Start != value2.Start && value1.End != value2.End);
 
         /// <inheritdoc />
-        public bool Equals(LineSegment2D other) => this.Start == other.Start && this.End == other.End;
+        public bool Equals(LineSegment2D other)
+            => this.Start == other.Start && this.End == other.End;
 
         /// <inheritdoc />
-        public override bool Equals(object obj) => (obj is LineSegment2D) && this.Equals((LineSegment2D)obj);
+        public override bool Equals(object obj)
+            => (obj is LineSegment2D) && this.Equals((LineSegment2D)obj);
 
         /// <inheritdoc />
-        public override int GetHashCode() => this.Start.GetHashCode() ^ this.End.GetHashCode();
+        public override int GetHashCode()
+            => this.Start.GetHashCode() ^ this.End.GetHashCode();
 
         /// <inheritdoc />
-        public override string ToString() => $"<{ Start } - { End }>";
+        public override string ToString()
+            => $"<{Start} - {End}>";
     }
 }
