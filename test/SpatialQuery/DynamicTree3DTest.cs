@@ -1,5 +1,6 @@
-﻿namespace Nine.Geometry.SpatialQuery
+﻿namespace Nine.Geometry.Test.SpatialQuery
 {
+    using Nine.Geometry.SpatialQuery;
     using System;
     using System.Numerics;
     using Xunit;

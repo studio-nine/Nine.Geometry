@@ -1,4 +1,4 @@
-﻿namespace Nine.Geometry
+﻿namespace Nine.Geometry.Test
 {
     using System.Numerics;
     using Xunit;
