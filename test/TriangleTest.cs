@@ -6,6 +6,34 @@
     public class TriangleTest
     {
         [Fact]
+        public void IsConvex()
+        {
+            var triangle = new Triangle(
+                new Vector3(0, 1, 0),
+                new Vector3(0, 0, 0),
+                new Vector3(1, 0, 0)
+            );
+
+            var isConvex = triangle.IsConvex;
+
+            Assert.True(isConvex);
+        }
+
+        [Fact]
+        public void IsConvex_False()
+        {
+            var triangle = new Triangle(
+                new Vector3(1, 0, 0),
+                new Vector3(0, 0, 0),
+                new Vector3(0, 1, 0)
+            );
+
+            var isConvex = triangle.IsConvex;
+
+            Assert.False(isConvex);
+        }
+
+        [Fact]
         public void Contains()
         {
             var triangle = new Triangle(

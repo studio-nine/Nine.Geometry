@@ -24,6 +24,21 @@
         public Vector3 V3;
 
         /// <summary>
+        /// Gets whether the triangle is considered convex if V0-V1-V2 are wound in a counter-clockwise order.
+        /// </summary>
+        public bool IsConvex
+        {
+            get
+            {
+                var s = Math.Sign(
+                    (this.V2.X - this.V1.X) * (-this.V3.Y + this.V1.Y)
+                  + (this.V2.Y - this.V1.Y) * (this.V3.X - this.V1.X)
+                );
+                return s == -1;
+            }
+        }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="Triangle"/> class.
         /// </summary>
         public Triangle(Vector3 v1, Vector3 v2, Vector3 v3)
@@ -403,6 +418,6 @@
 
         /// <inheritdoc />
         public override string ToString()
-            => $"<{ V1 }, { V2 }, { V3 }>";
+            => $"<{V1}, {V2}, {V3}>";
     }
 }
