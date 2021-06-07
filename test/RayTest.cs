@@ -44,34 +44,58 @@
             Assert.Equal(0.0f, new Ray(center, -Vector3.UnitZ).Intersects(boundingBox));
         }
 
-        [Fact]
-        public void ray_boundingfrustum()
-        {
+        // [Fact]
+        // public void ray_boundingfrustum()
+        // {
+        // 
+        // }
+        // 
+        // [Fact]
+        // public void ray_boundingsphere()
+        // {
+        // 
+        // }
+        // 
+        // [Fact]
+        // public void ray_plane()
+        // {
+        // 
+        // }
+        // 
+        // [Fact]
+        // public void ray_triangle()
+        // {
+        // 
+        // }
+        // 
+        // [Fact]
+        // public void ray_custom_geometry()
+        // {
+        // 
+        // }
 
+        [Fact]
+        public void Operator_Additive()
+        {
+            var value1 = new Ray(new Vector3(0, 0, 0), new Vector3(1, 0, 0));
+            var value2 = new Ray(new Vector3(1, 0, 0), new Vector3(1, 0, 0));
+            
+            var value = value1 + value2;
+
+            Assert.Equal(new Vector3(1, 0, 0), value.Position);
+            Assert.Equal(new Vector3(1, 0, 0), value.Direction);
         }
 
         [Fact]
-        public void ray_boundingsphere()
+        public void Operator_Subtractive()
         {
+            var value1 = new Ray(new Vector3(0, 0, 0), new Vector3(1, 0, 0));
+            var value2 = new Ray(new Vector3(1, 0, 0), new Vector3(1, 0, 0));
 
-        }
+            var value = value1 - value2;
 
-        [Fact]
-        public void ray_plane()
-        {
-
-        }
-
-        [Fact]
-        public void ray_triangle()
-        {
-
-        }
-
-        [Fact]
-        public void ray_custom_geometry()
-        {
-
+            Assert.Equal(new Vector3(-1, 0, 0), value.Position);
+            Assert.Equal(new Vector3(-1, 0, 0), value.Direction);
         }
     }
 }

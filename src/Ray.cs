@@ -90,19 +90,32 @@
             return result;
         }
 
-        public static bool operator ==(Ray left, Ray right) => (left.Position == right.Position) && (left.Direction == right.Direction);
-        public static bool operator !=(Ray left, Ray right) => (left.Position != right.Position) && (left.Direction != right.Direction);
+        public static Ray operator +(Ray left, Ray right)
+            => new Ray(left.Position + right.Position, Vector3.Normalize(left.Direction + right.Direction));
+
+        public static Ray operator -(Ray left, Ray right)
+            => new Ray(left.Position - right.Position, -Vector3.Normalize(left.Direction + right.Direction));
+
+        public static bool operator ==(Ray left, Ray right)
+            => (left.Position == right.Position) && (left.Direction == right.Direction);
+
+        public static bool operator !=(Ray left, Ray right)
+            => (left.Position != right.Position) && (left.Direction != right.Direction);
 
         /// <inheritdoc />
-        public bool Equals(Ray other) => (this.Position == other.Position) && (this.Direction == other.Direction);
+        public bool Equals(Ray other)
+            => (this.Position == other.Position) && (this.Direction == other.Direction);
 
         /// <inheritdoc />
-        public override bool Equals(object obj) => (obj is Ray) && this.Equals((Ray)obj);
+        public override bool Equals(object obj)
+            => (obj is Ray) && this.Equals((Ray)obj);
 
         /// <inheritdoc />
-        public override int GetHashCode() => this.Direction.GetHashCode() ^ this.Position.GetHashCode();
+        public override int GetHashCode()
+            => this.Direction.GetHashCode() ^ this.Position.GetHashCode();
         
         /// <inheritdoc />
-        public override string ToString() => $"<Position: { Position }, Direction: { Direction }>";
+        public override string ToString()
+            => $"<Position: {Position}, Direction: {Direction}>";
     }
 }
