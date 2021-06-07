@@ -2,7 +2,7 @@
 {
     using System;
     using System.Numerics;
-    
+
     /// <summary>
     /// Defines a 3D triangle made up of three vertices.
     /// </summary>
@@ -31,6 +31,30 @@
             this.V1 = v1;
             this.V2 = v2;
             this.V3 = v3;
+        }
+        
+        /// <summary>
+        /// Returns whether the point is inside the <see cref="Triangle"/>.
+        /// </summary>
+        /// <param name="point"></param>
+        /// <returns></returns>
+        public bool Contains(Vector3 point)
+        {
+            Vector3 a = V1 - point;
+            Vector3 b = V2 - point;
+            Vector3 c = V3 - point;
+
+            Vector3 u = Vector3.Cross(b, c);
+            Vector3 v = Vector3.Cross(c, a);
+            Vector3 w = Vector3.Cross(a, b);
+            
+            if (Vector3.Dot(u, v) < 0f)
+                return false;
+            
+            if (Vector3.Dot(u, w) < 0.0f)
+                return false;
+
+            return true;
         }
 
         /// <summary>
@@ -357,21 +381,28 @@
         /// <summary>
         /// Box triangle have at most 32 intersection points.
         /// </summary>
-        static Vector3[] IntersectionPoints = new Vector3[32];
+        static readonly Vector3[] IntersectionPoints = new Vector3[32];
 
-        public static bool operator ==(Triangle value1, Triangle value2) => ((value1.V1 == value2.V1) && (value1.V2 == value2.V2) && (value1.V3 == value2.V3));
-        public static bool operator !=(Triangle value1, Triangle value2) => !(value1.V1 == value2.V1 && value1.V2 == value2.V2 && value1.V3 == value2.V3);
+        public static bool operator ==(Triangle value1, Triangle value2)
+            => (value1.V1 == value2.V1) && (value1.V2 == value2.V2) && (value1.V3 == value2.V3);
 
-        /// <inheritdoc />
-        public bool Equals(Triangle other) => V1 == other.V1 && V2 == other.V2 && V3 == other.V3;
-
-        /// <inheritdoc />
-        public override bool Equals(object obj) => (obj is Triangle) && this.Equals((Triangle)obj);
+        public static bool operator !=(Triangle value1, Triangle value2)
+            => !(value1.V1 == value2.V1 && value1.V2 == value2.V2 && value1.V3 == value2.V3);
 
         /// <inheritdoc />
-        public override int GetHashCode() => this.V1.GetHashCode() ^ this.V2.GetHashCode() ^ this.V3.GetHashCode();
+        public bool Equals(Triangle other)
+            => V1 == other.V1 && V2 == other.V2 && V3 == other.V3;
 
         /// <inheritdoc />
-        public override string ToString() => $"<{ V1 }, { V2 }, { V3 }>";
+        public override bool Equals(object obj)
+            => (obj is Triangle) && this.Equals((Triangle)obj);
+
+        /// <inheritdoc />
+        public override int GetHashCode()
+            => this.V1.GetHashCode() ^ this.V2.GetHashCode() ^ this.V3.GetHashCode();
+
+        /// <inheritdoc />
+        public override string ToString()
+            => $"<{ V1 }, { V2 }, { V3 }>";
     }
 }

@@ -1,11 +1,40 @@
 ﻿namespace Nine.Geometry.Test
 {
-    using System.Diagnostics;
     using System.Numerics;
     using Xunit;
 
     public class TriangleTest
     {
+        [Fact]
+        public void Contains()
+        {
+            var triangle = new Triangle(
+                new Vector3(0, 1, 0),
+                new Vector3(0, 0, 0),
+                new Vector3(1, 0, 0)
+            );
+            var point = new Vector3(0.25f, 0.25f, 0);
+
+            var hit = triangle.Contains(point);
+
+            Assert.True(hit);
+        }
+
+        [Fact]
+        public void Contains_Invalid()
+        {
+            var triangle = new Triangle(
+                new Vector3(0, 1, 0),
+                new Vector3(0, 0, 0),
+                new Vector3(1, 0, 0)
+            );
+            var point = new Vector3(0.5f, 0.5f, 0);
+
+            var hit = triangle.Contains(point);
+
+            Assert.True(hit);
+        }
+
         [Fact]
         public void Intersects_Ray()
         {
