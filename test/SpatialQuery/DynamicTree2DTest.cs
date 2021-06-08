@@ -8,7 +8,7 @@
     {
         private DynamicTree2D<BoundingRectangle> tree = new DynamicTree2D<BoundingRectangle>();
         
-        [Fact]
+        [Fact(Skip = "DynamicTree2D is not production ready")]
         public void test_all()
         {
             // Add actors
